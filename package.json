@@ -1,6 +1,6 @@
 {
   "name": "marko-prettyprint",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Prettyprint Marko template files in the syntax of your choice",
   "main": "src/index.js",
   "scripts": {
