@@ -78,15 +78,7 @@ module.exports = function prettyPrint(ast, options) {
         });
     }
 
-    function flushText() {
-        // bufferedText = bufferedText.trim();
-
-        if (!bufferedText) {
-            return;
-        }
-
-        var lines = bufferedText.split(/\n|\r\n/);
-
+    function flushLines(lines) {
         lines = trimLinesStart(lines);
         lines = trimLinesEnd(lines);
 
@@ -99,7 +91,13 @@ module.exports = function prettyPrint(ast, options) {
                 lines = indentLines(lines);
                 write(currentIndent + '---\n' + lines.join('\n') + '\n' + currentIndent + '---');
             } else {
-                write(currentIndent + '- ' + lines[0].trim());
+                let trimmed = lines[0].trim();
+                if (trimmed.charAt(0) === '<') {
+                    // The line does not need to be prefixed since it starts with an opening angle bracket
+                    write(currentIndent + trimmed);
+                } else {
+                    write(currentIndent + '- ' + trimmed);
+                }
             }
         } else {
             if (lines.length > 1) {
@@ -111,6 +109,38 @@ module.exports = function prettyPrint(ast, options) {
         }
 
         write('\n');
+    }
+
+    function flushText() {
+        // bufferedText = bufferedText.trim();
+
+        if (!bufferedText) {
+            return;
+        }
+
+        var lines = bufferedText.split(/\n|\r\n/);
+
+        var i=0;
+
+        if (syntax === SYNTAX_CONCISE) {
+            // In concise mode we don't want to bother prefixing lines that start with an opening HTML bracket.
+            // This would be the case for HTML comments, HTML doctype and a declaration
+            while(lines.length && i < lines.length) {
+                var trimmed = lines[i].trim();
+                if (trimmed.charAt(0) === '<') {
+                    if (i > 0) {
+                        flushLines(lines.slice(0, i));
+                    }
+                    write(currentIndent + trimmed + '\n');
+                    lines = lines.slice(i+1);
+                    i=0;
+                } else {
+                    i++;
+                }
+            }
+        }
+
+        flushLines(lines);
 
         bufferedText = '';
     }
