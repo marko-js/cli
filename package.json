@@ -1,0 +1,27 @@
+{
+  "name": "marko-prettyprint",
+  "version": "1.0.0",
+  "description": "Prettyprint Marko template files in the syntax of your choice",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marko-js/marko-prettyprint.git"
+  },
+  "keywords": [
+    "prettyprint",
+    "marko",
+    "templates"
+  ],
+  "author": "Patrick Steele-Idem <pnidem@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marko-js/marko-prettyprint/issues"
+  },
+  "homepage": "https://github.com/marko-js/marko-prettyprint/#readme",
+  "dependencies": {
+    "marko": "^3.0.0-alpha.2"
+  }
+}
