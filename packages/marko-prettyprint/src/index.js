@@ -165,8 +165,6 @@ module.exports = function prettyPrint(ast, options) {
                 attrStr += '${' + attr.value  + '}';
             }
 
-            console.log('attrStr', JSON.stringify(attrStr), col + attrStr.length);
-
             if (i !== 0 && col + attrStr.length > 80 && attrStr.length < (80 - currentIndent.length + indent.length)) {
                 attrsStr += '\n' + currentIndent + indent + attrStr;
                 col = currentIndent.length + indent.length + attrStr.length;
