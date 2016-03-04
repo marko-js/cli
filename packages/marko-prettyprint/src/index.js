@@ -3,6 +3,12 @@
 const SYNTAX_CONCISE = 1;
 const SYNTAX_HTML = 2;
 
+var markoCompiler = require('marko/compiler');
+
+function rtrim(s) {
+    return s && s.replace(/\s\s*$/,'');
+}
+
 function trimLinesStart(lines) {
     var firstNonEmptyLine = -1;
     for (var i=0; i<lines.length; i++) {
@@ -35,13 +41,44 @@ function trimLinesEnd(lines) {
     return lines;
 }
 
+function getBodyText(el) {
+    var children = el.body.items;
+    var text = '';
+    for (var i=0; i<children.length; i++) {
+        let child = children[i];
+        if (child.type !== 'Text') {
+            return null;
+        }
+        text += child.argument.value;
+    }
+    return text;
+}
+
+function hasLineBreaks(str) {
+    return /\n/.test(str);
+}
+
 module.exports = function prettyPrint(ast, options) {
+    options = options || {};
+
+    if (typeof ast === 'string') {
+        var filename = options.filename;
+        if (!filename) {
+            throw new Error('The "filename" option is required when String source is provided');
+        }
+        ast = markoCompiler.parseRaw(ast, filename);
+    }
+
+    // console.log(JSON.stringify(ast, null, 4));
+
     var src = '';
     var indent = '    ';
     var currentIndent = '';
     var syntax = options && options.syntax === 'concise' ?
         SYNTAX_CONCISE :
         SYNTAX_HTML;
+
+    var isConciseSyntax = syntax === SYNTAX_CONCISE;
 
     var bufferedText = '';
 
@@ -70,12 +107,41 @@ module.exports = function prettyPrint(ast, options) {
 
             if (line.startsWith(blockIndentation)) {
                 line = line.substring(blockIndentation.length);
-                line = currentIndent + line;
+                line = currentIndent + rtrim(line);
             } else {
                 line = currentIndent + line.trim();
             }
             return line;
         });
+    }
+
+    function indentCommentLines(lines) {
+        let blockIndentation = null;
+
+        var indentedLines = [];
+
+        lines.forEach((line, i) => {
+            if (line.trim() === '') {
+                return;
+            }
+
+            if (blockIndentation == null) {
+                blockIndentation = line.match(/^\s*/)[0];
+                if (!blockIndentation) {
+                    blockIndentation = null;
+                }
+            }
+
+            if (line.startsWith(blockIndentation)) {
+                line = line.substring(blockIndentation.length);
+                line = currentIndent + rtrim(line);
+            } else {
+                line = currentIndent + line.trim();
+            }
+            indentedLines.push(line);
+        });
+
+        return indentedLines;
     }
 
     function flushLines(lines) {
@@ -86,7 +152,7 @@ module.exports = function prettyPrint(ast, options) {
             return;
         }
 
-        if (syntax === SYNTAX_CONCISE || currentIndent === '') {
+        if (isConciseSyntax || currentIndent === '') {
             if (lines.length > 1) {
                 lines = indentLines(lines);
                 write(currentIndent + '---\n' + lines.join('\n') + '\n' + currentIndent + '---');
@@ -111,7 +177,7 @@ module.exports = function prettyPrint(ast, options) {
         write('\n');
     }
 
-    function flushText() {
+    function flushBufferedText() {
         // bufferedText = bufferedText.trim();
 
         if (!bufferedText) {
@@ -122,7 +188,7 @@ module.exports = function prettyPrint(ast, options) {
 
         var i=0;
 
-        if (syntax === SYNTAX_CONCISE) {
+        if (isConciseSyntax) {
             // In concise mode we don't want to bother prefixing lines that start with an opening HTML bracket.
             // This would be the case for HTML comments, HTML doctype and a declaration
             while(lines.length && i < lines.length) {
@@ -131,7 +197,9 @@ module.exports = function prettyPrint(ast, options) {
                     if (i > 0) {
                         flushLines(lines.slice(0, i));
                     }
+
                     write(currentIndent + trimmed + '\n');
+
                     lines = lines.slice(i+1);
                     i=0;
                 } else {
@@ -146,7 +214,7 @@ module.exports = function prettyPrint(ast, options) {
     }
 
     function printHtmlElement(node) {
-        flushText();
+        flushBufferedText();
 
 
         var col = 0;
@@ -154,13 +222,25 @@ module.exports = function prettyPrint(ast, options) {
         writeLineIndent();
         col += currentIndent.length;
 
-        if (syntax === SYNTAX_HTML) {
+        if (!isConciseSyntax) {
             write('<');
             col++;
         }
 
         write(node.tagName);
         col += node.tagName.length;
+
+        if (node.rawShorthandId) {
+            write('#' + node.rawShorthandId);
+            col += node.rawShorthandId.length + 1;
+        }
+
+        if (node.rawShorthandClassNames) {
+            node.rawShorthandClassNames.forEach((className) => {
+                write('.' + className);
+                col += className.length + 1;
+            });
+        }
 
         if (node.argument) {
             write('(' + node.argument + ')');
@@ -211,23 +291,46 @@ module.exports = function prettyPrint(ast, options) {
         if (attrsStr) {
             write(' ');
 
-            if (multilineAttrs && syntax === SYNTAX_CONCISE) {
+            if (multilineAttrs && isConciseSyntax) {
                 write('[ ');
+                col += 2;
             }
 
             write(attrsStr);
 
-            if (multilineAttrs && syntax === SYNTAX_CONCISE) {
+            if (multilineAttrs && isConciseSyntax) {
                 write(' ]');
+                col += 2;
             }
         }
 
         var hasBody = node.body && node.body.length;
-        if (syntax === SYNTAX_HTML) {
+        if (!isConciseSyntax) {
             if (hasBody) {
                 write('>');
+                col += 1;
             } else {
                 write('/>');
+            }
+        }
+
+        if (hasBody) {
+            let bodyText = getBodyText(node);
+            if (bodyText && !hasLineBreaks(bodyText)) {
+                let endCol = col + bodyText.length;
+                if (!isConciseSyntax) {
+                    endCol += ('</' + node.tagName + '>').length;
+                }
+
+                if (bodyText && !hasLineBreaks(bodyText) && endCol < 80) {
+                    if (isConciseSyntax) {
+                        write(' - ' + bodyText + '\n');
+                    } else {
+                        write(bodyText + '</' + node.tagName + '>\n');
+                    }
+
+                    return;
+                }
             }
         }
 
@@ -240,11 +343,16 @@ module.exports = function prettyPrint(ast, options) {
         if (hasBody) {
             incIndent();
 
+            var bodyText = getBodyText(node);
+            if (bodyText && !hasLineBreaks(bodyText)) {
+
+            }
+
             node.body.forEach((child) => {
                 printNode(child);
             });
 
-            flushText();
+            flushBufferedText();
 
             decIndent();
 
@@ -265,6 +373,63 @@ module.exports = function prettyPrint(ast, options) {
         bufferedText += node.argument.value;
     }
 
+    function isInlineComment(node) {
+        if (bufferedText && !bufferedText.endsWith('\n')) {
+            return true;
+        }
+
+        var nextSibling = node.nextSibling;
+        if (!nextSibling) {
+            return false;
+        }
+
+        if (nextSibling.type !== 'Text') {
+            return false;
+        }
+
+        var nextSiblingText = nextSibling.argument.value;
+        if (nextSiblingText.startsWith('\n') || nextSiblingText.startsWith('\r\n')) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function printHtmlComment(node) {
+        var comment = node.comment.value;
+
+        if (isInlineComment(comment)) {
+            bufferedText += '<!--' + comment + '-->';
+        } else {
+            flushBufferedText();
+            var lines = comment.split(/\n|\r\n/);
+            if (lines.length === 1) {
+                if (isConciseSyntax) {
+                    write(currentIndent + '// ' + comment.trim());
+                } else {
+                    write(currentIndent + '<!-- ' + comment.trim() + '-->');
+                }
+
+            } else {
+                write(currentIndent + '<!--\n' + indentCommentLines(lines).join('\n') + '\n' + currentIndent + '-->');
+            }
+            write('\n');
+        }
+
+    }
+
+    function printDocumentType(node) {
+        flushBufferedText();
+        var doctype = node.documentType.value;
+        write(currentIndent + '<!' + doctype.trim() + '>\n');
+    }
+
+    function printDeclaration(node) {
+        flushBufferedText();
+        var declaration = node.declaration.value;
+        write(currentIndent + '<?' + declaration.trim() + '?>\n');
+    }
+
     function printNode(node, isRoot) {
         switch (node.type) {
             case 'HtmlElement':
@@ -272,6 +437,15 @@ module.exports = function prettyPrint(ast, options) {
                 break;
             case 'Text':
                 printText(node);
+                break;
+            case 'HtmlComment':
+                printHtmlComment(node);
+                break;
+            case 'DocumentType':
+                printDocumentType(node);
+                break;
+            case 'Declaration':
+                printDeclaration(node);
                 break;
             default:
                 throw new Error('Unsupported node: ' + node);
@@ -282,7 +456,7 @@ module.exports = function prettyPrint(ast, options) {
         printNode(child);
     });
 
-    flushText();
+    flushBufferedText();
 
     return src;
 };
