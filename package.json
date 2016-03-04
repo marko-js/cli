@@ -1,10 +1,10 @@
 {
   "name": "marko-prettyprint",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Prettyprint Marko template files in the syntax of your choice",
   "main": "src/index.js",
   "scripts": {
-  "init-tests": "./test/init-tests.sh",
+    "init-tests": "./test/init-tests.sh",
     "test": "npm run mocha && npm run jshint",
     "mocha": "node_modules/.bin/mocha --ui bdd --reporter spec ./test/",
     "jshint": "node_modules/.bin/jshint src/"
