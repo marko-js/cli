@@ -407,7 +407,7 @@ module.exports = function prettyPrint(ast, options) {
                 if (isConciseSyntax) {
                     write(currentIndent + '// ' + comment.trim());
                 } else {
-                    write(currentIndent + '<!-- ' + comment.trim() + '-->');
+                    write(currentIndent + '<!-- ' + comment.trim() + ' -->');
                 }
 
             } else {
