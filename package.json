@@ -3,6 +3,9 @@
   "version": "1.0.4",
   "description": "Prettyprint Marko template files in the syntax of your choice",
   "main": "src/index.js",
+  "bin": {
+    "marko-prettyprint": "bin/marko-prettyprint"
+  },
   "scripts": {
     "init-tests": "./test/init-tests.sh",
     "test": "npm run mocha && npm run jshint",
@@ -25,7 +28,9 @@
   },
   "homepage": "https://github.com/marko-js/marko-prettyprint/#readme",
   "dependencies": {
-    "marko": "^3.0.0-alpha.2"
+    "argly": "^1.0.0",
+    "marko": "^3.0.0",
+    "minimatch": "^3.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
