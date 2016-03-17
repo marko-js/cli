@@ -69,8 +69,6 @@ module.exports = function prettyPrint(ast, options) {
         ast = markoCompiler.parseRaw(ast, filename);
     }
 
-    // console.log(JSON.stringify(ast, null, 4));
-
     var src = '';
     var indent = '    ';
     var currentIndent = '';
@@ -105,12 +103,19 @@ module.exports = function prettyPrint(ast, options) {
                 blockIndentation = line.match(/^\s*/)[0];
             }
 
-            if (line.startsWith(blockIndentation)) {
-                line = line.substring(blockIndentation.length);
-                line = currentIndent + rtrim(line);
+            if (line.trim()) {
+                if (line.startsWith(blockIndentation)) {
+                    line = line.substring(blockIndentation.length);
+
+                    line = currentIndent + rtrim(line);
+                } else {
+                    line = currentIndent + line.trim();
+                }
             } else {
-                line = currentIndent + line.trim();
+                line = '';
             }
+
+
             return line;
         });
     }
@@ -170,7 +175,12 @@ module.exports = function prettyPrint(ast, options) {
                 lines = indentLines(lines);
                 write(lines.join('\n'));
             } else {
-                write(currentIndent + lines[0].trim());
+                let trimmed = lines[0].trim();
+                if (trimmed) {
+                    write(currentIndent + lines[0].trim());
+                } else {
+                    write('');
+                }
             }
         }
 
@@ -343,16 +353,20 @@ module.exports = function prettyPrint(ast, options) {
         if (hasBody) {
             incIndent();
 
-            var bodyText = getBodyText(node);
-            if (bodyText && !hasLineBreaks(bodyText)) {
+            var tagDef = node.tagDef;
 
+            if (tagDef && (tagDef.body === 'static-text' || tagDef.body === 'parsed-text')) {
+                var bodyText = getBodyText(node);
+                if (bodyText) {
+                    flushLines(bodyText.split(/\n|\r\n/));
+                }
+            } else {
+                node.body.forEach((child) => {
+                    printNode(child);
+                });
+
+                flushBufferedText();
             }
-
-            node.body.forEach((child) => {
-                printNode(child);
-            });
-
-            flushBufferedText();
 
             decIndent();
 
