@@ -3,6 +3,18 @@
 const SYNTAX_CONCISE = 1;
 const SYNTAX_HTML = 2;
 
+function unescapePlaceholdersInStringExpression(string) {
+    return string.replace(/([\\]{2,4})?\$[!]?{/g, function(match) {
+        if (match.startsWith('\\\\\\\\')) {
+            return match.substring(2);
+        } else if (match.startsWith('\\\\')) {
+            return match.substring(1);
+        }
+
+        return match;
+    });
+}
+
 var markoCompiler = require('marko/compiler');
 
 function rtrim(s) {
@@ -66,6 +78,7 @@ module.exports = function prettyPrint(ast, options) {
         if (!filename) {
             throw new Error('The "filename" option is required when String source is provided');
         }
+
         ast = markoCompiler.parseRaw(ast, filename);
     }
 
@@ -273,11 +286,10 @@ module.exports = function prettyPrint(ast, options) {
                 var attrValue = attr.value;
                 if (attrValue) {
                     if (attrValue.isCompoundExpression()) {
-                        attrStr += '=(' + attrValue + ')';
-                    }else {
-                        attrStr += '=' + attrValue;
+                        attrStr += '=(' + unescapePlaceholdersInStringExpression(attrValue.toString()) + ')';
+                    } else {
+                        attrStr += '=' + unescapePlaceholdersInStringExpression(attrValue.toString());
                     }
-
                 } else if (attr.argument) {
                     attrStr += '(' + attr.argument + ')';
                 }
