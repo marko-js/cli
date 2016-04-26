@@ -15,9 +15,19 @@ describe('marko-prettyprint' , function() {
         function run(dir) {
             let inputPath = path.join(dir, 'template.marko');
             var templateSrc = fs.readFileSync(inputPath, { encoding: 'utf8' });
-            var actualConcise = markoPrettyprint(templateSrc, { filename: inputPath, syntax: 'concise' });
-            var actualHtml = markoPrettyprint(templateSrc, { filename: inputPath, syntax: 'html' });
-            return actualHtml + '\n~~~~~~~\n' + actualConcise;
+
+            if (process.env.SYNTAX  === 'html') {
+                let actualHtml = markoPrettyprint(templateSrc, { filename: inputPath, syntax: 'html' });
+                return actualHtml;
+            } else if (process.env.SYNTAX  === 'concise') {
+                let actualConcise = markoPrettyprint(templateSrc, { filename: inputPath, syntax: 'concise' });
+                return actualConcise;
+            } else {
+                let actualConcise = markoPrettyprint(templateSrc, { filename: inputPath, syntax: 'concise' });
+                let actualHtml = markoPrettyprint(templateSrc, { filename: inputPath, syntax: 'html' });
+                return actualHtml + '\n~~~~~~~\n' + actualConcise;
+            }
+
         },
         {
             compareExtension: '.marko'
