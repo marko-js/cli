@@ -1,18 +1,15 @@
 <!-- Colors available -->
-<if test="notEmpty(colors)">
+<if(notEmpty(colors))>
     <ul>
-        <for each="color in colors">
-            <li>
-                $color
-            </li>
+        <for(color in colors)>
+            <li>$color</li>
         </for>
     </ul>
 </if>
 
 ~~~~~~~
 // Colors available
-if test="notEmpty(colors)"
+if(notEmpty(colors))
     ul
-        for each="color in colors"
-            li
-                - $color
+        for(color in colors)
+            li - $color
