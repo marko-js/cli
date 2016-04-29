@@ -25,8 +25,10 @@ module.exports = function prettyPrint(ast, userOptions) {
         SYNTAX_CONCISE :
         SYNTAX_HTML;
 
+    var indent = userOptions.indent || '    ';
+
     // We always start out in the concise syntax
-    var printContext = new PrintContext(syntax, 0, '    ');
+    var printContext = new PrintContext(syntax, 0, indent);
     var writer = new Writer(0 /* col */);
 
     printers.printNodes(ast.body.items, printContext, writer);
