@@ -207,6 +207,10 @@ module.exports = function printHtmlElement(node, printContext, writer) {
         }
 
         if (hasLineBreaks(trimmedOutput)) {
+            if (writer.getOutput().endsWith('\n' + printContext.indentString) === false) {
+                writer.write(printContext.indentString);
+            }
+
             writer.write(nestedWriter.getOutput());
             writer.write(printContext.currentIndentString);
             writer.write(endTag);
