@@ -48,6 +48,8 @@ function enableLiteralToStringPatch(func) {
 module.exports = function printHtmlElement(node, printContext, writer) {
     if (node.hasAttribute('marko-preserve-whitespace')) {
         printContext = printContext.startPreservingWhitespace();
+    } else if (node.tagDef && node.tagDef.preserveWhitespace === true) {
+        printContext = printContext.startPreservingWhitespace();
     }
 
     var preserveBodyWhitespace = printContext.preserveWhitespace === true;
