@@ -76,7 +76,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
         });
     }
 
-    if (node.argument) {
+    if (node.argument != null) {
         writer.write('(' + node.argument + ')');
     }
 
@@ -115,7 +115,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
                     } else {
                         attrStr += '=' + unescapePlaceholdersInStringExpression(attrValue.toString());
                     }
-                } else if (attr.argument) {
+                } else if (attr.argument != null) {
                     attrStr += '(' + attr.argument + ')';
                 }
             } else {
