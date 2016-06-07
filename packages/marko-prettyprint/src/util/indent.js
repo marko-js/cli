@@ -31,7 +31,7 @@ exports.indentCommentLines = function indentCommentLines(lines, printContext) {
     return indentedLines;
 };
 
-exports.getIndentString = function indentString(depth, indentString) {
+exports.getIndentString = function getIndentString(depth, indentString) {
     var str = '';
 
     for (let i=0; i<depth; i++) {
