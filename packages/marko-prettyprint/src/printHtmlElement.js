@@ -228,7 +228,10 @@ module.exports = function printHtmlElement(node, printContext, writer) {
         printers.printNodes(node.body.items, nestedPrintContext, writer);
 
         if (printContext.isHtmlSyntax) {
-            writer.write(printContext.currentIndentString);
+            if (!preserveBodyWhitespace) {
+                writer.write(printContext.currentIndentString);
+            }
+
             writer.write(endTag);
         }
     }
