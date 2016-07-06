@@ -52,9 +52,10 @@ module.exports = function printHtmlElement(node, printContext, writer) {
         printContext = printContext.startPreservingWhitespace();
     }
 
+    var isDynamicTagName = node.tagName.startsWith('$');
     var preserveBodyWhitespace = printContext.preserveWhitespace === true;
 
-    if (preserveBodyWhitespace) {
+    if (preserveBodyWhitespace || isDynamicTagName) {
         // We can only reliably preserve whitespace in HTML mode so we force the HTML
         // syntax if we detect that whitespace preserval is enabled
         printContext = printContext.switchToHtmlSyntax();
