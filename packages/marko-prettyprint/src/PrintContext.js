@@ -6,7 +6,7 @@ var SYNTAX_CONCISE = require('./constants').SYNTAX_CONCISE;
 var SYNTAX_HTML = require('./constants').SYNTAX_HTML;
 
 class PrintContext {
-    constructor(syntax, depth, indentString, preserveWhitespace) {
+    constructor(syntax, depth, indentString, preserveWhitespace, maxLen) {
         if (indentString == null) {
             indentString = '    ';
         }
@@ -15,6 +15,7 @@ class PrintContext {
         this.currentIndentString = getIndentString(depth, indentString);
         this.indentString = indentString;
         this.preserveWhitespace = preserveWhitespace === true;
+        this.maxLen = maxLen;
     }
 
     get isConciseSyntax() {
@@ -26,19 +27,19 @@ class PrintContext {
     }
 
     beginNested() {
-        return new PrintContext(this.syntax, this.depth+1, this.indentString, this.preserveWhitespace);
+        return new PrintContext(this.syntax, this.depth+1, this.indentString, this.preserveWhitespace, this.maxLen);
     }
 
     switchToHtmlSyntax() {
-        return new PrintContext(SYNTAX_HTML, this.depth, this.indentString, this.preserveWhitespace);
+        return new PrintContext(SYNTAX_HTML, this.depth, this.indentString, this.preserveWhitespace, this.maxLen);
     }
 
     startPreservingWhitespace() {
-        return new PrintContext(this.syntax, this.depth, this.indentString, true);
+        return new PrintContext(this.syntax, this.depth, this.indentString, true, this.maxLen);
     }
 
     clone() {
-        return new PrintContext(this.syntax, this.depth, this.indentString, this.preserveWhitespace);
+        return new PrintContext(this.syntax, this.depth, this.indentString, this.preserveWhitespace, this.maxLen);
     }
 }
 

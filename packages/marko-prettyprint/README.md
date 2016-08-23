@@ -52,3 +52,7 @@ marko-prettyprint src/ foo/
 marko-prettyprint template1.marko template2.marko
 ```
 
+The maximum line length (defaults to `80`) can be also be set:
+```
+marko-prettyprint . --syntax html --max-len 120
+```

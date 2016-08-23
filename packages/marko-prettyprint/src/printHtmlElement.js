@@ -9,7 +9,6 @@ const formattingTags = require('./formatting-tags');
 const trim = require('./util/trim');
 
 const oldLiteralToString = require('marko/compiler/ast/Literal').prototype.toString;
-const MAX_COL = 80;
 
 function replaceEscapedNewLines(jsonString) {
     return jsonString.replace(/\\\\|\\n/g, (match) => {
@@ -54,6 +53,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
 
     var isDynamicTagName = node.tagName.startsWith('$');
     var preserveBodyWhitespace = printContext.preserveWhitespace === true;
+    var maxLen = printContext.maxLen;
 
     if (preserveBodyWhitespace || isDynamicTagName) {
         // We can only reliably preserve whitespace in HTML mode so we force the HTML
@@ -141,7 +141,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
                     }
                 }
 
-                if (i === 0 || writer.col + stringToAppend.length < MAX_COL) {
+                if (i === 0 || writer.col + stringToAppend.length < maxLen) {
                     writer.write(stringToAppend);
                 } else {
                     writer.write('\n' + printContext.currentIndentString + printContext.indentString + trim.ltrim(stringToAppend));
@@ -149,7 +149,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
             });
         } else {
             var attrsString = attrStringsArray.join('');
-            if (writer.col + attrsString.length < MAX_COL) {
+            if (writer.col + attrsString.length < maxLen) {
                 writer.write(attrsString);
             } else {
                 writer.write(' [\n');
@@ -185,7 +185,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     if (bodyText && !hasLineBreaks(bodyText)) {
         let endCol = writer.col + bodyText.length + endTag.length;
 
-        if (endCol < MAX_COL) {
+        if (endCol < maxLen) {
             if (printContext.isConciseSyntax) {
                 writer.write(' - ' + bodyText);
             } else {
