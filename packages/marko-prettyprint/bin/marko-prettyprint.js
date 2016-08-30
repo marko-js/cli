@@ -84,6 +84,7 @@ var args = require('argly').createParser({
     .parse();
 
 var syntax = args.syntax || 'html';
+var maxLen = args.maxLen || 80;
 
 var ignoreRules = args.ignore;
 
@@ -203,6 +204,7 @@ var prettyprint = function(path, context) {
     var src = fs.readFileSync(path, { encoding: 'utf8' });
     var outputSrc = markoPrettyprint(src, {
         syntax: syntax,
+        maxLen: maxLen,
         filename: path
     });
 
