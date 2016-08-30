@@ -48,6 +48,10 @@ var args = require('argly').createParser({
         '--syntax -s': {
             type: 'string',
             description: 'The syntax (either "html" or "concise"). Defaults to "html"'
+        },
+        '--max-len': {
+            type: 'int',
+            description: 'The maximum line length. Defaults to 80'
         }
     })
     .usage('Usage: $0 <pattern> [options]')
