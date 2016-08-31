@@ -26,7 +26,7 @@ module.exports = function prettyPrint(ast, userOptions) {
         SYNTAX_HTML;
 
     var indent = userOptions.indent || '    ';
-    var maxLen = userOptions['max-len'] || 80;
+    var maxLen = userOptions.maxLen || 80;
 
     // We always start out in the concise syntax
     var printContext = new PrintContext(syntax, 0, indent, false, maxLen);
