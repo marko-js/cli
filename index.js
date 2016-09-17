@@ -4,6 +4,9 @@ var walk = require('fs-walk');
 
 var ServerContext = require('./ServerContext');
 
+require('marko/node-require').install();
+require('lasso/node-require-no-op').enable('.css', '.less', '.sass', '.scss', '.styl');
+
 function runTests() {
     walk.walkSync(process.cwd(), function(basedir, filename, stat) {
         var filepath = path.join(basedir, filename);
@@ -43,12 +46,12 @@ function runServerTestsForComponents(tagsDir) {
                     else if(handler.length <= 1) {
                         return it(name, function() {
                             context.test = { name };
-                            handler(context)
+                            handler.call(this, context)
                         })
                     } else if(handler.length >= 2) {
                         return it(name, function(done) {
                             context.test = { name };
-                            handler(context, done)
+                            handler.call(this, context, done)
                         })
                     }
                 }
