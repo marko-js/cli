@@ -1,0 +1,20 @@
+{
+  "name": "marko-test-runner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha index.js"
+  },
+  "author": "Michael Rawlings <ml.rawlings@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "cheerio": "^0.22.0",
+    "fs-walk": "0.0.1",
+    "mocha": "^3.0.2"
+  }
+}
