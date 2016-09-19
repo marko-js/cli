@@ -30,6 +30,9 @@ function runTests() {
 }
 
 function runServerTestsForComponents(tagsDir) {
+    // TODO: don't even walk node_modules so this check won't be necessary
+    if(/\/node_modules\//.test(tagsDir)) return;
+    
     console.log('RUN TESTS FOR COMPONENTS:', tagsDir)
     var tagNames = fs.readdirSync(tagsDir);
     tagNames.forEach(tagName => {
