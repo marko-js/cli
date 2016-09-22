@@ -1,22 +1,27 @@
 {
-  "name": "marko-test-runner",
+  "name": "marko-devtools",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "mocha index.js"
-  },
+  "description": "Marko DevTools",
+  "main": "src/index.js",
   "author": "Michael Rawlings <ml.rawlings@gmail.com>",
-  "license": "ISC",
+  "maintainers": [
+    "Michael Rawlings <ml.rawlings@gmail.com>",
+    "Patrick Steele-Idem <pnidem@gmail.com>"
+  ],
+  "license": "MIT",
   "dependencies": {
+    "argly": "^1.0.0",
+    "async": "^2.0.1",
     "chai": "^3.5.0",
     "cheerio": "^0.22.0",
-    "fs-walk": "0.0.1",
+    "child-process-promise": "^2.1.3",
+    "glob": "^7.1.0",
     "lasso": "*",
+    "lasso-package-root": "^1.0.0",
     "marko": "*",
     "mocha": "^3.0.2"
+  },
+  "bin": {
+    "marko": "bin/marko"
   }
 }
