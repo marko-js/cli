@@ -10,7 +10,6 @@ var path = require('path');
 var defaultPageTemplate = require('./page-template.marko');
 var spawn = require('child-process-promise').spawn;
 var fs = require('fs');
-var mkdirp = require('mkdirp');
 var mochaPhantomJSBin = require.resolve('mocha-phantomjs/bin/mocha-phantomjs');
 var resolveFrom = require('resolve-from');
 
@@ -38,9 +37,8 @@ class WrapStream extends Transform {
     }
 }
 
-function generate(tests, options, devTools) {
+function startServer(tests, options, devTools) {
     return new Promise((resolve, reject) => {
-        var startServer = options.startServer === true;
         var pageTemplate = options.pageTemplate || defaultPageTemplate;
         var workDir = devTools.config.workDir;
         var outputDir = path.resolve(workDir, 'browser-build');
@@ -48,7 +46,7 @@ function generate(tests, options, devTools) {
         var browserBuilderConfig = Object.assign(
             {
                 outputDir: path.join(outputDir, 'static'),
-                urlPrefix: startServer ? '/static' : './static',
+                urlPrefix: '/static',
                 bundlingEnabled: false,
                 fingerprintsEnabled: false,
                 minify: false,
@@ -58,22 +56,11 @@ function generate(tests, options, devTools) {
             },
             devTools.config.browserBuilder || {});
 
-        var outputFile = path.join(outputDir, 'test.html');
-
         var testDependencies = [];
 
         tests.forEach((test) => {
             var file = test.file;
-            // var ext = path.extname(file);
-            // var fileNoExt = file.slice(0, 0-ext.length);
 
-            // console.log(module.id, fileNoExt + '_before.js');
-
-            // testDependencies.push({
-            //     type: 'js',
-            //     virtualPath: fileNoExt + '_before.js',
-            //     code: `$marko_setTest(${JSON.stringify(test)})`
-            // });
             testDependencies.push({
                 type: 'require',
                 path: file,
@@ -131,54 +118,37 @@ function generate(tests, options, devTools) {
             browserDependencies: browserDependencies
         };
 
-        if (startServer) {
-            var app = express();
+        var app = express();
 
-            app.use(require('lasso/middleware').serveStatic({ lasso: myLasso }));
-            app.get('/', function(req, res) {
-                res.marko(pageTemplate, templateData);
-            });
+        app.use(require('lasso/middleware').serveStatic({ lasso: myLasso }));
+        app.get('/', function(req, res) {
+            res.marko(pageTemplate, templateData);
+        });
 
-            var port = 8080;
+        var port = 8080;
 
-            var server = app.listen(port, function(err) {
-                if (err) {
-                    throw err;
+        var server = app.listen(port, function(err) {
+            if (err) {
+                throw err;
+            }
+
+            var host = 'localhost';
+            var port = server.address().port;
+            var url = `http://${host}:${port}`;
+
+            console.log(`Server running at ${url}`);
+
+            if (process.send) {
+                process.send('online');
+            }
+
+            resolve({
+                url: url,
+                stopServer: function() {
+                    server.close();
                 }
-
-                var host = 'localhost';
-                var port = server.address().port;
-                var url = `http://${host}:${port}`;
-
-                console.log(`Server running at ${url}`);
-
-                if (process.send) {
-                    process.send('online');
-                }
-
-                resolve({ url: url});
             });
-        } else {
-            try {
-                mkdirp.sync(outputDir);
-            } catch(e) {}
-
-            // console.log(`Generating test HTML for ${path.relative(devTools.cwd, testsFile)}...`);
-
-            pageTemplate.render(templateData, function(err, html) {
-                if (err) {
-                    return reject(err);
-                }
-
-                fs.writeFileSync(outputFile, html, { encoding: 'utf8' });
-
-                console.log(`Saved test HTML page to ${path.relative(devTools.cwd, outputFile)}`);
-
-                resolve({
-                    url: outputFile
-                });
-            });
-        }
+        });
     });
 }
 
@@ -187,12 +157,18 @@ exports.run = function(allTests, options, devTools) {
         return test.env === 'browser' || test.env === 'both';
     });
 
-    return generate(filteredTests, options, devTools)
-        .then((generated) => {
-            console.log(`Running ${generated.url} using mocha-phantomjs...`);
-            console.log('mochaPhantomJSBin:', mochaPhantomJSBin);
-            return spawn(mochaPhantomJSBin, [generated.url], {
-                stdio: 'inherit'
-            });
+    if (!filteredTests.length) {
+        return;
+    }
+
+    return startServer(filteredTests, options, devTools)
+        .then((result) => {
+            console.log(`Running "${result.url}" using mocha-phantomjs...`);
+            return spawn(mochaPhantomJSBin, [result.url], {
+                    stdio: 'inherit'
+                })
+                .then(function() {
+                    result.stopServer();
+                });
         });
 };
