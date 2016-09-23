@@ -2,7 +2,7 @@
 
 var spawn = require('child-process-promise').spawn;
 
-function runServerTests(allTests, devTools) {
+exports.run = function(allTests, options, devTools) {
     var filteredTests = allTests.filter((test) => {
         return test.env === 'server' || test.env === 'both';
     });
@@ -22,6 +22,4 @@ function runServerTests(allTests, devTools) {
         .catch((err) => {
             process.exit(1);
         });
-}
-
-module.exports = runServerTests;
+};

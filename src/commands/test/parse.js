@@ -20,11 +20,17 @@ module.exports = function parse(argv) {
         })
         .usage('Usage: $0 [options]')
         .example(
-            'First example',
-            '$0 src/components/')
+            'Run all tests',
+            'marko')
         .example(
-            'Second example',
-            '$0 --foo hello --bar world')
+            'Run all UI component tests',
+            'marko src/components/')
+        .example(
+            'Run only server tests',
+            'marko src/components/ --server')
+        .example(
+            'Run only browser tests',
+            'marko src/components/ --browser')
         .validate(function(result) {
             if (result.help) {
                 this.printUsage();

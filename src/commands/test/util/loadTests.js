@@ -32,7 +32,7 @@ function getRenderer(dir) {
 
 
 
-function loadTests(dir, patterns) {
+function loadTests(dir, patterns, devTools) {
     var tests = [];
     var filesLookup = {};
 
@@ -62,6 +62,11 @@ function loadTests(dir, patterns) {
         }
 
         var componentDir = path.dirname(testsDir);
+
+        if (componentDir === devTools.packageRoot) {
+            return;
+        }
+        
         var componentName = path.basename(componentDir);
 
         var renderer = getRenderer(componentDir);
