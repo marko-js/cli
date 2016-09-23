@@ -7,6 +7,10 @@ exports.run = function(allTests, options, devTools) {
         return test.env === 'server' || test.env === 'both';
     });
 
+    if (!filteredTests.length) {
+        return;
+    }
+
     var testsJSON = JSON.stringify(filteredTests);
     var mochaBin = require.resolve('mocha/bin/mocha');
     var mochaTestsServer = require.resolve('./mocha-tests-server.js');
