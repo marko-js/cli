@@ -38,7 +38,12 @@ window.$marko_test = function(test, component, func) {
         runTest(it.only, name, handler, context);
     };
 
-    describe(test.componentName, func);
+    var desc = test.componentName;
+    if (test.groupName) {
+        desc += ' - ' + test.groupName;
+    }
+
+    describe(desc, func);
 
     window.test = null;
 };
