@@ -115,9 +115,37 @@ test.only('foo', function(context) {
 });
 ```
 
+## Component testing API
+
+### Globals
+
+#### `it(desc, [done])`
+
+#### `test(desc, context[, done])`
+
+#### `test.only(desc, context[, done])`
+
+### `Context`
+
+#### `render(data) : RenderResult`
+
+### `RenderResult`
+
+#### `$(selector)`
+
+Returns a jQuery-compatible object for querying the rendered DOM. Utilizes [cheerio](https://github.com/cheeriojs/cheerio).
+
+#### `html`
+
+The output HTML string.
+
+#### `widget`
+
+***In-browser only***
+
 ## Snapshots
 
-When a component is rendered, a snapshot will automatically be saved into the `test/snapshots/` directory. This directory should be excluded from source control. For example:
+When a component is rendered, a snapshot of the HTML output will automatically be saved into the `test/snapshots/` directory. This directory should be excluded from source control. For example:
 
 _.gitignore_
 
@@ -165,3 +193,19 @@ module.exports = function(markoDevTools) {
 ```
 
 A package-specific plugin will automatically be loaded when `marko` is launched.
+
+# TODO
+
+- Don't write compiled templates to disk
+- Allow mocks for custom tags
+- File watching when running tests
+    - `marko test --watch`
+- Helper API for simulating DOM events
+- Plugin API for adding helpers to `context`
+- In-browser UI component viewer with file watching
+    - Drop down for inputs
+    - Editor for input data
+- In-browser project explorer (with links to run browser tests and view UI components)
+- Image snapshots
+- Testing in jsdom
+- Launching tests in multiple browsers (both headless and real browsers)
