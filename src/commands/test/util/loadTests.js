@@ -66,8 +66,8 @@ function loadTests(dir, patterns, devTools) {
         if (componentDir === devTools.packageRoot) {
             return;
         }
-        
-        var componentName = path.basename(componentDir);
+
+        var componentName = path.relative(devTools.cwd, componentDir);
 
         var renderer = getRenderer(componentDir);
 
