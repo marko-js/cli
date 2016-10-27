@@ -9,10 +9,6 @@ module.exports = function parse(argv) {
                 type: 'boolean',
                 description: 'Run only server tests'
             },
-            '--load': {
-                type: 'string',
-                description: 'Load a file before running tests'
-            },
             '--browser': {
                 type: 'boolean',
                 description: 'Run only browser tests'

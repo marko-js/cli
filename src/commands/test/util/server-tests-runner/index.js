@@ -14,16 +14,11 @@ exports.run = function(allTests, options, devTools) {
     var testsJSON = JSON.stringify(filteredTests);
     var mochaBin = require.resolve('mocha/bin/mocha');
     var mochaTestsServer = require.resolve('./mocha-tests-server.js');
-    var args = [mochaTestsServer];
     var env = Object.assign({}, process.env);
     env.MARKO_DEVTOOLS_TESTS = testsJSON;
     env.MARKO_DEVTOOLS_ROOT = devTools.__dirname;
 
-    if(options.load) {
-        args.unshift('--require', options.load);
-    }
-
-    return spawn(mochaBin, args, {
+    return spawn(mochaBin, [mochaTestsServer], {
             cwd: devTools.cwd,
             env,
             stdio: 'inherit'
