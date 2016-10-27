@@ -3,8 +3,13 @@
 var loadTests = require('./util/loadTests');
 var serverTestsRunner = require('./util/server-tests-runner');
 var browserTestsRunner = require('./util/browser-tests-runner');
+var path = require('path');
 
 module.exports = function run(options, devTools) {
+    if(options.load) {
+        require(path.resolve(process.cwd(), options.load));
+    }
+
     return loadTests(devTools.cwd, options.patterns, devTools)
         .then((tests) => {
             var promise = Promise.resolve();
