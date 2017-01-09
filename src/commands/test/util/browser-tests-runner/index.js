@@ -65,7 +65,7 @@ function startServer(tests, options, devTools) {
                 type: 'require',
                 path: file,
                 run: true,
-                requireHandler: {
+                virtualModule: {
                     createReadStream: function() {
                         var rendererPath = test.renderer;
                         var testDir = path.dirname(test.file);
