@@ -10,8 +10,10 @@ var path = require('path');
 var defaultPageTemplate = require('./page-template.marko');
 var spawn = require('child-process-promise').spawn;
 var fs = require('fs');
-var mochaPhantomJSBin = require.resolve('mocha-phantomjs/bin/mocha-phantomjs');
+var mochaPhantomJSBin = require.resolve('mocha-phantomjs-core');
+var phantomjsBinPath = require('phantomjs-prebuilt').path;
 var resolveFrom = require('resolve-from');
+var shouldCover = !!process.env.NYC_CONFIG;
 
 class WrapStream extends Transform {
     constructor(prefix, suffix) {
@@ -56,6 +58,12 @@ function startServer(tests, options, devTools) {
             },
             devTools.config.browserBuilder || {});
 
+        if(shouldCover) {
+            browserBuilderConfig.plugins.push(
+                require('./lasso-istanbul-plugin')
+            );
+        }
+
         var testDependencies = [];
 
         tests.forEach((test) => {
@@ -73,6 +81,7 @@ function startServer(tests, options, devTools) {
                         if (relativePath.charAt(0) !== '.') {
                             relativePath = './' + relativePath;
                         }
+
                         return fs.createReadStream(file, { encoding: 'utf8' })
                             .pipe(new WrapStream(
                                 `$marko_test(${JSON.stringify(test)}, require(${JSON.stringify(relativePath)}), function() { `,
@@ -164,11 +173,21 @@ exports.run = function(allTests, options, devTools) {
     return startServer(filteredTests, options, devTools)
         .then((result) => {
             console.log(`Running "${result.url}" using mocha-phantomjs...`);
-            return spawn(mochaPhantomJSBin, [result.url], {
-                    stdio: 'inherit'
-                })
-                .then(function() {
-                    result.stopServer();
-                });
+            var mochaPhantomJSOptions = { useColors:true };
+
+            if(shouldCover) {
+                mochaPhantomJSOptions.hooks = 'mocha-phantomjs-istanbul';
+                mochaPhantomJSOptions.coverageFile = getCoverageFile();
+            }
+
+            return spawn(phantomjsBinPath, [mochaPhantomJSBin, result.url, 'spec', JSON.stringify(mochaPhantomJSOptions)], {
+                stdio: 'inherit'
+            }).then(function() {
+                result.stopServer();
+            });
         });
 };
+
+function getCoverageFile() {
+    return './.nyc_output/'+Math.floor(Math.random()*100000000)+'.json';
+}
