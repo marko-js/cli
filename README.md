@@ -153,6 +153,14 @@ _.gitignore_
 **/test/snapshots/
 ```
 
+## Code coverage
+
+Use [`nyc`](https://github.com/istanbuljs/nyc) to generate coverage reports.  Just prefix any test commands with `nyc`:
+
+```
+nyc marko test
+```
+
 # Plugins
 
 Marko DevTools supports plugins as JavaScript functions:
