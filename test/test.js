@@ -1,16 +1,15 @@
 'use strict';
 var chai = require('chai');
 chai.config.includeStack = true;
-var autotest = require('./autotest');
 var path = require('path');
 var markoPrettyprint = require('../');
 var fs = require('fs');
 
 describe('marko-prettyprint' , function() {
 
-    var autoTestDir = path.join(__dirname, 'fixtures/autotest');
+    var autoTestDir = path.join(__dirname, 'autotest');
 
-    autotest.scanDir(
+    require('./util/autotest').scanDir(
         autoTestDir,
         function run(dir) {
             let inputPath = path.join(dir, 'template.marko');
@@ -29,17 +28,17 @@ describe('marko-prettyprint' , function() {
 
             if (process.env.SYNTAX  === 'html') {
                 options.syntax = 'html';
-                let actualHtml = markoPrettyprint(templateSrc, options);
+                let actualHtml = markoPrettyprint.prettyPrintSource(templateSrc, options);
                 return actualHtml;
             } else if (process.env.SYNTAX  === 'concise') {
                 options.syntax = 'concise';
-                let actualConcise = markoPrettyprint(templateSrc, options);
+                let actualConcise = markoPrettyprint.prettyPrintSource(templateSrc, options);
                 return actualConcise;
             } else {
                 options.syntax = 'concise';
-                let actualConcise = markoPrettyprint(templateSrc, options);
+                let actualConcise = markoPrettyprint.prettyPrintSource(templateSrc, options);
                 options.syntax = 'html';
-                let actualHtml = markoPrettyprint(templateSrc, options);
+                let actualHtml = markoPrettyprint.prettyPrintSource(templateSrc, options);
                 return actualHtml + '\n~~~~~~~\n' + actualConcise;
             }
 

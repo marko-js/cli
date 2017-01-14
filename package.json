@@ -30,7 +30,8 @@
   "dependencies": {
     "argly": "^1.0.0",
     "marko": "^3.0.0",
-    "minimatch": "^3.0.0"
+    "minimatch": "^3.0.0",
+    "resolve-from": "^2.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
