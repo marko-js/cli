@@ -181,7 +181,7 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
                 if (wrappedOutput.startsWith('<!--')) {
                     inputWriter.write(wrappedOutput);
                 } else {
-                    inputWriter.write('- ' + wrappedOutput);
+                    inputWriter.write('-- ' + wrappedOutput);
                 }
 
             }

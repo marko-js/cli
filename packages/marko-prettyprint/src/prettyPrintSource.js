@@ -1,17 +1,6 @@
-var resolveFrom = require('resolve-from');
 var path = require('path');
 var prettyPrintAST = require('./prettyPrintAST');
 var getMarkoCompiler = require('./util/getMarkoCompiler');
-
-function getMarkoCompiler(dir) {
-    var markoCompilerPath = resolveFrom(dir, 'marko-compiler');
-
-    if (markoCompilerPath) {
-        return require(markoCompilerPath);
-    } else {
-        return require('marko/compiler');
-    }
-}
 
 module.exports = function prettyPrintSource(src, options) {
     if (!options) {
