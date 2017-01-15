@@ -46,7 +46,7 @@ module.exports = function printText(node, printContext, writer) {
             if (trimmed.startsWith('<')) {
                 writer.write(trimmed);
             } else {
-                writer.write('- ' + trimmed);
+                writer.write('-- ' + trimmed);
             }
 
         }

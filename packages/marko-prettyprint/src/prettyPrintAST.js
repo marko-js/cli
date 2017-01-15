@@ -7,7 +7,7 @@ var printers = require('./printers');
 var SYNTAX_CONCISE = require('./constants').SYNTAX_CONCISE;
 var SYNTAX_HTML = require('./constants').SYNTAX_HTML;
 
-module.exports = function prettyPrint(ast, options) {
+module.exports = function prettyPrintAST(ast, options) {
     options = options || {};
 
     var syntax = options && options.syntax === 'concise' ?

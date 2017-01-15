@@ -187,7 +187,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
 
         if (endCol < maxLen) {
             if (printContext.isConciseSyntax) {
-                writer.write(' - ' + bodyText);
+                writer.write(' -- ' + bodyText);
             } else {
                 writer.write(bodyText + '</' + node.tagName + '>');
             }
