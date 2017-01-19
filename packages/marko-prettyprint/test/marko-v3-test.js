@@ -4,6 +4,14 @@ chai.config.includeStack = true;
 var path = require('path');
 var markoPrettyprint = require('../');
 var fs = require('fs');
+var childProcess = require('child_process');
+
+if (!fs.existsSync(path.join(__dirname, 'marko-v3/node_modules/marko'))) {
+    childProcess.execSync('npm install', {
+        cwd: path.join(__dirname, 'marko-v3')
+    });
+}
+
 
 describe('marko-prettyprint' , function() {
 
