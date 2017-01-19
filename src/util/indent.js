@@ -31,16 +31,6 @@ exports.indentCommentLines = function indentCommentLines(lines, printContext) {
     return indentedLines;
 };
 
-exports.getIndentString = function getIndentString(depth, indentString) {
-    var str = '';
-
-    for (let i=0; i<depth; i++) {
-        str += indentString;
-    }
-
-    return str;
-};
-
 exports.indentLines = function indentLines(lines, printContext) {
     var currentIndentString = printContext.currentIndentString;
 

@@ -29,6 +29,8 @@
   "homepage": "https://github.com/marko-js/marko-prettyprint/#readme",
   "dependencies": {
     "argly": "^1.0.0",
+    "editorconfig": "^0.13.2",
+    "lasso-package-root": "^1.0.0",
     "marko": "^4.0.0-rc.3",
     "minimatch": "^3.0.0",
     "resolve-from": "^2.0.0"

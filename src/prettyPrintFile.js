@@ -8,7 +8,16 @@ module.exports = function prettyPrintFile(filename, options) {
         throw new Error('The "filename" option is required when String source is provided');
     }
 
+    if (options) {
+        options = Object.assign({}, options);
+    } else {
+        options = {};
+    }
+
     var dirname = path.dirname(filename);
+    options.filename = filename;
+    options.dirname = dirname;
+
     var markoCompiler = getMarkoCompiler(dirname);
 
     var sourceCode = fs.readFileSync(filename, { encoding: 'utf8' });

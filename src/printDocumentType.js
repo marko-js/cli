@@ -7,5 +7,5 @@ module.exports = function printDocumentType(node, printContext, writer) {
         doctype = doctype.trim();
     }
 
-    writer.write('<!' + doctype + '>\n');
+    writer.write('<!' + doctype + '>' + printContext.eol);
 };

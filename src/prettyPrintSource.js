@@ -13,7 +13,10 @@ module.exports = function prettyPrintSource(src, options) {
         throw new Error('The "filename" option is required');
     }
 
+    options = Object.assign({}, options);
+
     var dirname = path.dirname(filename);
+    options.dirname = dirname;
 
     var markoCompiler = getMarkoCompiler(dirname);
 
