@@ -166,9 +166,10 @@ module.exports = function printHtmlElement(node, printContext, writer) {
                     var lastIndex = attrStringsArray.length - 1;
 
                     attrStringsArray.forEach((attrString, i) => {
-                        writer.write(printContext.currentIndentString);
-                        writer.write(printContext.indentString);
-                        writer.write(printContext.indentString);
+                        if (i !== 0) {
+                            writer.write(printContext.currentIndentString);
+                            writer.write(printContext.indentString);
+                        }
 
                         if (i === lastIndex) {
 
