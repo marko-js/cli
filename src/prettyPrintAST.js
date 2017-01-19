@@ -15,14 +15,6 @@ module.exports = function prettyPrintAST(ast, options) {
         options = {};
     }
 
-    if (options.syntax) {
-        options.syntax = options.syntax === 'concise' ?
-            SYNTAX_CONCISE :
-            SYNTAX_HTML;
-    } else {
-        options.syntax = SYNTAX_HTML;
-    }
-
     if (options.configFiles !== false) {
         var filename = options.filename;
         if (filename) {
@@ -31,6 +23,14 @@ module.exports = function prettyPrintAST(ast, options) {
                 options = Object.assign({}, configFileOptions, options);
             }
         }
+    }
+
+    if (options.syntax) {
+        options.syntax = options.syntax === 'concise' ?
+            SYNTAX_CONCISE :
+            SYNTAX_HTML;
+    } else {
+        options.syntax = SYNTAX_HTML;
     }
 
     var printContext = new PrintContext(options);
