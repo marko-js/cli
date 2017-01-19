@@ -2,8 +2,6 @@ var prettyPrintSource = require('./prettyPrintSource');
 var prettyPrintAST = require('./prettyPrintAST');
 
 module.exports = exports = function prettyPrint(ast, options) {
-
-
     if (typeof ast === 'string') {
         var source = ast;
         return prettyPrintSource(source, options);

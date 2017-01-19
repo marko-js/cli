@@ -5,6 +5,9 @@ var Writer = require('./util/Writer');
 var hasLineBreaks = require('./util/hasLineBreaks');
 var isInlineComment = require('./util/isInlineComment');
 var formattingTags = require('./formatting-tags');
+var constants = require('./constants');
+
+var SYNTAX_HTML = constants.SYNTAX_HTML;
 
 function inspectNodes(nodes) {
     var allSimple = true;
@@ -63,8 +66,7 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
     var inlineCommentIndexes = inspected.inlineCommentIndexes;
 
     if (inspected.preserveWhitespace) {
-        printContext = printContext.startPreservingWhitespace();
-        printContext = printContext.switchToHtmlSyntax();
+        printContext = printContext.create({ preserveWhitespace: true, syntax: SYNTAX_HTML});
     }
 
     // console.log('------');
@@ -94,11 +96,9 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
         if (printContext.isConciseSyntax) {
             wrapHtmlBlock = true;
             writer = new Writer(writer.col);
-            printContext = printContext.switchToHtmlSyntax();
-            printContext.forceHtml = true;
+            printContext = printContext.create({forceHtml: true, syntax: SYNTAX_HTML});
         } else {
-            printContext = printContext.clone();
-            printContext.forceHtml = true;
+            printContext = printContext.create({forceHtml: true});
         }
     }
 
@@ -121,7 +121,7 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
                 return;
             }
 
-            if (writer.getOutput().endsWith('\n')) {
+            if (writer.getOutput().endsWith(printContext.eol)) {
                 writer.write(printContext.currentIndentString);
             }
 
@@ -137,14 +137,14 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
                         } else if (allSimple) {
                             writer.write(' ');
                         } else {
-                            writer.write('\n');
+                            writer.write(printContext.eol);
                         }
                     }
                 } else {
-                    writer.write('\n');
+                    writer.write(printContext.eol);
                 }
             } else {
-                writer.write('\n');
+                writer.write(printContext.eol);
             }
         }
         prevChild = child;
@@ -153,29 +153,29 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
     if (printContext.isHtmlSyntax && printContext.preserveWhitespace !== true) {
         writer.rtrim();
 
-        writer.write('\n');
+        writer.write(printContext.eol);
 
         if (wrapHtmlBlock) {
             var wrappedOutput = writer.getOutput().trim();
 
             if (hasLineBreaks(wrappedOutput)) {
-                if (!inputWriter.getOutput().endsWith('\n' + printContext.currentIndentString)) {
-                    if (!inputWriter.getOutput().endsWith('\n')) {
-                        inputWriter.write('\n');
+                if (!inputWriter.getOutput().endsWith(printContext.eol + printContext.currentIndentString)) {
+                    if (!inputWriter.getOutput().endsWith(printContext.eol)) {
+                        inputWriter.write(printContext.eol);
                     }
 
                     inputWriter.write(printContext.currentIndentString);
                 }
 
-                inputWriter.write('---\n');
+                inputWriter.write('---' + printContext.eol);
                 inputWriter.write(printContext.currentIndentString);
                 inputWriter.write(wrappedOutput);
 
-                if (!inputWriter.getOutput().endsWith('\n' + printContext.currentIndentString)) {
-                    inputWriter.write('\n' + printContext.currentIndentString);
+                if (!inputWriter.getOutput().endsWith(printContext.eol + printContext.currentIndentString)) {
+                    inputWriter.write(printContext.eol + printContext.currentIndentString);
                 }
 
-                inputWriter.write('---\n');
+                inputWriter.write('---' + printContext.eol);
             } else {
                 inputWriter.write(printContext.currentIndentString);
                 if (wrappedOutput.startsWith('<!--')) {
@@ -187,8 +187,8 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
             }
         }
 
-        if (!inputWriter.getOutput().endsWith('\n')) {
-            inputWriter.write('\n');
+        if (!inputWriter.getOutput().endsWith(printContext.eol)) {
+            inputWriter.write(printContext.eol);
         }
     }
 };

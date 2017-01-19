@@ -1,21 +1,20 @@
 'use strict';
 
-var getIndentString = require('./util/indent').getIndentString;
-
 var SYNTAX_CONCISE = require('./constants').SYNTAX_CONCISE;
 var SYNTAX_HTML = require('./constants').SYNTAX_HTML;
+var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;
 
 class PrintContext {
-    constructor(syntax, depth, indentString, preserveWhitespace, maxLen) {
-        if (indentString == null) {
-            indentString = '    ';
-        }
-        this.depth = depth == null ? 0 : depth;
-        this.syntax = syntax;
-        this.currentIndentString = getIndentString(depth, indentString);
-        this.indentString = indentString;
-        this.preserveWhitespace = preserveWhitespace === true;
-        this.maxLen = maxLen;
+    constructor(options) {
+        this.syntax = options.syntax || SYNTAX_HTML;
+        this.indentString = options.indent || '    ';
+        this.preserveWhitespace = options.preserveWhitespace === true;
+        this.maxLen = options.maxLen == null ? 80 : (options.maxLen <= 0 ? MAX_SAFE_INTEGER : options.maxLen);
+        this.eol = options.eol || '\n';
+
+        this.depth = 0;
+        this.forceHtml = false;
+        this.currentIndentString = '';
     }
 
     get isConciseSyntax() {
@@ -27,19 +26,36 @@ class PrintContext {
     }
 
     beginNested() {
-        return new PrintContext(this.syntax, this.depth+1, this.indentString, this.preserveWhitespace, this.maxLen);
+        var newPrintContext = Object.create(this);
+        newPrintContext.depth++;
+        newPrintContext.currentIndentString += this.indentString;
+        return newPrintContext;
     }
 
     switchToHtmlSyntax() {
-        return new PrintContext(SYNTAX_HTML, this.depth, this.indentString, this.preserveWhitespace, this.maxLen);
+        if (this.syntax == SYNTAX_HTML) {
+            return this;
+        }
+
+        var newPrintContext = Object.create(this);
+        newPrintContext.syntax = SYNTAX_HTML;
+        return newPrintContext;
     }
 
     startPreservingWhitespace() {
-        return new PrintContext(this.syntax, this.depth, this.indentString, true, this.maxLen);
+        if (this.preserveWhitespace) {
+            return this;
+        }
+        var newPrintContext = Object.create(this);
+        newPrintContext.preserveWhitespace = true;
+        return newPrintContext;
     }
 
-    clone() {
-        return new PrintContext(this.syntax, this.depth, this.indentString, this.preserveWhitespace, this.maxLen);
+    create(newOptions) {
+        var newPrintContext = Object.create(this);
+        Object.assign(newPrintContext, newOptions);
+        return newPrintContext;
+
     }
 }
 

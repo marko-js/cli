@@ -12,8 +12,8 @@ module.exports = function printText(node, printContext, writer) {
         if (isConciseSyntax) {
 
             if (/^\s+$/.test(text)) {
-                if (!text.endsWith('\r\n') && !text.endsWith('\n')) {
-                    text += '\n';
+                if (!text.endsWith('\r\n') && !text.endsWith(printContext.eol)) {
+                    text += printContext.eol;
                 }
                 writer.write(text);
                 return;
@@ -25,7 +25,7 @@ module.exports = function printText(node, printContext, writer) {
     }
 
 
-    var lines = text.split(/\n|\r\n/);
+    var lines = text.split(/\r\n|\n/);
 
     lines = trimLinesStart(lines);
     lines = trimLinesEnd(lines);
@@ -39,7 +39,7 @@ module.exports = function printText(node, printContext, writer) {
     if (printContext.forceHtml !== true && isConciseSyntax) {
         if (lines.length > 1) {
             lines = indentLines(lines, printContext);
-            writer.write('---\n' + currentIndentString + lines.join('\n').trim() + '\n' + currentIndentString + '---');
+            writer.write('---' + printContext.eol + currentIndentString + lines.join(printContext.eol).trim() + printContext.eol + currentIndentString + '---');
         } else {
             let trimmed = lines[0].trim();
 
@@ -52,6 +52,6 @@ module.exports = function printText(node, printContext, writer) {
         }
     } else {
         lines = indentLines(lines, printContext);
-        writer.write(lines.join('\n'));
+        writer.write(lines.join(printContext.eol));
     }
 };
