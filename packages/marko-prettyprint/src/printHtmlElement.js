@@ -105,7 +105,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     enableLiteralToStringPatch(() => {
         attrs.forEach((attr, i) => {
 
-            var attrStr = ' ';
+            var attrStr = '';
 
             if (attr.name) {
                 attrStr += attr.name;
@@ -132,7 +132,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
         // Let's see if all of the attributes will fit on the same line
         if (printContext.isHtmlSyntax) {
             attrStringsArray.forEach((attrString, i) => {
-                let stringToAppend = attrString;
+                let stringToAppend = ' ' + attrString;
                 if (i === attrStringsArray.length - 1) {
                     if (hasBody) {
                         stringToAppend += '>';
@@ -144,25 +144,52 @@ module.exports = function printHtmlElement(node, printContext, writer) {
                 if (i === 0 || writer.col + stringToAppend.length < maxLen) {
                     writer.write(stringToAppend);
                 } else {
-                    writer.write('\n' + printContext.currentIndentString + printContext.indentString + trim.ltrim(stringToAppend));
+                    writer.write(printContext.eol + printContext.currentIndentString + printContext.indentString + trim.ltrim(stringToAppend));
                 }
             });
         } else {
-            var attrsString = attrStringsArray.join('');
+            var useCommas = node.tagName === 'var';
+
+            var attrsString;
+
+            if (useCommas) {
+                attrsString = ' ' + attrStringsArray.join(', ') + ';';
+            } else {
+                attrsString = ' ' + attrStringsArray.join(' ');
+            }
+
             if (writer.col + attrsString.length < maxLen) {
                 writer.write(attrsString);
             } else {
-                writer.write(' [\n');
-                attrStringsArray.forEach((attrString, i) => {
+                if (useCommas) {
+                    writer.write(' ');
+                    var lastIndex = attrStringsArray.length - 1;
+
+                    attrStringsArray.forEach((attrString, i) => {
+                        writer.write(printContext.currentIndentString);
+                        writer.write(printContext.indentString);
+                        writer.write(printContext.indentString);
+
+                        if (i === lastIndex) {
+
+                            writer.write(attrString + ';' + printContext.eol);
+                        } else {
+                            writer.write(attrString + ',' + printContext.eol);
+                        }
+                    });
+                } else {
+                    writer.write(' [' + printContext.eol);
+                    attrStringsArray.forEach((attrString, i) => {
+                        writer.write(printContext.currentIndentString);
+                        writer.write(printContext.indentString);
+                        writer.write(printContext.indentString);
+                        writer.write(attrString + printContext.eol);
+                    });
+
                     writer.write(printContext.currentIndentString);
                     writer.write(printContext.indentString);
-                    writer.write(printContext.indentString);
-                    writer.write(trim.ltrim(attrString) + '\n');
-                });
-
-                writer.write(printContext.currentIndentString);
-                writer.write(printContext.indentString);
-                writer.write(']');
+                    writer.write(']');
+                }
             }
         }
     } else {
@@ -196,7 +223,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     }
 
     if (!preserveBodyWhitespace) {
-        writer.write('\n');
+        writer.write(printContext.eol);
     }
 
     var nestedPrintContext = printContext.beginNested();
@@ -210,7 +237,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
         }
 
         if (hasLineBreaks(trimmedOutput)) {
-            if (writer.getOutput().endsWith('\n' + printContext.indentString) === false) {
+            if (writer.getOutput().endsWith(printContext.eol + printContext.indentString) === false) {
                 writer.write(printContext.indentString);
             }
 

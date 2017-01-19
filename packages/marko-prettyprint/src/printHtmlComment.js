@@ -13,7 +13,7 @@ module.exports = function printHtmlComment(node, printContext, writer) {
     if (printContext.isHtmlSyntax && printContext.depth !== 0) {
         writer.write('<!--' + comment + '-->');
     } else {
-        var lines = comment.split(/\n|\r\n/);
+        var lines = comment.split(/\r\n|\n/);
 
         if (lines.length === 1) {
             if (printContext.isConciseSyntax) {
@@ -24,7 +24,7 @@ module.exports = function printHtmlComment(node, printContext, writer) {
 
         } else {
             var indentedLines = indentCommentLines(lines, printContext);
-            writer.write(currentIndentString + '<!--\n' + indentedLines.join('\n') + '\n' + currentIndentString + '-->');
+            writer.write(currentIndentString + '<!--' + printContext.eol + indentedLines.join(printContext.eol) +  printContext.eol + currentIndentString + '-->');
         }
     }
 
