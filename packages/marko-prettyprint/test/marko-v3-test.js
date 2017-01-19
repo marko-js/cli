@@ -13,7 +13,7 @@ if (!fs.existsSync(path.join(__dirname, 'marko-v3/node_modules/marko'))) {
 }
 
 
-describe('marko-prettyprint' , function() {
+describe('marko-prettyprint (marko v3)' , function() {
 
     var autoTestDir = path.join(__dirname, 'marko-v3/autotest');
 
