@@ -59,9 +59,9 @@ function startServer(tests, options, devTools) {
             },
             devTools.config.browserBuilder || {});
 
-        if(shouldCover) {
+        if (shouldCover) {
             browserBuilderConfig.plugins.push(
-                require('./lasso-istanbul-plugin')
+                require('./lasso-istanbul-plugin')(devTools.config.istanbulLibInstrumentOptions)
             );
         }
 
