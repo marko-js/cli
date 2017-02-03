@@ -44,6 +44,7 @@ function startServer(tests, options, devTools) {
         var pageTemplate = options.pageTemplate || defaultPageTemplate;
         var workDir = devTools.config.workDir;
         var outputDir = path.resolve(workDir, 'browser-build');
+        var phantomOptions = devTools.config.phantomOptions;
 
         var browserBuilderConfig = Object.assign(
             {
@@ -58,9 +59,9 @@ function startServer(tests, options, devTools) {
             },
             devTools.config.browserBuilder || {});
 
-        if(shouldCover) {
+        if (shouldCover) {
             browserBuilderConfig.plugins.push(
-                require('./lasso-istanbul-plugin')
+                require('./lasso-istanbul-plugin')(devTools.config.istanbulLibInstrumentOptions)
             );
         }
 
@@ -151,8 +152,14 @@ function startServer(tests, options, devTools) {
                 process.send('online');
             }
 
+            process.on('exit', function () {
+                console.log('Exiting, closing server...');
+                server.close();
+            });
+
             resolve({
-                url: url,
+                url,
+                phantomOptions,
                 stopServer: function() {
                     server.close();
                 }
@@ -173,9 +180,9 @@ exports.run = function(allTests, options, devTools) {
     return startServer(filteredTests, options, devTools)
         .then((result) => {
             console.log(`Running "${result.url}" using mocha-phantomjs...`);
-            var mochaPhantomJSOptions = { useColors:true };
+            var mochaPhantomJSOptions = result.phantomOptions || { useColors: true };
 
-            if(shouldCover) {
+            if (shouldCover) {
                 mochaPhantomJSOptions.hooks = 'mocha-phantomjs-istanbul';
                 mochaPhantomJSOptions.coverageFile = getCoverageFile();
             }
@@ -183,7 +190,9 @@ exports.run = function(allTests, options, devTools) {
             return spawn(phantomjsBinPath, [mochaPhantomJSBin, result.url, 'spec', JSON.stringify(mochaPhantomJSOptions)], {
                 stdio: 'inherit'
             }).then(function() {
-                result.stopServer();
+                process.exit(0);
+            }).catch(function(e) {
+                process.exit(1);
             });
         });
 };
