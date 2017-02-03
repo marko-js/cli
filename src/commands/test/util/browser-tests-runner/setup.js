@@ -9,12 +9,23 @@ window.mocha.reporter('html');
 
 require('chai').config.includeStack = true;
 
+function _isPromise(obj) {
+    return (obj && obj.then && (typeof obj.then === 'function'));
+}
+
 function runTest(it, name, handler, context) {
     if(handler.length <= 1) {
         it(name, function() {
             context.name = name;
-            handler.call(this, context);
-            context._afterTest();
+            var testFunction = handler.call(this, context);
+            if (_isPromise(testFunction)) {
+                testFunction.then(function () {
+                    context._afterTest();
+                });
+                return testFunction;
+            } else {
+                context._afterTest();
+            }
         });
     } else if(handler.length >= 2) {
         it(name, function(done) {
