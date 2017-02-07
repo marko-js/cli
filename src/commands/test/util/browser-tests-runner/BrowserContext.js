@@ -4,7 +4,6 @@ var cheerio = require('cheerio');
 var raptorRenderer = require('raptor-renderer');
 var objectAssign = require('object-assign');
 
-
 function WrappedRenderResult(renderResult, context) {
     this._renderResult = renderResult;
     this.html = renderResult.html;
@@ -54,13 +53,19 @@ BrowserContext.prototype = {
         var renderResult;
         var component = this.component;
 
-        if(component.renderSync) {
-            var renderer = function(input, out) {
-                component.renderSync(input);
-            };
-
-            renderResult = raptorRenderer.render(renderer, data);
+        if (typeof component.renderer === 'function') {
+            // component exposes renderer function
+            renderResult = raptorRenderer.render(component.renderer, data);
+        } else if (component.renderSync) {
+            // potentially a v4 or v3 component
+            renderResult = component.renderSync(data);
+            if (!renderResult.html) {
+                // this is a v4 component
+                var docFragment = renderResult.getOutput().actualize(document);
+                renderResult.html = docFragment.firstChild.outerHTML;
+            }
         } else {
+            // assume older version of marko
             renderResult = component.render(data);
         }
 
