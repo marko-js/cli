@@ -49,6 +49,10 @@ window.$marko_test = function(test, component, func) {
         runTest(it.only, name, handler, context);
     };
 
+    window.test.skip = function(name, handler) {
+        runTest(it.skip, name, handler, context);
+    };
+
     var desc = test.componentName;
     if (test.groupName) {
         desc += ' - ' + test.groupName;

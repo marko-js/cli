@@ -113,6 +113,11 @@ test('my async test', function(context, done) {
 test.only('foo', function(context) {
     // ...
 });
+
+// Use test.skip to skip tests
+test.skip('bar', function(context) {
+    // ...
+});
 ```
 
 ## Component testing API
@@ -124,6 +129,8 @@ test.only('foo', function(context) {
 #### `test(desc, context[, done])`
 
 #### `test.only(desc, context[, done])`
+
+#### `test.skip(desc, context[, done])`
 
 ### `Context`
 
