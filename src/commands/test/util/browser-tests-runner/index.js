@@ -14,6 +14,7 @@ var mochaPhantomJSBin = require.resolve('mocha-phantomjs-core');
 var phantomjsBinPath = require('phantomjs-prebuilt').path;
 var resolveFrom = require('resolve-from');
 var shouldCover = !!process.env.NYC_CONFIG;
+var parseRequire = require('lasso-require/src/util/parseRequire');
 
 class WrapStream extends Transform {
     constructor(prefix, suffix) {
@@ -107,13 +108,41 @@ function startServer(tests, options, devTools) {
         var browserDependencies = [
             "mocha/mocha.js",
             "mocha/mocha.css",
-            "require-run: " + require.resolve('./setup'),
+            "require-run: " + require.resolve('./setup')
+        ];
+
+        var configDependencies = devTools.config.dependencies;
+
+        if (configDependencies) {
+            if (Array.isArray(configDependencies)) {
+                // load in any dependencies (if specified)
+                configDependencies.forEach(function (dependency) {
+                    var parsedDependency = parseRequire(dependency);
+                    var type = parsedDependency.type;
+
+                    // resolve the path from the project directory
+                    var path = resolveFrom(devTools.cwd, parsedDependency.path);
+
+                    if (type) {
+                        dependency = type + ': ' + path;
+                    } else {
+                        dependency = path;
+                    }
+
+                    browserDependencies.push(dependency);
+                });
+            } else {
+                throw new Error('config.dependencies must be an array');
+            }
+        }
+
+        browserDependencies = browserDependencies.concat([
             testDependencies,
             {
                 "require-run": require.resolve('./mocha-run'),
                 "slot": "mocha-run"
             }
-        ];
+        ]);
 
         var markoWidgetsPath = resolveFrom(devTools.cwd, 'marko-widgets');
 
