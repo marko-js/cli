@@ -55,14 +55,15 @@ function startServer(tests, options, devTools) {
                 minify: false,
                 plugins: [
                     'lasso-marko'
-                ]
+                ],
+                require: {
+                    transforms: []
+                }
             },
             devTools.config.browserBuilder || {});
 
         if (shouldCover) {
-            browserBuilderConfig.plugins.push(
-                require('./lasso-istanbul-plugin')(devTools.config.istanbulLibInstrumentOptions)
-            );
+            browserBuilderConfig.require.transforms.unshift({ transform: 'lasso-istanbul-instrument-transform' }) 
         }
 
         var testDependencies = [];
