@@ -190,9 +190,9 @@ exports.run = function(allTests, options, devTools) {
             return spawn(phantomjsBinPath, [mochaPhantomJSBin, result.url, 'spec', JSON.stringify(mochaPhantomJSOptions)], {
                 stdio: 'inherit'
             }).then(function() {
-                process.exit(0);
+                if(!options.noExit) process.exit(0);
             }).catch(function(e) {
-                process.exit(1);
+                if(!options.noExit) process.exit(1);
             });
         });
 };

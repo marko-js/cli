@@ -9,6 +9,10 @@ module.exports = function parse(argv) {
                 type: 'boolean',
                 description: 'Run only server tests'
             },
+            '--no-exit': {
+                type: 'boolean',
+                description: 'Do not shutdown the test server'
+            },
             '--browser': {
                 type: 'boolean',
                 description: 'Run only browser tests'
