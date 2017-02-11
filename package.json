@@ -18,7 +18,7 @@
     "express": "^4.14.0",
     "glob": "^7.1.0",
     "lasso": "*",
-    "lasso-istanbul-instrument-transform": "^0.0.3",
+    "lasso-istanbul-instrument-transform": "^0.0.4",
     "lasso-package-root": "^1.0.0",
     "marko": "*",
     "mkdirp": "^0.5.1",
