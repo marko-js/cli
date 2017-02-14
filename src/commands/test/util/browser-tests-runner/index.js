@@ -117,16 +117,19 @@ function startServer(tests, options, devTools) {
             if (Array.isArray(configDependencies)) {
                 // load in any dependencies (if specified)
                 configDependencies.forEach(function (dependency) {
-                    var parsedDependency = parseRequire(dependency);
-                    var type = parsedDependency.type;
+                    // resolve paths based on the project's directory
+                    if ((typeof dependency === 'string' || dependency instanceof String)) {
+                        var parsedDependency = parseRequire(dependency);
+                        var type = parsedDependency.type;
+                        var path = resolveFrom(devTools.cwd, parsedDependency.path);
 
-                    // resolve the path from the project directory
-                    var path = resolveFrom(devTools.cwd, parsedDependency.path);
-
-                    if (type) {
-                        dependency = type + ': ' + path;
-                    } else {
-                        dependency = path;
+                        if (type) {
+                            dependency = type + ': ' + path;
+                        } else {
+                            dependency = path;
+                        }
+                    } else if ((path = dependency.path)) {
+                        dependency.path = resolveFrom(devTools.cwd, path);
                     }
 
                     browserDependencies.push(dependency);
