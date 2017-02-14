@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const registryDownload = require('npm-registry-download');
+const nrd = require('nrd');
 
 const SCAFFOLD_PROJECT = 'marko-starter-demo';
 
@@ -30,7 +30,7 @@ module.exports = function run(options, devTools) {
 
         process.chdir(dir);
 
-        registryDownload(SCAFFOLD_PROJECT).then(function() {
+        nrd.download(SCAFFOLD_PROJECT).then(function() {
             fs.renameSync('./package', name);
             process.chdir(`./${name}`);
 
