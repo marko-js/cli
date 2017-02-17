@@ -45,9 +45,13 @@ window.$marko_test = function(test, component, func) {
         runTest(it, name, handler, context);
     };
 
-    window.test.only = function(name, handler) {
-        runTest(it.only, name, handler, context);
-    };
+    Object.keys(it).forEach(function(key) {
+      if (typeof it[key] === 'function') {
+          window.test[key] = function(name, handler) {
+              runTest(it[key], name, handler, context);
+          };
+      }
+    });
 
     var desc = test.componentName;
     if (test.groupName) {
