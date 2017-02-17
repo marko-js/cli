@@ -21,7 +21,6 @@
     "lasso": "*",
     "lasso-package-root": "^1.0.0",
     "lasso-resolve-from": "^1.2.0",
-    "marko": "*",
     "mkdirp": "^0.5.1",
     "mocha": "^2",
     "mocha-phantomjs-core": "^2.1.1",
