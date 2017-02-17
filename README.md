@@ -33,6 +33,24 @@ marko test src/components/app-foo
 
 ## Core commands
 
+### create
+
+Used to create a template Marko project in a specific directory.
+
+Usage:
+
+Create a Marko project in the current directory:
+
+```bash
+marko create myapp
+```
+
+Create a Marko project in a specific directory:
+
+```bash
+marko create myapp --dir /Users/me/Desktop
+```
+
 ### test
 
 Used to run unit tests for UI components. See [Component Testing](#ComponentTesting) below for more details on how to write unit tests for UI components.
