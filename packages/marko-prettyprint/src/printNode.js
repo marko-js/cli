@@ -12,6 +12,8 @@ module.exports = function printNode(node, printContext, writer) {
             return this.printDocumentType(node, printContext, writer);
         case 'Declaration':
             return this.printDeclaration(node, printContext, writer);
+        case 'Scriptlet':
+           return this.printScriptlet(node, printContext, writer);
         default:
             throw new Error('Unsupported node: ' + node);
     }
