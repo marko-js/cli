@@ -28,20 +28,30 @@ module.exports = function run(options, devTools) {
             return reject(new Error(`Invaid app name: ${name}`));
         }
 
-        process.chdir(dir);
+        nrd.download(SCAFFOLD_PROJECT, {
+            dir
+        }).then(function() {
+            const packageNamePath = path.resolve(dir, './package');
+            const newPackageNamePath = path.resolve(dir, `./${name}`);
 
-        nrd.download(SCAFFOLD_PROJECT).then(function() {
-            fs.renameSync('./package', name);
-            process.chdir(`./${name}`);
+            fs.renameSync(packageNamePath, newPackageNamePath);
 
-            let packageData = fs.readFileSync('./package.json', 'utf8');
+            const packagePath = path.resolve(fullPath, './package.json');
+            let packageData = fs.readFileSync(packagePath, 'utf8');
+
             packageData = JSON.parse(packageData);
 
             packageData.name = name;
             packageData.version = '1.0.0';
             packageData.private = true;
 
-            fs.writeFileSync('./package.json', JSON.stringify(packageData, null, 2));
+            fs.writeFileSync(packagePath, JSON.stringify(packageData, null, 2));
+
+            const npmignorePath = path.resolve(fullPath, './.npmignore');
+            const gitignorePath = path.resolve(fullPath, './.gitignore');
+
+            // npm removes .gitignore and creates an .npmignore, so recreate it
+            fs.createReadStream(npmignorePath).pipe(fs.createWriteStream(gitignorePath));
             resolve();
         }).catch(reject);
     });
