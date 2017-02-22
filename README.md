@@ -208,7 +208,7 @@ For example, shared test dependencies can be specified with the `dependencies` o
 
 ```javascript
 module.exports = function(markoDevTools) {
-    markoDevTools.config.dependencies = [
+    markoDevTools.config.browserTestDependencies = [
         'bluebird/js/browser/bluebird.core.js',
         'require-run: ./tools/myDependency.js',
     ];

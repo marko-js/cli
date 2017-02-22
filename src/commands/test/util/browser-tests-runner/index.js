@@ -111,12 +111,12 @@ function startServer(tests, options, devTools) {
             "require-run: " + require.resolve('./setup')
         ];
 
-        var configDependencies = devTools.config.dependencies;
+        var browserTestDependencies = devTools.config.browserTestDependencies;
 
-        if (configDependencies) {
-            if (Array.isArray(configDependencies)) {
+        if (browserTestDependencies) {
+            if (Array.isArray(browserTestDependencies)) {
                 // load in any dependencies (if specified)
-                configDependencies.forEach(function (dependency) {
+                browserTestDependencies.forEach(function (dependency) {
                     // resolve paths based on the project's directory
                     if ((typeof dependency === 'string' || dependency instanceof String)) {
                         var parsedDependency = parseRequire(dependency);
