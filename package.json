@@ -12,6 +12,7 @@
   "dependencies": {
     "argly": "^1.0.0",
     "async": "^2.0.1",
+    "browser-refresh-taglib": "^1.1.0",
     "chai": "^3.5.0",
     "cheerio": "^0.22.0",
     "child-process-promise": "^2.1.3",
