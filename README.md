@@ -215,7 +215,7 @@ module.exports = function(markoDevTools) {
 }
 ```
 
-You can provide a package-specific plugin by creating a `.marko-devtools.js` file at the root of your project:
+You can provide a package-specific plugin by creating a `marko-devtools.js` file at the root of your project:
 
 _my-app/.marko-devtools.js:_
 
@@ -226,6 +226,41 @@ module.exports = function(markoDevTools) {
 ```
 
 A package-specific plugin will automatically be loaded when `marko` is launched.
+
+Some options can be specified on the `config` object that `markoDevTools` exposes.
+
+For example, shared test dependencies can be specified with the `dependencies` option.
+
+```javascript
+module.exports = function(markoDevTools) {
+    markoDevTools.config.browserTestDependencies = [
+        'bluebird/js/browser/bluebird.core.js',
+        'require-run: ./tools/myDependency.js',
+    ];
+}
+```
+
+For more info on how to specify dependencies can be found [here](https://github.com/lasso-js/lasso#dependencies).
+
+Lasso plugins and transforms can also be specified using the `browserBuilder` option.
+
+```javascript
+module.exports = function(markoDevTools) {
+    markoDevTools.config.browserBuilder = {
+        plugins: [
+            'lasso-marko',
+            'lasso-less'
+        ],
+        require: {
+           transforms: [
+               {
+                   transform: 'lasso-babel-transform'
+               }
+           ]
+        }
+    };
+}
+```
 
 # TODO
 
