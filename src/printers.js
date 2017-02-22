@@ -7,3 +7,4 @@ exports.printHtmlComment = require('./printHtmlComment');
 exports.printHtmlElement = require('./printHtmlElement');
 exports.printNode = require('./printNode');
 exports.printText = require('./printText');
+exports.printScriptlet = require('./printScriptlet');
