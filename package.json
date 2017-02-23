@@ -1,6 +1,6 @@
 {
   "name": "marko-devtools",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "description": "Marko DevTools",
   "main": "src/index.js",
   "author": "Michael Rawlings <ml.rawlings@gmail.com>",
@@ -20,14 +20,16 @@
     "lasso": "*",
     "lasso-istanbul-instrument-transform": "^0.0.4",
     "lasso-package-root": "^1.0.0",
-    "marko": "*",
+    "lasso-require": "^3.4.1",
+    "lasso-resolve-from": "^1.2.0",
     "mkdirp": "^0.5.1",
     "mocha": "^2",
     "mocha-phantomjs-core": "^2.1.1",
     "mocha-phantomjs-istanbul": "0.0.2",
+    "nrd": "^1.0.0",
     "object-assign": "^4.1.0",
     "phantomjs-prebuilt": "^2.1.14",
-    "raptor-renderer": "^1.4.5",
+    "raptor-renderer": "^1.4.6",
     "resolve-from": "^2.0.0"
   },
   "bin": {

@@ -9,6 +9,10 @@ module.exports = function parse(argv) {
                 type: 'boolean',
                 description: 'Run only server tests'
             },
+            '--no-exit': {
+                type: 'boolean',
+                description: 'Do not shutdown the test server'
+            },
             '--browser': {
                 type: 'boolean',
                 description: 'Run only browser tests'
@@ -21,16 +25,16 @@ module.exports = function parse(argv) {
         .usage('Usage: $0 [options]')
         .example(
             'Run all tests',
-            'marko')
+            'marko test')
         .example(
             'Run all UI component tests',
-            'marko src/components/')
+            'marko test src/components/')
         .example(
             'Run only server tests',
-            'marko src/components/ --server')
+            'marko test src/components/ --server')
         .example(
             'Run only browser tests',
-            'marko src/components/ --browser')
+            'marko test src/components/ --browser')
         .validate(function(result) {
             if (result.help) {
                 this.printUsage();

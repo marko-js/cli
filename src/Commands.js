@@ -8,7 +8,8 @@ class Commands {
 
     addBuiltinCommands() {
         var commandNames = [
-            'test'
+            'test',
+            'create'
         ];
 
         commandNames.forEach((commandName) => {

@@ -14,6 +14,7 @@ var mochaPhantomJSBin = require.resolve('mocha-phantomjs-core');
 var phantomjsBinPath = require('phantomjs-prebuilt').path;
 var resolveFrom = require('resolve-from');
 var shouldCover = !!process.env.NYC_CONFIG;
+var parseRequire = require('lasso-require/src/util/parseRequire');
 
 class WrapStream extends Transform {
     constructor(prefix, suffix) {
@@ -108,13 +109,44 @@ function startServer(tests, options, devTools) {
         var browserDependencies = [
             "mocha/mocha.js",
             "mocha/mocha.css",
-            "require-run: " + require.resolve('./setup'),
+            "require-run: " + require.resolve('./setup')
+        ];
+
+        var browserTestDependencies = devTools.config.browserTestDependencies;
+
+        if (browserTestDependencies) {
+            if (Array.isArray(browserTestDependencies)) {
+                // load in any dependencies (if specified)
+                browserTestDependencies.forEach(function (dependency) {
+                    // resolve paths based on the project's directory
+                    if ((typeof dependency === 'string' || dependency instanceof String)) {
+                        var parsedDependency = parseRequire(dependency);
+                        var type = parsedDependency.type;
+                        var path = resolveFrom(devTools.cwd, parsedDependency.path);
+
+                        if (type) {
+                            dependency = type + ': ' + path;
+                        } else {
+                            dependency = path;
+                        }
+                    } else if ((path = dependency.path)) {
+                        dependency.path = resolveFrom(devTools.cwd, path);
+                    }
+
+                    browserDependencies.push(dependency);
+                });
+            } else {
+                throw new Error('config.dependencies must be an array');
+            }
+        }
+
+        browserDependencies = browserDependencies.concat([
             testDependencies,
             {
                 "require-run": require.resolve('./mocha-run'),
                 "slot": "mocha-run"
             }
-        ];
+        ]);
 
         var markoWidgetsPath = resolveFrom(devTools.cwd, 'marko-widgets');
 
@@ -191,9 +223,9 @@ exports.run = function(allTests, options, devTools) {
             return spawn(phantomjsBinPath, [mochaPhantomJSBin, result.url, 'spec', JSON.stringify(mochaPhantomJSOptions)], {
                 stdio: 'inherit'
             }).then(function() {
-                process.exit(0);
+                if(!options.noExit) process.exit(0);
             }).catch(function(e) {
-                process.exit(1);
+                if(!options.noExit) process.exit(1);
             });
         });
 };
