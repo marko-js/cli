@@ -1,6 +1,6 @@
 {
   "name": "marko-devtools",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Marko DevTools",
   "main": "src/index.js",
   "author": "Michael Rawlings <ml.rawlings@gmail.com>",
