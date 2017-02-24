@@ -15,6 +15,11 @@ var phantomjsBinPath = require('phantomjs-prebuilt').path;
 var resolveFrom = require('resolve-from');
 var shouldCover = !!process.env.NYC_CONFIG;
 var parseRequire = require('lasso-require/src/util/parseRequire');
+var porti = require('porti');
+
+function getCoverageFile() {
+    return './.nyc_output/'+Math.floor(Math.random()*100000000)+'.json';
+}
 
 class WrapStream extends Transform {
     constructor(prefix, suffix) {
@@ -64,7 +69,7 @@ function startServer(tests, options, devTools) {
             devTools.config.browserBuilder || {});
 
         if (shouldCover) {
-            browserBuilderConfig.require.transforms.unshift({ transform: require('lasso-istanbul-instrument-transform') })
+            browserBuilderConfig.require.transforms.unshift({ transform: require('lasso-istanbul-instrument-transform') });
         }
 
         var testDependencies = [];
@@ -116,13 +121,14 @@ function startServer(tests, options, devTools) {
 
         if (browserTestDependencies) {
             if (Array.isArray(browserTestDependencies)) {
+                let path;
                 // load in any dependencies (if specified)
                 browserTestDependencies.forEach(function (dependency) {
                     // resolve paths based on the project's directory
                     if ((typeof dependency === 'string' || dependency instanceof String)) {
                         var parsedDependency = parseRequire(dependency);
                         var type = parsedDependency.type;
-                        var path = resolveFrom(devTools.cwd, parsedDependency.path);
+                        path = resolveFrom(devTools.cwd, parsedDependency.path);
 
                         if (type) {
                             dependency = type + ': ' + path;
@@ -168,36 +174,36 @@ function startServer(tests, options, devTools) {
             res.marko(pageTemplate, templateData);
         });
 
-        var port = 8080;
-
-        var server = app.listen(port, function(err) {
-            if (err) {
-                throw err;
-            }
-
-            var host = 'localhost';
-            var port = server.address().port;
-            var url = `http://${host}:${port}`;
-
-            console.log(`Server running at ${url}`);
-
-            if (process.send) {
-                process.send('online');
-            }
-
-            process.on('exit', function () {
-                console.log('Exiting, closing server...');
-                server.close();
-            });
-
-            resolve({
-                url,
-                phantomOptions,
-                stopServer: function() {
-                    server.close();
+        porti.getUnusedPort().then((port) => {
+            var server = app.listen(port, function(err) {
+                if (err) {
+                    throw err;
                 }
+
+                var host = 'localhost';
+                var port = server.address().port;
+                var url = `http://${host}:${port}`;
+
+                console.log(`Server running at ${url}`);
+
+                if (process.send) {
+                    process.send('online');
+                }
+
+                process.on('exit', function () {
+                    console.log('Exiting, closing server...');
+                    server.close();
+                });
+
+                resolve({
+                    url,
+                    phantomOptions,
+                    stopServer: function() {
+                        server.close();
+                    }
+                });
             });
-        });
+        }).catch(reject);
     });
 }
 
@@ -229,7 +235,3 @@ exports.run = function(allTests, options, devTools) {
             });
         });
 };
-
-function getCoverageFile() {
-    return './.nyc_output/'+Math.floor(Math.random()*100000000)+'.json';
-}
