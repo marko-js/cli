@@ -18,7 +18,7 @@ module.exports = function prettyPrintSource(src, options) {
     var dirname = path.dirname(filename);
     options.dirname = dirname;
 
-    var markoCompiler = getMarkoCompiler(dirname);
+    var markoCompiler = options.markoCompiler || getMarkoCompiler(dirname);
 
     var ast = markoCompiler.parseRaw(src, filename);
     return prettyPrintAST(ast, options);
