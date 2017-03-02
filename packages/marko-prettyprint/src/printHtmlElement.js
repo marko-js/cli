@@ -10,6 +10,13 @@ const trim = require('./util/trim');
 
 const oldLiteralToString = require('marko/compiler/ast/Literal').prototype.toString;
 
+const codeTags = {
+    'class': true,
+    'import': true,
+    'static': true,
+    'style': true
+};
+
 function replaceEscapedNewLines(jsonString) {
     return jsonString.replace(/\\\\|\\n/g, (match) => {
         if (match === '\\\\') {
@@ -44,11 +51,41 @@ function enableLiteralToStringPatch(func) {
     }
 }
 
+function isComponentStyleTag(node) {
+    var attrs = node.getAttributes();
+    var attrCount = attrs.length;
+    if (!attrCount) {
+        return false;
+    }
+
+    var lastAttr = attrs[attrCount - 1];
+    return /\s*\{/.test(lastAttr.name);
+}
+
+function handleCodeTag(node, writer) {
+    var tagName = node.tagName;
+
+    if (!codeTags[tagName]) {
+        return false;
+    }
+
+    if (tagName === 'style' && !isComponentStyleTag(node)) {
+        return false;
+    }
+    writer.write(node.tagString);
+
+    return true;
+}
+
 module.exports = function printHtmlElement(node, printContext, writer) {
     if (node.hasAttribute('marko-preserve-whitespace')) {
         printContext = printContext.startPreservingWhitespace();
     } else if (node.tagDef && node.tagDef.preserveWhitespace === true) {
         printContext = printContext.startPreservingWhitespace();
+    }
+
+    if (printContext.depth === 0 && handleCodeTag(node, writer)) {
+        return;
     }
 
     var isDynamicTagName = node.tagName.startsWith('$');

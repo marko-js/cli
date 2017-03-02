@@ -1,0 +1,26 @@
+class {
+    constructor() {
+        this.state = {
+            count:0
+        };
+    }
+    increment() {
+        this.state.count++;
+    }
+}
+<div>The current count is ${state.count}</div>
+<button on-click('increment')>+1</button>
+
+~~~~~~~
+class {
+    constructor() {
+        this.state = {
+            count:0
+        };
+    }
+    increment() {
+        this.state.count++;
+    }
+}
+div -- The current count is ${state.count}
+button on-click('increment') -- +1

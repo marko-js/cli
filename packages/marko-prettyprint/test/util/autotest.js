@@ -45,11 +45,15 @@ function autoTest(name, dir, run, options, done) {
                     (isJSON ? JSON.parse(actualJSON) : actual),
                     expected);
         } catch(e) {
-            throw new Error('Unexpected output for "' + name + '":\nEXPECTED (' + expectedPath + '):\n---------\n' +
-                (isJSON ? expectedJSON : expected) +
-                '\n---------\nACTUAL (' + actualPath + '):\n---------\n' +
-                (isJSON ? actualJSON : actual) +
-                '\n---------');
+            if (process.env.UPDATE_EXPECTED) {
+                fs.writeFileSync(expectedPath, actual, { encoding: 'utf8' });
+            } else {
+                throw new Error('Unexpected output for "' + name + '":\nEXPECTED (' + expectedPath + '):\n---------\n' +
+                    (isJSON ? expectedJSON : expected) +
+                    '\n---------\nACTUAL (' + actualPath + '):\n---------\n' +
+                    (isJSON ? actualJSON : actual) +
+                    '\n---------');
+            }
         }
 
     }
