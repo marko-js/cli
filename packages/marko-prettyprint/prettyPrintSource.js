@@ -1,1 +1,1 @@
-module.exports = require('./prettyPrintSource');
+module.exports = require('./src/prettyPrintSource');
