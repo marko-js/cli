@@ -4,6 +4,27 @@ var cheerio = require('cheerio');
 var raptorRenderer = require('raptor-renderer');
 var objectAssign = require('object-assign');
 
+function _getRenderedComponent (wrappedRenderResult) {
+  if (!wrappedRenderResult._widget) {
+    var renderedResult = wrappedRenderResult._renderResult
+        .appendTo(document.getElementById('testsTarget'))
+
+    var component;
+    if (renderedResult.getComponent) {
+      // wrappedRenderResult is definitely a v4 component
+      component = renderedResult.getComponent();
+    } else {
+      // pre v4 component
+      component = renderedResult.getWidget();
+    }
+
+    wrappedRenderResult._widget = component
+    wrappedRenderResult.context._mountedWidgets.push(component);
+  }
+
+  return wrappedRenderResult._widget;
+}
+
 function WrappedRenderResult(renderResult, context) {
     this._renderResult = renderResult;
     this.html = renderResult.html;
@@ -22,13 +43,12 @@ WrappedRenderResult.prototype = {
         return this._$;
     },
 
-    get widget() {
-        if (!this._widget) {
-            this._widget = this._renderResult.appendTo(document.getElementById('testsTarget')).getWidget();
-            this.context._mountedWidgets.push(this._widget);
-        }
+    get component() {
+        return _getRenderedComponent(this);
+    },
 
-        return this._widget;
+    get widget() {
+        return _getRenderedComponent(this);
     }
 };
 
