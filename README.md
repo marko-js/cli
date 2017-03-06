@@ -164,9 +164,17 @@ Returns a jQuery-compatible object for querying the rendered DOM. Utilizes [chee
 
 The output HTML string.
 
+#### `component`
+
+***In-browser only***
+
+Returns a rendered instance of the component.
+
 #### `widget`
 
 ***In-browser only***
+
+This is an alias for the above `component` getter.
 
 ## Snapshots
 
