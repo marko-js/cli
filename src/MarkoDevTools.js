@@ -2,6 +2,7 @@
 
 var EventEmitter = require('events').EventEmitter;
 var lassoPackageRoot = require('lasso-package-root');
+var resolveFrom = require('resolve-from');
 var path = require('path');
 var Commands = require('./Commands');
 
@@ -21,6 +22,16 @@ class MarkoDevTools extends EventEmitter {
 
     get packageRoot() {
         return this._rootPackage ? this._rootPackage.__dirname : this.cwd;
+    }
+
+    requireFromRoot(path) {
+        var resolvedPath;
+
+        try {
+            resolvedPath = resolveFrom(this.packageRoot, path);
+        } catch(e) {}
+
+        return resolvedPath ? require(resolvedPath) : require(path);
     }
 
     configure(config) {
