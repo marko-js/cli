@@ -12,7 +12,8 @@ function isValidAppName(name) {
 
 module.exports = function run(options, devTools) {
     return new Promise(function(resolve, reject) {
-        let {name, dir} = options;
+        let name = options.name;
+        let dir = options.dir;
 
         if (!fs.existsSync(dir)) {
             return reject(new Error(`Invalid directory specified '${dir}'`));
