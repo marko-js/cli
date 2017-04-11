@@ -223,7 +223,9 @@ module.exports = function(markoDevTools) {
 }
 ```
 
-You can provide a package-specific plugin by creating a `marko-devtools.js` file at the root of your project:
+## `.marko-devtools.js`
+
+You can provide a package-specific plugin by creating a `.marko-devtools.js` file at the root of your project:
 
 _my-app/.marko-devtools.js:_
 
@@ -250,7 +252,11 @@ module.exports = function(markoDevTools) {
 
 For more info on how to specify dependencies can be found [here](https://github.com/lasso-js/lasso#dependencies).
 
+### Configuring Lasso
+
 Lasso plugins and transforms can also be specified using the `browserBuilder` option.
+
+_my-app/.marko-devtools.js:_
 
 ```javascript
 module.exports = function(markoDevTools) {
