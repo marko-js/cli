@@ -30,7 +30,7 @@ function getRenderer(dir) {
 }
 
 
-function defaultFileMatcher(file) {
+function defaultTestMatcher(file) {
     var testRegExp = /^(?:(.+?)[-.])?(?:spec|test)(?:[-.](server|browser))?[.]/i;
     var basename = path.basename(file);
     var testMatches = testRegExp.exec(basename);
@@ -50,14 +50,14 @@ function defaultFileMatcher(file) {
 function loadTests(dir, patterns, devTools) {
     var tests = [];
     var filesLookup = {};
-    var fileMatcher = devTools.config.fileMatcher || defaultFileMatcher
+    var testMatcher = devTools.config.testMatcher || defaultTestMatcher
 
     function handleFile(file) {
         if (filesLookup[file]) return;
 
-        var matches = fileMatcher(file);
-        if (matches === false) return;
-        var { groupName, env = 'browser' } = matches;
+        var testMatches = testMatcher(file);
+        if (testMatches === false) return;
+        var { groupName, env = 'browser' } = testMatches;
 
 
         filesLookup[file] = true;
