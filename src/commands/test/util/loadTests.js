@@ -4,7 +4,6 @@ var glob = require('glob');
 var async = require('async');
 var path = require('path');
 var fs = require('fs');
-var testRegExp = /^(?:(.+?)[-.])?(?:spec|test)(?:[-.](server|browser))?[.]/i;
 
 var globOptions = {
     matchBase: true,
@@ -31,29 +30,38 @@ function getRenderer(dir) {
 }
 
 
+function defaultFileMatcher(file) {
+    var testRegExp = /^(?:(.+?)[-.])?(?:spec|test)(?:[-.](server|browser))?[.]/i;
+    var basename = path.basename(file);
+    var testMatches = testRegExp.exec(basename);
+
+    if (!testMatches) {
+        // The file is not a test file
+        return false;
+    }
+
+    return {
+        groupName: testMatches[1],
+        env: testMatches[2] || 'browser'
+    }
+};
+
 
 function loadTests(dir, patterns, devTools) {
     var tests = [];
     var filesLookup = {};
+    var fileMatcher = devTools.config.fileMatcher || defaultFileMatcher
 
     function handleFile(file) {
-        var basename = path.basename(file);
-        var testMatches = testRegExp.exec(basename);
+        if (filesLookup[file]) return;
 
-        if (!testMatches) {
-            // The file is not a test file
-            return;
-        }
+        var matches = fileMatcher(file);
+        if (matches === false) return;
+        var { groupName, env = 'browser' } = matches;
 
-        if (filesLookup[file]) {
-            return;
-        }
 
         filesLookup[file] = true;
 
-
-        var groupName = testMatches[1];
-        var env = testMatches[2] || 'browser';
 
         var testsDir = path.dirname(file);
 
