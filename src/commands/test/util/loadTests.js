@@ -36,7 +36,7 @@ function loadTests(dir, patterns, devTools) {
     var tests = [];
     var filesLookup = {};
 
-    function handleFile(file) {
+  function handleFile(file) {
         var basename = path.basename(file);
         var testMatches = testRegExp.exec(basename);
 
@@ -51,24 +51,22 @@ function loadTests(dir, patterns, devTools) {
 
         filesLookup[file] = true;
 
-
         var groupName = testMatches[1];
         var env = testMatches[2] || 'browser';
+        let testsDir = path.dirname(file);
 
-        var testsDir = path.dirname(file);
-
-        if (path.basename(testsDir) !== 'test') {
-            return;
+        let componentDir;
+        if (testsDir.endsWith('/test')) {
+            componentDir = path.dirname(testsDir);
+        } else {
+            componentDir = testsDir;
         }
-
-        var componentDir = path.dirname(testsDir);
 
         if (componentDir === devTools.packageRoot) {
             return;
         }
 
         var componentName = path.relative(devTools.cwd, componentDir);
-
         var renderer = getRenderer(componentDir);
 
         if (!renderer) {
@@ -88,7 +86,6 @@ function loadTests(dir, patterns, devTools) {
     function processPatterns(dir, patterns, callback) {
         var tasks = patterns.map(function(pattern) {
             return function(callback) {
-
                 if (glob.hasMagic(pattern)) {
                     globOptions.cwd = dir;
                     glob(pattern, globOptions, function (err, files) {
@@ -119,10 +116,6 @@ function loadTests(dir, patterns, devTools) {
 
                 if (stat.isDirectory()) {
                     let dir = file;
-                    let patterns = [
-                        '**/test/*.js'
-                    ];
-
                     processPatterns(dir, patterns, callback);
                 } else {
                     handleFile(file);
