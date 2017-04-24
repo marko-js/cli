@@ -89,7 +89,9 @@ marko test **/test/test.js
 
 # Component testing
 
-Marko DevTools includes a testing framework (built on top of [mocha](https://mochajs.org/)) that targets UI components built using Marko or Marko Widgets. Each UI component is expected to have a `test/` directory that consists of one or more JavaScript test files with a name in any of the following formats:
+Marko DevTools includes a testing framework (built on top of [mocha](https://mochajs.org/)) that targets UI components built using Marko or Marko Widgets. Each UI
+component may include test files alongside components or in a `test/` directory that consists of one or more JavaScript test files with a name in any of the
+following formats:
 
 - `test.js` - runs only in the browser
 - `test.server.js` _or_ `test-server.js` - runs only on the server
