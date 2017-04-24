@@ -1,3 +1,5 @@
 node_modules
 snapshots
 *.marko.js
+*.swp
+.cache/
