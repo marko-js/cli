@@ -4,7 +4,6 @@ var glob = require('glob');
 var async = require('async');
 var path = require('path');
 var fs = require('fs');
-var testRegExp = /^(?:(.+?)[-.])?(?:spec|test)(?:[-.](server|browser))?[.]/i;
 
 var globOptions = {
     matchBase: true,
@@ -31,30 +30,41 @@ function getRenderer(dir) {
 }
 
 
+function defaultTestMatcher(file) {
+    var testRegExp = /^(?:(.+?)[-.])?(?:spec|test)(?:[-.](server|browser))?[.]/i;
+    var basename = path.basename(file);
+    var testMatches = testRegExp.exec(basename);
+
+    if (!testMatches) {
+        // The file is not a test file
+        return false;
+    }
+
+    return {
+        groupName: testMatches[1],
+        env: testMatches[2] || 'browser'
+    }
+};
+
 
 function loadTests(dir, patterns, devTools) {
     var tests = [];
     var filesLookup = {};
+    var testMatcher = devTools.config.testMatcher || defaultTestMatcher
 
-  function handleFile(file) {
-        var basename = path.basename(file);
-        var testMatches = testRegExp.exec(basename);
+    function handleFile(file) {
+        if (filesLookup[file]) return;
 
-        if (!testMatches) {
-            // The file is not a test file
-            return;
-        }
-
-        if (filesLookup[file]) {
-            return;
-        }
-
+        var testMatches = testMatcher(file);
+        if (testMatches === false) return;
+  
+        var groupName = testMatches.groupName;
+        var env = testMatches.env || 'browser';
+  
         filesLookup[file] = true;
-
-        var groupName = testMatches[1];
-        var env = testMatches[2] || 'browser';
+      
         let testsDir = path.dirname(file);
-
+      
         let componentDir;
         if (testsDir.endsWith('/test')) {
             componentDir = path.dirname(testsDir);
