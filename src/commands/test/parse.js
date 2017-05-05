@@ -63,7 +63,7 @@ module.exports = function parse(argv) {
     }
 
     if (!patterns || !patterns.length) {
-        patterns = ['**/test/*.js'];
+        patterns = ['**/test.js', '**/test.*.js', '**/test/*.js'];
     }
 
     options.patterns = patterns;

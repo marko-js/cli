@@ -45,7 +45,14 @@ class ServerContext {
 
         var snapshotId = this._nextSnapshotId++;
         let snapshotFile = this.name.replace(/[^A-Za-z0-9_\-\.]/g, '-') +'.'+snapshotId+'.html';
+        let testDir = path.join(this.componentDir, 'test');
         let snapshotDir = path.join(this.componentDir, 'test/snapshots');
+
+        // Snapshots should always be placed in /test/snapshots even if the test file is located
+        // at the component level
+        if (!fs.existsSync(testDir)) {
+            fs.mkdirSync(testDir);
+        }
 
         if (!fs.existsSync(snapshotDir)) {
             fs.mkdirSync(snapshotDir);

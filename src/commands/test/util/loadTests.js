@@ -57,26 +57,26 @@ function loadTests(dir, patterns, devTools) {
 
         var testMatches = testMatcher(file);
         if (testMatches === false) return;
-        var { groupName, env = 'browser' } = testMatches;
-
-
+  
+        var groupName = testMatches.groupName;
+        var env = testMatches.env || 'browser';
+  
         filesLookup[file] = true;
-
-
-        var testsDir = path.dirname(file);
-
-        if (path.basename(testsDir) !== 'test') {
-            return;
+      
+        let testsDir = path.dirname(file);
+      
+        let componentDir;
+        if (testsDir.endsWith('/test')) {
+            componentDir = path.dirname(testsDir);
+        } else {
+            componentDir = testsDir;
         }
-
-        var componentDir = path.dirname(testsDir);
 
         if (componentDir === devTools.packageRoot) {
             return;
         }
 
         var componentName = path.relative(devTools.cwd, componentDir);
-
         var renderer = getRenderer(componentDir);
 
         if (!renderer) {
@@ -96,7 +96,6 @@ function loadTests(dir, patterns, devTools) {
     function processPatterns(dir, patterns, callback) {
         var tasks = patterns.map(function(pattern) {
             return function(callback) {
-
                 if (glob.hasMagic(pattern)) {
                     globOptions.cwd = dir;
                     glob(pattern, globOptions, function (err, files) {
@@ -127,10 +126,6 @@ function loadTests(dir, patterns, devTools) {
 
                 if (stat.isDirectory()) {
                     let dir = file;
-                    let patterns = [
-                        '**/test/*.js'
-                    ];
-
                     processPatterns(dir, patterns, callback);
                 } else {
                     handleFile(file);

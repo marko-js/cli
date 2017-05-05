@@ -89,7 +89,9 @@ marko test **/test/test.js
 
 # Component testing
 
-Marko DevTools includes a testing framework (built on top of [mocha](https://mochajs.org/)) that targets UI components built using Marko or Marko Widgets. Each UI component is expected to have a `test/` directory that consists of one or more JavaScript test files with a name in any of the following formats:
+Marko DevTools includes a testing framework (built on top of [mocha](https://mochajs.org/)) that targets UI components built using Marko or Marko Widgets. Each UI
+component may include test files alongside components or in a `test/` directory that consists of one or more JavaScript test files with a name in any of the
+following formats:
 
 - `test.js` - runs only in the browser
 - `test.server.js` _or_ `test-server.js` - runs only on the server
@@ -223,11 +225,11 @@ module.exports = function(markoDevTools) {
 }
 ```
 
-## `.marko-devtools.js`
+## `marko-devtools.js`
 
-You can provide a package-specific plugin by creating a `.marko-devtools.js` file at the root of your project:
+You can provide a package-specific plugin by creating a `marko-devtools.js` file at the root of your project:
 
-_my-app/.marko-devtools.js:_
+_my-app/marko-devtools.js:_
 
 ```javascript
 module.exports = function(markoDevTools) {
@@ -256,7 +258,7 @@ For more info on how to specify dependencies can be found [here](https://github.
 
 Lasso plugins and transforms can also be specified using the `browserBuilder` option.
 
-_my-app/.marko-devtools.js:_
+_my-app/marko-devtools.js:_
 
 ```javascript
 module.exports = function(markoDevTools) {
