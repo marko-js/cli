@@ -82,7 +82,17 @@ BrowserContext.prototype = {
             if (!renderResult.html) {
                 // this is a v4 component
                 var docFragment = renderResult.getOutput().actualize(document);
-                renderResult.html = docFragment.firstChild.outerHTML;
+
+                // generate html from childNodes
+                var html = '';
+                if (docFragment.hasChildNodes()) {
+                    var children = docFragment.childNodes;
+                    for (var i = 0; i < children.length; i++) {
+                        html += children[i].outerHTML;
+                    }
+                }
+
+                renderResult.html = html;
             }
         } else {
             // assume older version of marko
