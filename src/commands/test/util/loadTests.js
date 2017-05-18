@@ -46,7 +46,6 @@ function defaultTestMatcher(file) {
     }
 };
 
-
 function loadTests(dir, patterns, devTools) {
     var tests = [];
     var filesLookup = {};
@@ -57,14 +56,14 @@ function loadTests(dir, patterns, devTools) {
 
         var testMatches = testMatcher(file);
         if (testMatches === false) return;
-  
+
         var groupName = testMatches.groupName;
         var env = testMatches.env || 'browser';
-  
+
         filesLookup[file] = true;
-      
+
         let testsDir = path.dirname(file);
-      
+        
         let componentDir;
         if (testsDir.endsWith('/test')) {
             componentDir = path.dirname(testsDir);
@@ -93,7 +92,7 @@ function loadTests(dir, patterns, devTools) {
         });
     }
 
-    function processPatterns(dir, patterns, callback) {
+    function processPatterns(dir, callback) {
         var tasks = patterns.map(function(pattern) {
             return function(callback) {
                 if (glob.hasMagic(pattern)) {
@@ -126,7 +125,7 @@ function loadTests(dir, patterns, devTools) {
 
                 if (stat.isDirectory()) {
                     let dir = file;
-                    processPatterns(dir, patterns, callback);
+                    processPatterns(dir, callback);
                 } else {
                     handleFile(file);
                     return callback();
@@ -138,7 +137,7 @@ function loadTests(dir, patterns, devTools) {
     }
 
     return new Promise((resolve, reject) => {
-        processPatterns(dir, patterns, function(err) {
+        processPatterns(dir, function(err) {
             if (err) {
                 return reject(err);
             }
