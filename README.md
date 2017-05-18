@@ -53,7 +53,9 @@ marko create myapp --dir /Users/me/Desktop
 
 ### test
 
-Used to run unit tests for UI components. See [Component Testing](#ComponentTesting) below for more details on how to write unit tests for UI components.
+Used to run unit tests for UI components. `marko test` supports glob patterns
+for locating and running test files. See [Component Testing](#ComponentTesting) below for more
+details on how to write unit tests for UI components.
 
 Usage:
 
@@ -66,25 +68,19 @@ marko test
 Run all of the unit tests for a single UI component:
 
 ```bash
-marko test src/components/app-foo
+marko test ./src/components/app-foo/**/test*.js
 ```
 
 Run all of the unit tests for all UI components:
 
 ```bash
-marko test src/components/
+marko test ./src/components/**/test*.js
 ```
 
 Run only server tests:
 
 ```bash
-marko test src/components/ --server
-```
-
-Glob patterns
-
-```bash
-marko test **/test/test.js
+marko test ./src/components/**/test*server.js --server
 ```
 
 # Component testing

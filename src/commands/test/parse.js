@@ -27,14 +27,17 @@ module.exports = function parse(argv) {
             'Run all tests',
             'marko test')
         .example(
+            'Run all tests for a single component',
+            'marko test ./src/components/app-foo/**/test*.js')
+        .example(
             'Run all UI component tests',
-            'marko test src/components/')
+            'marko test ./src/components/**/test*.js')
         .example(
             'Run only server tests',
-            'marko test src/components/ --server')
+            'marko test ./src/components/**/test*server.js --server')
         .example(
             'Run only browser tests',
-            'marko test src/components/ --browser')
+            'marko test ./src/components/**/test*browser.js --browser')
         .validate(function(result) {
             if (result.help) {
                 this.printUsage();
