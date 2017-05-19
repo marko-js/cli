@@ -6,11 +6,12 @@ var markoDevToolsRoot = process.env.MARKO_DEVTOOLS_ROOT;
 var MarkoDevTools = require(path.join(markoDevToolsRoot, 'MarkoDevTools'));
 
 require('marko/node-require').install();
-    function requireNoOp(module, filename) { /* no-op */ }
 
-    ['.css', '.less'].forEach((ext) => {
-        require.extensions[ext] = requireNoOp;
-    });
+function requireNoOp(module, filename) { /* no-op */ }
+
+['.css', '.less'].forEach((ext) => {
+    require.extensions[ext] = requireNoOp;
+});
 
 var devTools = new MarkoDevTools();
 devTools.emit('beforeRunServerTests');
