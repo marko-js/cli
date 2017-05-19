@@ -49,7 +49,6 @@ tests.forEach((componentNode) => {
 
         var file = test.file;
         var context = new ServerContext(test);
-        context.component = require(context.renderer);
 
         function runTest(it, name, handler) {
             if(handler.length <= 1) {

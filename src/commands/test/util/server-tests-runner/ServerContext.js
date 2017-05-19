@@ -35,6 +35,10 @@ class ServerContext {
         return this._name;
     }
 
+    get component() {
+        return require(this.renderer);
+    }
+
     render(data) {
         var htmlString;
         if(this.component.renderSync) {
