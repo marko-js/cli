@@ -15,6 +15,8 @@ module.exports = function prettyPrintSource(src, options) {
 
     options = Object.assign({}, options);
 
+    src = src.replace(/(\r\n|\r)/g, '\n');
+
     var dirname = path.dirname(filename);
     options.dirname = dirname;
 
