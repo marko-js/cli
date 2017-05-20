@@ -8,8 +8,6 @@ const Writer = require('./util/Writer');
 const formattingTags = require('./formatting-tags');
 const trim = require('./util/trim');
 
-const oldLiteralToString = require('marko/compiler/ast/Literal').prototype.toString;
-
 const codeTags = {
     'class': true,
     'import': true,
@@ -17,39 +15,6 @@ const codeTags = {
     'style': true
 };
 
-function replaceEscapedNewLines(jsonString) {
-    return jsonString.replace(/\\\\|\\n/g, (match) => {
-        if (match === '\\\\') {
-            return match;
-        } else {
-            return '\n';
-        }
-    });
-}
-
-/**
- * Normal JavaScript strings don't allow the newline character, but our htmljs-parser
- * does allow new line characters in JavaScript strings (they get converted to '\\n' automatically).
- * This function is used to change how the code for JavaScript strings is printed out
- * when printing out strings in attribute values. We favor using the unescaped new line
- * character since it is usually easier to read.
- */
-function enableLiteralToStringPatch(func) {
-    require('marko/compiler/ast/Literal').prototype.toString = function() {
-        var value = this.value;
-        if (typeof value === 'string') {
-            return replaceEscapedNewLines(oldLiteralToString.apply(this, arguments));
-        } else {
-            return oldLiteralToString.apply(this, arguments);
-        }
-    };
-
-    try {
-        func();
-    } finally {
-        require('marko/compiler/ast/Literal').prototype.toString = oldLiteralToString;
-    }
-}
 
 function isComponentStyleTag(node) {
     var attrs = node.getAttributes();
@@ -139,29 +104,27 @@ module.exports = function printHtmlElement(node, printContext, writer) {
 
     // We will make one pass to generate all of the strings for each attribute. We will then
     // append them to the output while avoiding putting too many attributes on one line.
-    enableLiteralToStringPatch(() => {
-        attrs.forEach((attr, i) => {
+    attrs.forEach((attr, i) => {
 
-            var attrStr = '';
+        var attrStr = '';
 
-            if (attr.name) {
-                attrStr += attr.name;
-                var attrValue = attr.value;
-                if (attrValue) {
-                    if (attrValue.isCompoundExpression()) {
-                        attrStr += '=(' + unescapePlaceholdersInStringExpression(attrValue.toString()) + ')';
-                    } else {
-                        attrStr += '=' + unescapePlaceholdersInStringExpression(attrValue.toString());
-                    }
-                } else if (attr.argument != null) {
-                    attrStr += '(' + attr.argument + ')';
+        if (attr.name) {
+            attrStr += attr.name;
+            var attrValue = attr.value;
+            if (attrValue) {
+                if (attrValue.isCompoundExpression()) {
+                    attrStr += '=(' + unescapePlaceholdersInStringExpression(attrValue.toString()) + ')';
+                } else {
+                    attrStr += '=' + unescapePlaceholdersInStringExpression(attrValue.toString());
                 }
-            } else {
-                attrStr += '${' + attr.value  + '}';
+            } else if (attr.argument != null) {
+                attrStr += '(' + attr.argument + ')';
             }
+        } else {
+            attrStr += '${' + attr.value  + '}';
+        }
 
-            attrStringsArray.push(attrStr);
-        });
+        attrStringsArray.push(attrStr);
     });
 
     if (attrStringsArray.length) {
