@@ -19,6 +19,7 @@ module.exports = function prettyPrintFile(filename, options) {
     options.dirname = dirname;
 
     var markoCompiler = getMarkoCompiler(dirname);
+    options.markoCompiler = markoCompiler;
 
     var sourceCode = fs.readFileSync(filename, { encoding: 'utf8' });
     var ast = markoCompiler.parseRaw(sourceCode, filename);

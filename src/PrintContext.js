@@ -25,6 +25,10 @@ class PrintContext {
         return this.syntax === SYNTAX_HTML;
     }
 
+    get markoCompiler() {
+        return this.options.markoCompiler;
+    }
+
     beginNested() {
         var newPrintContext = Object.create(this);
         newPrintContext.depth++;
