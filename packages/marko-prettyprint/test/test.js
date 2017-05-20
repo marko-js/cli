@@ -39,7 +39,7 @@ describe('marko-prettyprint' , function() {
                 let actualConcise = markoPrettyprint.prettyPrintSource(templateSrc, options);
                 options.syntax = 'html';
                 let actualHtml = markoPrettyprint.prettyPrintSource(templateSrc, options);
-                return actualHtml + '\n~~~~~~~\n' + actualConcise;
+                return actualHtml.trim() + '\n~~~~~~~\n' + actualConcise.trim();
             }
 
         },
