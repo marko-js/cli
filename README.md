@@ -54,7 +54,7 @@ marko create myapp --dir /Users/me/Desktop
 ### test
 
 Used to run unit tests for UI components. `marko test` supports glob patterns
-for locating and running test files. See [Component Testing](#ComponentTesting) below for more
+for locating and running test files. See [Component Testing](#component-testing) below for more
 details on how to write unit tests for UI components.
 
 Usage:
