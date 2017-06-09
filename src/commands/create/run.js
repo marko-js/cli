@@ -6,6 +6,7 @@ const nrd = require('nrd');
 
 const SCAFFOLD_PROJECT = 'marko-starter-demo';
 
+
 function isValidAppName(name) {
     return !/\/|\\/.test(name);
 }
@@ -53,6 +54,14 @@ module.exports = function run(options, devTools) {
 
             // npm removes .gitignore and creates an .npmignore, so recreate it
             fs.createReadStream(npmignorePath).pipe(fs.createWriteStream(gitignorePath));
+
+            console.log(`
+Successfully installed app. To start your app, run the following commands:
+
+cd ${fullPath}
+npm install # or 'yarn'
+npm start
+            `);
             resolve();
         }).catch(reject);
     });
