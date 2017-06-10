@@ -1,68 +1,139 @@
 'use strict';
 
 const fs = require('fs');
+const got = require('got');
+const ora = require('ora');
 const path = require('path');
-const nrd = require('nrd');
+const unzip = require('unzip');
+const exec = require('child_process').exec;
 
-const SCAFFOLD_PROJECT = 'marko-starter-demo';
+const DEFAULT_REPO = 'demo';
+const MARKO_PREFIX = 'marko-';
+const MARKO_STARTER_PREFIX = 'marko-starter-';
+const MARKO_SAMPLES_ORG = 'marko-js-samples';
+const GITHUB_URL = 'https://github.com/';
+const ARCHIVE_PATH = '/archive/master.zip';
+const MASTER_SUFFIX = '-master';
 
+module.exports = function run(options, devTools) {
+    console.log('');
+    const spinner = ora('Starting...').start();
+    return Promise.resolve().then(() => {
+        const dir = options.dir;
+        const [source, name] = splitOrUnshiftDefault(options.name, ':', DEFAULT_REPO);
+        const [org, repo] = splitOrUnshiftDefault(source, '/', MARKO_SAMPLES_ORG);
+        const fullPath = path.resolve(dir, name);
+        const relativePath = path.relative(process.cwd(), fullPath);
+
+        assertAllGood(dir, name, fullPath);
+
+        return getExistingRepo(org, repo).then(({ org, repo }) => {
+            spinner.text = 'Downloading app...';
+            return getZipArchive(org, repo, dir, name).then(() => {
+                rewritePackageJson(fullPath, name);
+                spinner.text = 'Installing npm modules... (this may take a minute)';
+                return installPackages(fullPath).then(() => {
+                    spinner.succeed(
+                        'Successfully created app! To get started, run:\n\n'+getRunInstructions(fullPath)+'\n'
+                    );
+                })
+            });
+        })
+    }).catch(err => spinner.fail(err.message+'\n'));
+};
+
+function splitOrUnshiftDefault(string, char, defaultValue) {
+    let parts = string.split(char);
+    if (parts.length === 1) {
+        parts.unshift(defaultValue);
+    }
+    return parts;
+}
+
+function assertAllGood(dir, name, fullPath) {
+    if (!fs.existsSync(dir)) {
+        throw new Error(`Invalid directory specified '${dir}'`);
+    }
+    if (fs.existsSync(fullPath)) {
+        throw new Error(`Project path already exists '${fullPath}'`);
+    }
+    if (!isValidAppName(name)) {
+        throw new Error(`Invaid app name: ${name}`);
+    }
+}
 
 function isValidAppName(name) {
     return !/\/|\\/.test(name);
 }
 
-module.exports = function run(options, devTools) {
-    return new Promise(function(resolve, reject) {
-        let name = options.name;
-        let dir = options.dir;
+function getExistingRepo(org, repo) {
+    let possibleRepos = org === MARKO_SAMPLES_ORG ? [
+        { org, repo },
+        { org, repo:MARKO_PREFIX+repo },
+        { org, repo:MARKO_STARTER_PREFIX+repo }
+    ] : [{ org, repo }];
 
-        if (!fs.existsSync(dir)) {
-            return reject(new Error(`Invalid directory specified '${dir}'`));
+    return Promise.all(possibleRepos.map(({ org, repo }) =>
+        got.head(GITHUB_URL+org+'/'+repo).then(
+            (response) => true,
+            (error) => false,
+        )
+    )).then(results => {
+        let matchingRepo;
+        if(results[0]) {
+            matchingRepo = possibleRepos[0];
+        } else if(results[1]) {
+            matchingRepo = possibleRepos[1];
+        } else if(results[2]) {
+            matchingRepo = possibleRepos[2];
+        } else {
+            throw new Error('Unable to find a matching app template. Tried ' + possibleRepos.join());
         }
 
-        // Check if the path where we plan to place the scaffold project already exists
-        const fullPath = path.resolve(dir, name);
-        if (fs.existsSync(fullPath)) {
-            return reject(new Error(`Project path already exists '${fullPath}'`));
-        }
-
-        if (!isValidAppName(name)) {
-            return reject(new Error(`Invaid app name: ${name}`));
-        }
-
-        nrd.download(SCAFFOLD_PROJECT, {
-            dir
-        }).then(function() {
-            const packageNamePath = path.resolve(dir, './package');
-            const newPackageNamePath = path.resolve(dir, `./${name}`);
-
-            fs.renameSync(packageNamePath, newPackageNamePath);
-
-            const packagePath = path.resolve(fullPath, './package.json');
-            let packageData = fs.readFileSync(packagePath, 'utf8');
-
-            packageData = JSON.parse(packageData);
-
-            packageData.name = name;
-            packageData.version = '1.0.0';
-            packageData.private = true;
-
-            fs.writeFileSync(packagePath, JSON.stringify(packageData, null, 2));
-
-            const npmignorePath = path.resolve(fullPath, './.npmignore');
-            const gitignorePath = path.resolve(fullPath, './.gitignore');
-
-            // npm removes .gitignore and creates an .npmignore, so recreate it
-            fs.createReadStream(npmignorePath).pipe(fs.createWriteStream(gitignorePath));
-
-            console.log(`
-Successfully installed app. To start your app, run the following commands:
-
-cd ${fullPath}
-npm install # or 'yarn'
-npm start
-            `);
-            resolve();
-        }).catch(reject);
+        return matchingRepo;
     });
-};
+}
+
+function getZipArchive(org, repo, dir, name) {
+    let resource = GITHUB_URL+org+'/'+repo+ARCHIVE_PATH;
+    let extractor = unzip.Extract({ path: dir });
+
+    return new Promise((resolve, reject) => {
+        let zipStream = got.stream(resource).pipe(extractor)
+        zipStream.on('error', reject).on('close', () => {
+            fs.renameSync(
+                path.join(dir, repo+MASTER_SUFFIX),
+                path.join(dir, name)
+            );
+            resolve();
+        });
+    });
+}
+
+function rewritePackageJson(fullPath, name) {
+    let packagePath = path.resolve(fullPath, './package.json');
+    let packageData = fs.readFileSync(packagePath, 'utf8');
+
+    packageData = JSON.parse(packageData);
+
+    packageData.name = name;
+    packageData.version = '1.0.0';
+    packageData.private = true;
+
+    fs.writeFileSync(packagePath, JSON.stringify(packageData, null, 2));
+}
+
+function installPackages(fullPath) {
+    return new Promise((resolve, reject) => {
+        exec(`cd ${fullPath} && npm install`, (err, stdout, stderr) => {
+            if(err) reject(err);
+            else resolve();
+        });
+    });
+}
+
+function getRunInstructions(fullPath) {
+    return `cd ${path.relative(process.cwd(), fullPath)}\nnpm start`;
+}
+
+
