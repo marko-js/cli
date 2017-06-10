@@ -87,7 +87,10 @@ function getExistingRepo(org, repo) {
         } else if(results[2]) {
             matchingRepo = possibleRepos[2];
         } else {
-            throw new Error('Unable to find a matching app template. Tried ' + possibleRepos.join());
+            throw new Error(
+                'Unable to find a matching app template. None of the following exist:\n' +
+                possibleRepos.map(({ org, repo }) => '  - '+org+'/'+repo).join('\n')
+            );
         }
 
         return matchingRepo;
