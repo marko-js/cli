@@ -20,14 +20,20 @@ module.exports = function run(options, devTools) {
     const spinner = ora('Starting...').start();
     return Promise.resolve().then(() => {
         const dir = options.dir;
-        const [source, name] = splitOrUnshiftDefault(options.name, ':', DEFAULT_REPO);
-        const [org, repo] = splitOrUnshiftDefault(source, '/', MARKO_SAMPLES_ORG);
+        const nameParts = splitOrUnshiftDefault(options.name, ':', DEFAULT_REPO);
+        const source = nameParts[0];
+        const name = nameParts[1];
+        const sourceParts = splitOrUnshiftDefault(source, '/', MARKO_SAMPLES_ORG);
+        const org = sourceParts[0];
+        const repo = sourceParts[1];
         const fullPath = path.resolve(dir, name);
         const relativePath = path.relative(process.cwd(), fullPath);
 
         assertAllGood(dir, name, fullPath);
 
-        return getExistingRepo(org, repo).then(({ org, repo }) => {
+        return getExistingRepo(org, repo).then((existing) => {
+            let org = existing.org;
+            let repo = existing.repo;
             spinner.text = 'Downloading app...';
             return getZipArchive(org, repo, dir, name).then(() => {
                 rewritePackageJson(fullPath, name);
@@ -73,12 +79,14 @@ function getExistingRepo(org, repo) {
         { org, repo:MARKO_STARTER_PREFIX+repo }
     ] : [{ org, repo }];
 
-    return Promise.all(possibleRepos.map(({ org, repo }) =>
-        got.head(GITHUB_URL+org+'/'+repo).then(
+    return Promise.all(possibleRepos.map((possible) => {
+        let org = possible.org;
+        let repo = possible.repo;
+        return got.head(GITHUB_URL+org+'/'+repo).then(
             (response) => true,
             (error) => false,
         )
-    )).then(results => {
+    })).then(results => {
         let matchingRepo;
         if(results[0]) {
             matchingRepo = possibleRepos[0];
