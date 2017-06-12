@@ -12,30 +12,32 @@ const MARKO_PREFIX = 'marko-';
 const MARKO_STARTER_PREFIX = 'marko-starter-';
 const MARKO_SAMPLES_ORG = 'marko-js-samples';
 const GITHUB_URL = 'https://github.com/';
-const ARCHIVE_PATH = '/archive/master.zip';
-const MASTER_SUFFIX = '-master';
+const REPO_PATH = (org, repo) => `${GITHUB_URL}${org}/${repo}`;
+const TREE_PATH = (org, repo, tag) => `${REPO_PATH(org, repo)}/tree/${tag}`;
+const ARCHIVE_PATH = (org, repo, tag) => `${REPO_PATH(org, repo)}/archive/${tag}.zip`;
+const MASTER_TAG = 'master';
 
 module.exports = function run(options, devTools) {
     console.log('');
     const spinner = ora('Starting...').start();
     return Promise.resolve().then(() => {
         const dir = options.dir;
-        const nameParts = splitOrUnshiftDefault(options.name, ':', DEFAULT_REPO);
-        const source = nameParts[0];
-        const name = nameParts[1];
-        const sourceParts = splitOrUnshiftDefault(source, '/', MARKO_SAMPLES_ORG);
-        const org = sourceParts[0];
-        const repo = sourceParts[1];
+        const parts = getOrgRepoTagAndName(options.name);
+        const name = parts.name;
+        const org = parts.org;
+        const repo = parts.repo;
+        const tag = parts.tag;
         const fullPath = path.resolve(dir, name);
         const relativePath = path.relative(process.cwd(), fullPath);
 
         assertAllGood(dir, name, fullPath);
 
-        return getExistingRepo(org, repo).then((existing) => {
+        return getExistingRepo(org, repo, tag).then((existing) => {
             let org = existing.org;
             let repo = existing.repo;
+            let tag = existing.tag;
             spinner.text = 'Downloading app...';
-            return getZipArchive(org, repo, dir, name).then(() => {
+            return getZipArchive(org, repo, tag, dir, name).then(() => {
                 rewritePackageJson(fullPath, name);
                 spinner.text = 'Installing npm modules... (this may take a minute)';
                 return installPackages(fullPath).then(() => {
@@ -47,6 +49,19 @@ module.exports = function run(options, devTools) {
         })
     }).catch(err => spinner.fail(err.message+'\n'));
 };
+
+function getOrgRepoTagAndName(arg) {
+    const argParts = splitOrUnshiftDefault(arg, ':', DEFAULT_REPO);
+    const source = argParts[0];
+    const name = argParts[1];
+    const sourceParts = splitOrUnshiftDefault(source, '/', MARKO_SAMPLES_ORG);
+    const org = sourceParts[0];
+    const repoAndTag = sourceParts[1];
+    const repoAndTagParts = repoAndTag.split('@');
+    const repo = repoAndTagParts[0] || DEFAULT_REPO;
+    const tag = repoAndTagParts[1] || MASTER_TAG;
+    return { name, org, repo, tag };
+}
 
 function splitOrUnshiftDefault(string, char, defaultValue) {
     let parts = string.split(char);
@@ -72,7 +87,7 @@ function isValidAppName(name) {
     return !/\/|\\/.test(name);
 }
 
-function getExistingRepo(org, repo) {
+function getExistingRepo(org, repo, tag) {
     let possibleRepos = org === MARKO_SAMPLES_ORG ? [
         { org, repo },
         { org, repo:MARKO_PREFIX+repo },
@@ -82,10 +97,7 @@ function getExistingRepo(org, repo) {
     return Promise.all(possibleRepos.map((possible) => {
         let org = possible.org;
         let repo = possible.repo;
-        return got.head(GITHUB_URL+org+'/'+repo).then(
-            (response) => true,
-            (error) => false,
-        )
+        return isUrlFound(REPO_PATH(org, repo));
     })).then(results => {
         let matchingRepo;
         if(results[0]) {
@@ -101,19 +113,39 @@ function getExistingRepo(org, repo) {
             );
         }
 
-        return matchingRepo;
+        let org = matchingRepo.org;
+        let repo = matchingRepo.repo;
+
+        return isUrlFound(TREE_PATH(org, repo, tag)).then((found) => {
+            if (!found) {
+                throw new Error(
+                    `Unable to find a branch/tag/commit named ${tag} in ${org}/${repo}.`
+                );
+            }
+
+            matchingRepo.tag = tag;
+
+            return matchingRepo;
+        })
     });
 }
 
-function getZipArchive(org, repo, dir, name) {
-    let resource = GITHUB_URL+org+'/'+repo+ARCHIVE_PATH;
+function isUrlFound(url) {
+    return got.head(url).then(
+        (response) => true,
+        (error) => false,
+    );
+}
+
+function getZipArchive(org, repo, tag, dir, name) {
+    let resource = ARCHIVE_PATH(org, repo, tag);
     let extractor = unzip.Extract({ path: dir });
 
     return new Promise((resolve, reject) => {
         let zipStream = got.stream(resource).pipe(extractor)
         zipStream.on('error', reject).on('close', () => {
             fs.renameSync(
-                path.join(dir, repo+MASTER_SUFFIX),
+                path.join(dir, repo+'-'+tag),
                 path.join(dir, name)
             );
             resolve();
