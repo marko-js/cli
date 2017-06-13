@@ -109,7 +109,11 @@ function getExistingRepo(org, repo, tag) {
         } else {
             throw new Error(
                 'Unable to find a matching app template. None of the following exist:\n' +
-                possibleRepos.map(({ org, repo }) => '  - '+org+'/'+repo).join('\n')
+                possibleRepos.map((possible) => {
+                    const org = possible.org;
+                    const repo = possible.repo;
+                    return '  - '+org+'/'+repo;
+                }).join('\n')
             );
         }
 
@@ -131,10 +135,9 @@ function getExistingRepo(org, repo, tag) {
 }
 
 function isUrlFound(url) {
-    return got.head(url).then(
-        (response) => true,
-        (error) => false,
-    );
+    return got.head(url)
+        .then((response) => true)
+        .catch((error) => false);
 }
 
 function getZipArchive(org, repo, tag, dir, name) {
