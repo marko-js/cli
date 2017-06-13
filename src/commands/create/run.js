@@ -28,7 +28,6 @@ module.exports = function run(options, devTools) {
         const repo = parts.repo;
         const tag = parts.tag;
         const fullPath = path.resolve(dir, name);
-        const relativePath = path.relative(process.cwd(), fullPath);
 
         assertAllGood(dir, name, fullPath);
 
@@ -44,9 +43,9 @@ module.exports = function run(options, devTools) {
                     spinner.succeed(
                         'Successfully created app! To get started, run:\n\n'+getRunInstructions(fullPath)+'\n'
                     );
-                })
+                });
             });
-        })
+        });
     }).catch(err => spinner.fail(err.message+'\n'));
 };
 
@@ -130,7 +129,7 @@ function getExistingRepo(org, repo, tag) {
             matchingRepo.tag = tag;
 
             return matchingRepo;
-        })
+        });
     });
 }
 
@@ -145,7 +144,7 @@ function getZipArchive(org, repo, tag, dir, name) {
     let extractor = unzip.Extract({ path: dir });
 
     return new Promise((resolve, reject) => {
-        let zipStream = got.stream(resource).pipe(extractor)
+        let zipStream = got.stream(resource).pipe(extractor);
         zipStream.on('error', reject).on('close', () => {
             fs.renameSync(
                 path.join(dir, repo+'-'+tag),
@@ -181,5 +180,3 @@ function installPackages(fullPath) {
 function getRunInstructions(fullPath) {
     return `cd ${path.relative(process.cwd(), fullPath)}\nnpm start`;
 }
-
-
