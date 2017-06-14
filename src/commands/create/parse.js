@@ -1,7 +1,9 @@
+var chalk = require('chalk');
+
 module.exports = function parse(argv) {
     var options = require('argly')
         .createParser({
-            '--help': {
+            '--help -h': {
                 type: 'string',
                 description: 'Show this help message'
             },
@@ -12,18 +14,28 @@ module.exports = function parse(argv) {
             },
             '--name -n *': {
                 type: 'string',
-                description: 'Project name'
+                description: 'Name of the new app (with optional source)'
             }
         })
-        .usage('Usage: $0 [options]')
+        .usage(`${chalk.bold.underline('Usage:')} $0 create ${chalk.green('<app-name>')} ${chalk.dim('[options]')}`)
         .example(
             'Create a marko app in the current directory',
-            'marko create app-name')
+            'marko create my-new-app')
         .example(
-            'Create a marko app in a specific directory',
-            'marko create app-name --dir ~/Desktop')
+            '…in a specific directory',
+            `marko create my-new-app ${chalk.green.bold('--dir ~/Desktop')}`)
+        .example(
+            '…from the min template (marko-js-samples/marko-starter-min)',
+            `marko create ${chalk.green.bold('min:')}my-new-app`)
+        .example(
+            '…from a github repo',
+            `marko create ${chalk.green.bold('user/repo:')}my-new-app`)
+        .example(
+            '…from a github repo at a specific branch/tag/commit',
+            `marko create ${chalk.green.bold('user/repo@commit:')}my-new-app`)
         .validate(function(result) {
-            if (Object.keys(result).length === 0 || result.help) {
+            let noArgs = Object.keys(result).length === 1 && result.dir === process.cwd();
+            if (noArgs || result.help) {
                 this.printUsage();
                 process.exit(0);
             }
