@@ -63,7 +63,7 @@ function loadTests(dir, patterns, devTools) {
         filesLookup[file] = true;
 
         let testsDir = path.dirname(file);
-        
+
         let componentDir;
         if (testsDir.endsWith('/test')) {
             componentDir = path.dirname(testsDir);
@@ -71,14 +71,10 @@ function loadTests(dir, patterns, devTools) {
             componentDir = testsDir;
         }
 
-        if (componentDir === devTools.packageRoot) {
-            return;
-        }
+        let componentName = testMatches.componentName || path.relative(devTools.cwd, componentDir);
+        let rendererPath = testMatches.rendererPath || getRenderer(componentDir);
 
-        var componentName = path.relative(devTools.cwd, componentDir);
-        var renderer = getRenderer(componentDir);
-
-        if (!renderer) {
+        if (!rendererPath) {
             return;
         }
 
@@ -87,7 +83,7 @@ function loadTests(dir, patterns, devTools) {
             env,
             componentName,
             componentDir,
-            renderer,
+            renderer: rendererPath,
             file
         });
     }
