@@ -6,6 +6,7 @@ const ora = require('ora');
 const path = require('path');
 const unzip = require('unzip');
 const exec = require('child_process').exec;
+const createConfig = require('./create-config');
 
 const DEFAULT_REPO = 'demo';
 const MARKO_PREFIX = 'marko-';
@@ -156,57 +157,26 @@ function getZipArchive(org, repo, tag, dir, name) {
 }
 
 function prepareApplication(fullPath, name) {
-    let packagePath = path.resolve(fullPath, './package.json');
-    let packageData = fs.readFileSync(packagePath, 'utf8');
-    let createConfig = getCreateConfig(fullPath);
-    let createIgnore = createConfig.ignore || {};
-    let ignoredFiles = createIgnore.files;
-    let ignoredScripts = createIgnore.scripts;
-    let ignoredDependencies = createIgnore.dependencies;
-
-    packageData = JSON.parse(packageData);
+    let packageData = getPackageData(fullPath);
 
     packageData.name = name;
     packageData.version = '1.0.0';
     packageData.private = true;
 
-    if (ignoredScripts && packageData.scripts) {
-        removeKeys(packageData, 'scripts', ignoredScripts);
-    }
+    createConfig.applyConfigInDirectory(fullPath, packageData);
 
-    if (ignoredDependencies) {
-        if (packageData.dependencies) {
-            removeKeys(packageData, 'dependencies', ignoredDependencies);
-        }
-        if (packageData.devDependencies) {
-            removeKeys(packageData, 'devDependencies', ignoredDependencies);
-        }
-    }
+    savePackageData(packageData, fullPath);
+}
 
-    if (ignoredFiles) {
-        ignoredFiles.forEach(file => {
-            fs.unlinkSync(path.resolve(fullPath, file));
-        });
-    }
+function getPackageData(directoryPath) {
+    let packagePath = path.resolve(directoryPath, './package.json');
+    let packageContents = fs.readFileSync(packagePath, 'utf8');
+    return JSON.parse(packageContents);
+}
 
+function savePackageData(packageData, directoryPath) {
+    let packagePath = path.resolve(directoryPath, './package.json');
     fs.writeFileSync(packagePath, JSON.stringify(packageData, null, 2));
-}
-
-function removeKeys(parent, prop, propsToRemove) {
-    let object = parent[prop];
-    propsToRemove.forEach(propName => {
-        delete object[propName];
-    });
-    if (Object.keys(object).length === 0) {
-        delete parent[prop];
-    }
-}
-
-function getCreateConfig(fullPath) {
-    let createConfigPath = path.resolve(fullPath, '.createconfig');
-    let createConfigRaw = fs.existsSync(createConfigPath) && fs.readFileSync(createConfigPath, 'utf8');
-    let createConfig = createConfigRaw ? JSON.parse(createConfigRaw) : {};
-    return createConfig;
 }
 
 function installPackages(fullPath) {
