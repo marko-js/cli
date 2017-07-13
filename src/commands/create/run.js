@@ -37,7 +37,7 @@ module.exports = function run(options, devTools) {
             let tag = existing.tag;
             spinner.text = 'Downloading app...';
             return getZipArchive(org, repo, tag, dir, name).then(() => {
-                rewritePackageJson(fullPath, name);
+                prepareApplication(fullPath, name);
                 spinner.text = 'Installing npm modules... (this may take a minute)';
                 return installPackages(fullPath).then(() => {
                     spinner.succeed(
@@ -155,9 +155,14 @@ function getZipArchive(org, repo, tag, dir, name) {
     });
 }
 
-function rewritePackageJson(fullPath, name) {
+function prepareApplication(fullPath, name) {
     let packagePath = path.resolve(fullPath, './package.json');
     let packageData = fs.readFileSync(packagePath, 'utf8');
+    let createConfig = getCreateConfig(fullPath);
+    let createIgnore = createConfig.ignore || {};
+    let ignoredFiles = createIgnore.files;
+    let ignoredScripts = createIgnore.scripts;
+    let ignoredDependencies = createIgnore.dependencies;
 
     packageData = JSON.parse(packageData);
 
@@ -165,7 +170,43 @@ function rewritePackageJson(fullPath, name) {
     packageData.version = '1.0.0';
     packageData.private = true;
 
+    if (ignoredScripts && packageData.scripts) {
+        removeKeys(packageData, 'scripts', ignoredScripts);
+    }
+
+    if (ignoredDependencies) {
+        if (packageData.dependencies) {
+            removeKeys(packageData, 'dependencies', ignoredDependencies);
+        }
+        if (packageData.devDependencies) {
+            removeKeys(packageData, 'devDependencies', ignoredDependencies);
+        }
+    }
+
+    if (ignoredFiles) {
+        ignoredFiles.forEach(file => {
+            fs.unlinkSync(path.resolve(fullPath, file));
+        });
+    }
+
     fs.writeFileSync(packagePath, JSON.stringify(packageData, null, 2));
+}
+
+function removeKeys(parent, prop, propsToRemove) {
+    let object = parent[prop];
+    propsToRemove.forEach(propName => {
+        delete object[propName];
+    });
+    if (Object.keys(object).length === 0) {
+        delete parent[prop];
+    }
+}
+
+function getCreateConfig(fullPath) {
+    let createConfigPath = path.resolve(fullPath, '.createconfig');
+    let createConfigRaw = fs.existsSync(createConfigPath) && fs.readFileSync(createConfigPath, 'utf8');
+    let createConfig = createConfigRaw ? JSON.parse(createConfigRaw) : {};
+    return createConfig;
 }
 
 function installPackages(fullPath) {
