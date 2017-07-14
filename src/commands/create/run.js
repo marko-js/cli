@@ -6,6 +6,7 @@ const ora = require('ora');
 const path = require('path');
 const unzip = require('unzip');
 const exec = require('child_process').exec;
+const initGitRepo = require('./init-git-repo');
 
 const DEFAULT_REPO = 'demo';
 const MARKO_PREFIX = 'marko-';
@@ -40,9 +41,12 @@ module.exports = function run(options, devTools) {
                 rewritePackageJson(fullPath, name);
                 spinner.text = 'Installing npm modules... (this may take a minute)';
                 return installPackages(fullPath).then(() => {
-                    spinner.succeed(
-                        'Successfully created app! To get started, run:\n\n'+getRunInstructions(fullPath)+'\n'
-                    );
+                    return initGitRepo(fullPath, spinner).then(() => {
+                        spinner.succeed(
+                            'Successfully created app! To get started, run:\n\n' +
+                            getRunInstructions(fullPath)+'\n'
+                        );
+                    });
                 });
             });
         });
