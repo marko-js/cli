@@ -274,6 +274,25 @@ module.exports = function(markoDevTools) {
 }
 ```
 
+### Configuring the test runner
+
+You can easily configure test running using `markoDevTools.config.testOptions`.
+Supported options:
+
+- `timeout` `{Number}`: Timeout for each test. Defaults to `2000`ms.
+- `useColors` `{Boolean}`: Whether the tests should use colors. Defaults to `true`.
+
+_my-app/marko-devtools.js:_
+
+```javascript
+module.exports = function(markoDevTools) {
+    markoDevTools.config.testOptions = {
+        timeout: 5000, // Defaults to 2000ms
+        useColors: true // Defaults to true
+    };
+}
+```
+
 # TODO
 
 - Don't write compiled templates to disk
