@@ -16,6 +16,7 @@ var resolveFrom = require('resolve-from');
 var shouldCover = !!process.env.NYC_CONFIG;
 var parseRequire = require('lasso-require/src/util/parseRequire');
 var porti = require('porti');
+const complain = require('complain');
 
 function getCoverageFile() {
     return './.nyc_output/'+Math.floor(Math.random()*100000000)+'.json';
@@ -51,6 +52,19 @@ function startServer(tests, options, devTools) {
         var workDir = devTools.config.workDir;
         var outputDir = path.resolve(workDir, 'browser-build');
         var phantomOptions = devTools.config.phantomOptions;
+        let testOptions = devTools.config.testOptions;
+
+        if (phantomOptions) {
+            complain('"markoDevTools.config.phantomOptions" is deprecated. Please use "markoDevTools.config.testOptions" instead.', {
+                location: path.join(devTools.cwd, 'marko-devtools.js')
+            });
+        }
+
+        if (phantomOptions && testOptions) {
+            return reject(new Error('Using "markoDevTools.config.phantomOptions" with "markoDevTools.config.testOptions" is not permitted. Please just use "markoDevTools.config.testOptions"'));
+        }
+
+        testOptions = testOptions || phantomOptions;
 
         var browserBuilderConfig = Object.assign(
             {
@@ -202,7 +216,7 @@ function startServer(tests, options, devTools) {
 
                 resolve({
                     url,
-                    phantomOptions,
+                    testOptions,
                     stopServer: function() {
                         server.close();
                     }
@@ -224,14 +238,14 @@ exports.run = function(allTests, options, devTools) {
     return startServer(filteredTests, options, devTools)
         .then((result) => {
             console.log(`Running "${result.url}" using mocha-phantomjs...`);
-            var mochaPhantomJSOptions = result.phantomOptions || { useColors: true };
+            let testOptions = result.testOptions || { useColors: true };
 
             if (shouldCover) {
-                mochaPhantomJSOptions.hooks = 'mocha-phantomjs-istanbul';
-                mochaPhantomJSOptions.coverageFile = getCoverageFile();
+                testOptions.hooks = 'mocha-phantomjs-istanbul';
+                testOptions.coverageFile = getCoverageFile();
             }
 
-            return spawn(phantomjsBinPath, [mochaPhantomJSBin, result.url, 'spec', JSON.stringify(mochaPhantomJSOptions)], {
+            return spawn(phantomjsBinPath, [mochaPhantomJSBin, result.url, 'spec', JSON.stringify(testOptions)], {
                 stdio: 'inherit'
             }).then(function() {
                 if(!options.noExit) process.exit(0);
