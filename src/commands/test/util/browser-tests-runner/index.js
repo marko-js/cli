@@ -69,7 +69,12 @@ function startServer(tests, options, devTools) {
             devTools.config.browserBuilder || {});
 
         if (shouldCover) {
-            browserBuilderConfig.require.transforms.unshift({ transform: require('lasso-istanbul-instrument-transform') });
+            browserBuilderConfig.require.transforms.unshift({
+                transform: require('lasso-istanbul-instrument-transform'),
+                config: {
+                    extensions: ['.marko', '.js', '.es6']
+                }
+            });
         }
 
         var testDependencies = [];
