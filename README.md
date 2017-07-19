@@ -274,6 +274,32 @@ module.exports = function(markoDevTools) {
 }
 ```
 
+
+### Configuring PhantomJS
+
+You can easily configure PhantomJS using `markoDevTools.config.phantomOptions`.
+[Supported `mocha-phantomjs-core` options](https://github.com/nathanboktae/mocha-phantomjs-core):
+
+- `reporter` `{String}`: One of mocha's built in reporters, or a full path to a file for a 3rd party reporter
+- `grep` `{String}`: A string to pass to mocha.grep() to filter tests. also provide invert: true if you want to invert the grep and filter out tests.
+- `useColors` `{Boolean}`: Boolean. Force or suppress color usage. Defaults to what your terminal supports.
+- `bail` `{Boolean}`: Stop the test run at the first failure if `true`. Defaults to `false`.
+- `ignoreResourceErrors` `{Boolean}`: Suppress the resource failure output that `mocha-phantomjs-core` will output by default.
+- `loadTimeout` `{Number}`: Time in milliseconds after the page loads that mocha.run needs to be called. Defaults to 10 seconds.
+- `timeout` `{Number}`: Sets mocha's root suite timeout. Defers to `mocha`'s default if omitted.
+- `viewportSize` `{String}`: Sets the viewport size. Specify height and width (e.g. `"{\"viewportSize\":{\"width\":720,\"height\":480}}"`)
+
+_my-app/marko-devtools.js:_
+
+```javascript
+module.exports = function(markoDevTools) {
+    markoDevTools.config.phantomOptions = {
+        timeout: 5000, // Defaults to 2000ms
+        useColors: true // Defaults to true
+    };
+}
+```
+
 # TODO
 
 - Don't write compiled templates to disk
