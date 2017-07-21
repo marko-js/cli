@@ -1,4 +1,4 @@
-Marko DevTools
+Marko CLI
 ==============
 
 Developer tools for Marko.
@@ -8,13 +8,13 @@ Developer tools for Marko.
 Global installation:
 
 ```bash
-npm install marko-devtools --global
+npm install marko-cli --global
 ```
 
 Local installation:
 
 ```bash
-npm install marko-devtools --save-dev
+npm install marko-cli --save-dev
 ```
 
 # Usage
@@ -85,7 +85,7 @@ marko test ./src/components/**/test*server.js --server
 
 # Component testing
 
-Marko DevTools includes a testing framework (built on top of [mocha](https://mochajs.org/)) that targets UI components built using Marko or Marko Widgets. Each UI
+Marko CLI includes a testing framework (built on top of [mocha](https://mochajs.org/)) that targets UI components built using Marko or Marko Widgets. Each UI
 component may include test files alongside components or in a `test/` directory that consists of one or more JavaScript test files with a name in any of the
 following formats:
 
@@ -194,17 +194,17 @@ nyc marko test
 
 # Plugins
 
-Marko DevTools supports plugins as JavaScript functions:
+Marko CLI supports plugins as JavaScript functions:
 
 ```javascript
-module.exports = function(markoDevTools) {
+module.exports = function(markoCli) {
     // Run any initialization code:
     require('app-module-path').addPath(__dirname);
 
     // Register new commands...
     //
     // Add support for: `marko my-command arg0 arg1 ... argn`
-    markoDevTools.addCommand('my-command', {
+    markoCli.addCommand('my-command', {
         run(options) {
             return new Promise((resolve, reject) => {
                 // Run the command
@@ -217,31 +217,31 @@ module.exports = function(markoDevTools) {
         }
     });
 
-    markoDevTools.plugin(require('marko-devtools-my-plugin'));
+    markoCli.plugin(require('marko-cli-my-plugin'));
 }
 ```
 
-## `marko-devtools.js`
+## `marko-cli.js`
 
-You can provide a package-specific plugin by creating a `marko-devtools.js` file at the root of your project:
+You can provide a package-specific plugin by creating a `marko-cli.js` file at the root of your project:
 
-_my-app/marko-devtools.js:_
+_my-app/marko-cli.js:_
 
 ```javascript
-module.exports = function(markoDevTools) {
+module.exports = function(markoCli) {
     // ...
 }
 ```
 
 A package-specific plugin will automatically be loaded when `marko` is launched.
 
-Some options can be specified on the `config` object that `markoDevTools` exposes.
+Some options can be specified on the `config` object that `markoCli` exposes.
 
 For example, shared test dependencies can be specified with the `dependencies` option.
 
 ```javascript
-module.exports = function(markoDevTools) {
-    markoDevTools.config.browserTestDependencies = [
+module.exports = function(markoCli) {
+    markoCli.config.browserTestDependencies = [
         'bluebird/js/browser/bluebird.core.js',
         'require-run: ./tools/myDependency.js',
     ];
@@ -254,11 +254,11 @@ For more info on how to specify dependencies can be found [here](https://github.
 
 Lasso plugins and transforms can also be specified using the `browserBuilder` option.
 
-_my-app/marko-devtools.js:_
+_my-app/marko-cli.js:_
 
 ```javascript
-module.exports = function(markoDevTools) {
-    markoDevTools.config.browserBuilder = {
+module.exports = function(markoCli) {
+    markoCli.config.browserBuilder = {
         plugins: [
             'lasso-marko',
             'lasso-less'
@@ -277,14 +277,14 @@ module.exports = function(markoDevTools) {
 
 ### Configuring PhantomJS
 
-You can configure PhantomJS for browser tests using `markoDevTools.config.phantomOptions`.
+You can configure PhantomJS for browser tests using `markoCli.config.phantomOptions`.
 [Supported `mocha-phantomjs-core` options](https://github.com/nathanboktae/mocha-phantomjs-core#config):
 
-_my-app/marko-devtools.js:_
+_my-app/marko-cli.js:_
 
 ```javascript
-module.exports = function(markoDevTools) {
-    markoDevTools.config.phantomOptions = {
+module.exports = function(markoCli) {
+    markoCli.config.phantomOptions = {
         timeout: 5000,
         useColors: true
     };
@@ -293,15 +293,15 @@ module.exports = function(markoDevTools) {
 
 ### Configuring Mocha
 
-You can easily configure Mocha for server-side tests using `markoDevTools.config.mochaOptions`.
+You can easily configure Mocha for server-side tests using `markoCli.config.mochaOptions`.
 [Supported `mocha` options](https://mochajs.org/#usage), and should be written
 in camel case:
 
-_my-app/marko-devtools.js:_
+_my-app/marko-cli.js:_
 
 ```javascript
-module.exports = function(markoDevTools) {
-    markoDevTools.config.mochaOptions = {
+module.exports = function(markoCli) {
+    markoCli.config.mochaOptions = {
         timeout: 5000,
         colors: true
     };
