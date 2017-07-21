@@ -59,7 +59,7 @@ exports.run = function(allTests, options, devTools) {
             stdio: 'inherit'
         })
         .catch((err) => {
-            console.error('Error spawning mocha from marko-devtools', err);
+            console.error('Error spawning mocha from marko-cli', err);
             process.exit(1);
         });
 };

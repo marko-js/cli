@@ -14,7 +14,7 @@ class MarkoDevTools extends EventEmitter {
         this._rootPackage = lassoPackageRoot.getRootPackage(this.cwd);
         this._commands = undefined;
         this.config = {
-            workDir: path.join(this.packageRoot, '.marko-devtools')
+            workDir: path.join(this.packageRoot, '.marko-cli')
         };
 
         this._loadPackagePlugin();
@@ -66,7 +66,7 @@ class MarkoDevTools extends EventEmitter {
             var packagePluginPath;
 
             try {
-                packagePluginPath = require.resolve(path.join(rootDir, 'marko-devtools'));
+                packagePluginPath = require.resolve(path.join(rootDir, 'marko-cli'));
             } catch(e) {}
 
             if (packagePluginPath) {

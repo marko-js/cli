@@ -1,10 +1,10 @@
 {
-  "name": "marko-devtools",
+  "name": "marko-cli",
   "version": "1.0.15",
-  "description": "Marko DevTools",
+  "description": "Marko CLI",
   "repository": {
     "type": "git",
-    "url": "https://github.com/marko-js/marko-devtools.git"
+    "url": "https://github.com/marko-js/marko-cli.git"
   },
   "main": "src/index.js",
   "author": "Michael Rawlings <ml.rawlings@gmail.com>",
