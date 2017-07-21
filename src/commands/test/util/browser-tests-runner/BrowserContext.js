@@ -7,7 +7,7 @@ var objectAssign = require('object-assign');
 function _getRenderedComponent (wrappedRenderResult) {
   if (!wrappedRenderResult._widget) {
     var renderedResult = wrappedRenderResult._renderResult
-        .appendTo(document.getElementById('testsTarget'))
+        .appendTo(wrappedRenderResult.container);
 
     var component;
     if (renderedResult.getComponent) {
@@ -42,6 +42,10 @@ WrappedRenderResult.prototype = {
 
         return this._$;
     },
+
+    get container() {
+        return document.getElementById('testsTarget');
+    }
 
     get component() {
         return _getRenderedComponent(this);
