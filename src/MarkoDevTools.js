@@ -4,6 +4,7 @@ var EventEmitter = require('events').EventEmitter;
 var lassoPackageRoot = require('lasso-package-root');
 var resolveFrom = require('resolve-from');
 var path = require('path');
+var complain = require('complain');
 var Commands = require('./Commands');
 
 class MarkoDevTools extends EventEmitter {
@@ -52,6 +53,8 @@ class MarkoDevTools extends EventEmitter {
     }
 
     runCommand(commandName, args) {
+        complain('"marko-devtools" is deprecated. Please use "marko-cli" instead.');
+
         var command = this.commands.get(commandName);
         if (!command) {
             throw new Error('Command not found: ' + commandName);
