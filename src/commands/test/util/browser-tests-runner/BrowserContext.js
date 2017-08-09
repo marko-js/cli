@@ -45,7 +45,7 @@ WrappedRenderResult.prototype = {
 
     get container() {
         return document.getElementById('testsTarget');
-    }
+    },
 
     get component() {
         return _getRenderedComponent(this);
