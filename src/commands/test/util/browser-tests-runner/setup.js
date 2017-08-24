@@ -1,11 +1,13 @@
 var BrowserContext = require('./BrowserContext');
 
-if (window.initMochaPhantomJS === 'function') {
-    window.initMochaPhantomJS();
+if (window.location.hash === '#headless') {
+    window.mocha.reporter('spec');
+    window.mocha.useColors('true');
+} else {
+    window.mocha.reporter('html');
 }
 
 window.mocha.ui('bdd');
-window.mocha.reporter('html');
 
 require('chai').config.includeStack = true;
 
