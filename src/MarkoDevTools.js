@@ -1,10 +1,20 @@
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var lassoPackageRoot = require('lasso-package-root');
-var resolveFrom = require('resolve-from');
-var path = require('path');
-var Commands = require('./Commands');
+const EventEmitter = require('events').EventEmitter;
+const lassoPackageRoot = require('lasso-package-root');
+const resolveFrom = require('resolve-from');
+const path = require('path');
+const Commands = require('./Commands');
+const complain = require('complain');
+
+function getPackagePluginPath (markoCli, fileName) {
+    const rootDir = markoCli._rootPackage.__dirname;
+    try {
+        return require.resolve(path.join(rootDir, fileName));
+    } catch (err) {
+        // Ignore error. The config file is optional.
+    }
+}
 
 class MarkoDevTools extends EventEmitter {
     constructor(cwd) {
@@ -62,12 +72,15 @@ class MarkoDevTools extends EventEmitter {
 
     _loadPackagePlugin() {
         if (this._rootPackage) {
-            let rootDir = this._rootPackage.__dirname;
-            var packagePluginPath;
+            let packagePluginPath = getPackagePluginPath(this, 'marko-cli');
 
-            try {
-                packagePluginPath = require.resolve(path.join(rootDir, 'marko-cli'));
-            } catch(e) {}
+            if (!packagePluginPath) {
+                packagePluginPath = getPackagePluginPath(this, 'marko-devtools');
+
+                if (packagePluginPath) {
+                    complain(`The "marko-devtools.js" file found at path "${packagePluginPath}" is deprecated. Please use "marko-cli.js" instead.`);
+                }
+            }
 
             if (packagePluginPath) {
                 var plugin = require(packagePluginPath);
