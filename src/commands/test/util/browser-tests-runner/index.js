@@ -209,7 +209,7 @@ function startServer(tests, options, devTools) {
     });
 }
 
-exports.run = async function(allTests, options, devTools) {
+exports.run = function(allTests, options, devTools) {
     var filteredTests = allTests.filter((test) => {
         return test.env === 'browser' || test.env === 'both';
     });
@@ -218,43 +218,53 @@ exports.run = async function(allTests, options, devTools) {
         return;
     }
 
-    const result = await startServer(filteredTests, options, devTools);
-    const browser = await puppeteer.launch();
+    return startServer(filteredTests, options, devTools).then(result => {
+        return puppeteer.launch().then(browser =>
+            Promise.all([browser.version(), browser.newPage()])
+        ).then(([version, page]) => {
+            console.log(`Launching tests using ${version}`);
 
-    console.log(`Launching tests using ${await browser.version()}`);
+            page.on('console', (...args) => {
+                let label = args[0];
 
-    const page = await browser.newPage();
+                if (label === 'stdout:') {
+                    // mocha writes control characters
+                    // to process.stdout.  we'll ignore these
+                } else if (label === 'result:') {
+                    let result = args[1];
 
-    page.on('console', (...args) => {
-        let label = args[0];
+                    console.log('');
 
-        if (label === 'stdout:') {
-            // mocha writes control characters
-            // to process.stdout.  we'll ignore these
-        } else if (label === 'result:') {
-            let result = args[1];
+                    if (result.coverage) {
+                        fs.writeFileSync(getCoverageFile(), JSON.stringify(result.coverage));
+                    }
 
-            console.log('');
+                    if (!options.noExit) {
+                        process.exit(result.success ? 0 : 1);
+                    }
+                } else {
+                    console.log(...args);
+                }
+            });
 
-            if (result.coverage) {
-                fs.writeFileSync(getCoverageFile(), JSON.stringify(result.coverage));
-            }
+            page.on('error', (...args) => {
+                console.error(...args)
+            });
 
-            if (!options.noExit) {
-                process.exit(result.success ? 0 : 1);
-            }
-        } else {
-            console.log(...args);
-        }
+            page.on('pageerror', (...args) => {
+                console.error(...args)
+            });
+
+            let browserOptions = {
+                mocha: Object.assign(
+                    { reporter:'spec', useColors:true },
+                    devTools.config.mochaOptions
+                )
+            };
+
+            let optionsHash = JSON.stringify(browserOptions);
+
+            return page.goto(result.url+'?'+optionsHash);
+        });
     });
-
-    page.on('error', (...args) => {
-        console.error(...args)
-    });
-
-    page.on('pageerror', (...args) => {
-        console.error(...args)
-    });
-
-    await page.goto(result.url+'#headless');
 };
