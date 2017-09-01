@@ -274,23 +274,6 @@ module.exports = function(markoCli) {
 }
 ```
 
-
-### Configuring PhantomJS
-
-You can configure PhantomJS for browser tests using `markoCli.config.phantomOptions`.
-[Supported `mocha-phantomjs-core` options](https://github.com/nathanboktae/mocha-phantomjs-core#config):
-
-_my-app/marko-cli.js:_
-
-```javascript
-module.exports = function(markoCli) {
-    markoCli.config.phantomOptions = {
-        timeout: 5000,
-        useColors: true
-    };
-}
-```
-
 ### Configuring Mocha
 
 You can easily configure Mocha for server-side tests using `markoCli.config.mochaOptions`.
