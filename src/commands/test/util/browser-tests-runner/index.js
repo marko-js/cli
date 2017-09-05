@@ -60,7 +60,7 @@ function startServer(tests, options, devTools) {
                 fingerprintsEnabled: false,
                 minify: false,
                 plugins: [
-                    'lasso-marko'
+                    require.resolve('lasso-marko')
                 ],
                 require: {
                     transforms: []
