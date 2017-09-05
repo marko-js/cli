@@ -6,12 +6,12 @@ const execSync = require('child_process').execSync;
 module.exports = function initGitRepo(directoryPath, spinner) {
   if (hasGit() && !isGitRepo() && !isMercurialRepo()) {
     spinner.text = 'Initializing repo...';
-    return execAll(
+    return execAll([
       `cd ${directoryPath}`,
       `git init`,
       `git add .`,
       `git commit -m "${commitMessage}"`
-    );
+    ]);
   } else {
     return Promise.resolve();
   }
@@ -38,7 +38,7 @@ function tryCommand(cmd) {
   }
 }
 
-function execAll(...cmds) {
+function execAll(cmds) {
   return new Promise((resolve, reject) => {
     exec(cmds.join(' && '), (err) => {
       if (err) reject(err);
