@@ -1,9 +1,9 @@
 const runner = window.mocha.run()
 
-let success = true
+let success = true;
 
 runner.once('fail', () => {
-    success = false
+    success = false;
 });
 
 runner.on('end', (event) => {
