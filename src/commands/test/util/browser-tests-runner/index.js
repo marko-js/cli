@@ -8,14 +8,12 @@ var express = require('express');
 var lasso = require('lasso');
 var path = require('path');
 var defaultPageTemplate = require('./page-template.marko');
-var spawn = require('child-process-promise').spawn;
 var fs = require('fs');
-var mochaPhantomJSBin = require.resolve('mocha-phantomjs-core');
-var phantomjsBinPath = require('phantomjs-prebuilt').path;
 var resolveFrom = require('resolve-from');
 var shouldCover = !!process.env.NYC_CONFIG;
 var parseRequire = require('lasso-require/src/util/parseRequire');
 var porti = require('porti');
+var puppeteer = require('puppeteer');
 
 function getCoverageFile() {
     return './.nyc_output/'+Math.floor(Math.random()*100000000)+'.json';
@@ -196,7 +194,6 @@ function startServer(tests, options, devTools) {
                 }
 
                 process.on('exit', function () {
-                    console.log('Exiting, closing server...');
                     server.close();
                 });
 
@@ -221,22 +218,61 @@ exports.run = function(allTests, options, devTools) {
         return;
     }
 
-    return startServer(filteredTests, options, devTools)
-        .then((result) => {
-            console.log(`Running "${result.url}" using mocha-phantomjs...`);
-            var mochaPhantomJSOptions = result.phantomOptions || { useColors: true };
+    return startServer(filteredTests, options, devTools).then(result => {
+        return puppeteer.launch().then(browser =>
+            Promise.all([browser.version(), browser.newPage()])
+        ).then(([version, page]) => {
+            return new Promise((resolve, reject) => {
+                console.log(`Launching tests using ${version}`);
 
-            if (shouldCover) {
-                mochaPhantomJSOptions.hooks = 'mocha-phantomjs-istanbul';
-                mochaPhantomJSOptions.coverageFile = getCoverageFile();
-            }
+                page.on('console', (...args) => {
+                    const label = args[0];
 
-            return spawn(phantomjsBinPath, [mochaPhantomJSBin, result.url, 'spec', JSON.stringify(mochaPhantomJSOptions)], {
-                stdio: 'inherit'
-            }).then(function() {
-                if(!options.noExit) process.exit(0);
-            }).catch(function(e) {
-                if(!options.noExit) process.exit(1);
+                    if (label === 'stdout:') {
+                        // mocha writes control characters
+                        // to process.stdout.  we'll ignore these
+                    } else if (label === 'result:') {
+                        const result = args[1];
+
+                        console.log('');
+
+                        if (result.coverage) {
+                            fs.writeFileSync(getCoverageFile(), JSON.stringify(result.coverage));
+                        }
+
+                        if (!options.noExit) {
+                            process.exit(result.success ? 0 : 1);
+                        }
+                    } else {
+                        console.log(...args);
+                    }
+                });
+
+                page.on('error', (...args) => {
+                    console.error(...args);
+                    reject(...args);
+                });
+
+                page.on('pageerror', (...args) => {
+                    console.error(...args);
+                    reject(...args);
+                });
+
+                const mochaOptions = Object.assign({
+                    reporter: 'spec',
+                    useColors: true
+                }, devTools.config.mochaOptions);
+
+                const browserOptions = {
+                    mocha: mochaOptions
+                };
+
+                const optionsHash = JSON.stringify(browserOptions);
+
+                return page.goto(result.url + '?' + optionsHash)
+                    .then(resolve)
+                    .catch(reject);
             });
         });
+    });
 };

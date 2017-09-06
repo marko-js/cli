@@ -1,11 +1,21 @@
 var BrowserContext = require('./BrowserContext');
+var options = {};
 
-if (window.initMochaPhantomJS === 'function') {
-    window.initMochaPhantomJS();
+if (window.location.search) {
+    try {
+        options = JSON.parse(decodeURIComponent(window.location.search.slice(1)))
+    } catch(e) {
+        console.error(e);
+    }
 }
 
-window.mocha.ui('bdd');
-window.mocha.reporter('html');
+var mochaOptions = Object.assign({ reporter:'html', ui:'bdd' }, options.mocha);
+
+Object.keys(mochaOptions).forEach(function(key) {
+    if (typeof window.mocha[key] === 'function') {
+        window.mocha[key](mochaOptions[key]);
+    }
+});
 
 require('chai').config.includeStack = true;
 
