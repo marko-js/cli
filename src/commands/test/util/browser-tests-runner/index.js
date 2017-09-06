@@ -222,49 +222,57 @@ exports.run = function(allTests, options, devTools) {
         return puppeteer.launch().then(browser =>
             Promise.all([browser.version(), browser.newPage()])
         ).then(([version, page]) => {
-            console.log(`Launching tests using ${version}`);
+            return new Promise((resolve, reject) => {
+                console.log(`Launching tests using ${version}`);
 
-            page.on('console', (...args) => {
-                let label = args[0];
+                page.on('console', (...args) => {
+                    const label = args[0];
 
-                if (label === 'stdout:') {
-                    // mocha writes control characters
-                    // to process.stdout.  we'll ignore these
-                } else if (label === 'result:') {
-                    let result = args[1];
+                    if (label === 'stdout:') {
+                        // mocha writes control characters
+                        // to process.stdout.  we'll ignore these
+                    } else if (label === 'result:') {
+                        const result = args[1];
 
-                    console.log('');
+                        console.log('');
 
-                    if (result.coverage) {
-                        fs.writeFileSync(getCoverageFile(), JSON.stringify(result.coverage));
+                        if (result.coverage) {
+                            fs.writeFileSync(getCoverageFile(), JSON.stringify(result.coverage));
+                        }
+
+                        if (!options.noExit) {
+                            process.exit(result.success ? 0 : 1);
+                        }
+                    } else {
+                        console.log(...args);
                     }
+                });
 
-                    if (!options.noExit) {
-                        process.exit(result.success ? 0 : 1);
-                    }
-                } else {
-                    console.log(...args);
-                }
+                page.on('error', (...args) => {
+                    console.error(...args);
+                    reject(...args);
+                });
+
+                page.on('pageerror', (...args) => {
+                    console.error(...args);
+                    reject(...args);
+                });
+
+                const mochaOptions = Object.assign({
+                    reporter: 'spec',
+                    useColors: true
+                }, devTools.config.mochaOptions);
+
+                const browserOptions = {
+                    mocha: mochaOptions
+                };
+
+                const optionsHash = JSON.stringify(browserOptions);
+
+                return page.goto(result.url + '?' + optionsHash)
+                    .then(resolve)
+                    .catch(reject);
             });
-
-            page.on('error', (...args) => {
-                console.error(...args)
-            });
-
-            page.on('pageerror', (...args) => {
-                console.error(...args)
-            });
-
-            let browserOptions = {
-                mocha: Object.assign(
-                    { reporter:'spec', useColors:true },
-                    devTools.config.mochaOptions
-                )
-            };
-
-            let optionsHash = JSON.stringify(browserOptions);
-
-            return page.goto(result.url+'?'+optionsHash);
         });
     });
 };

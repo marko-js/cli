@@ -5,6 +5,8 @@ Developer tools for Marko.
 
 # Installation
 
+**Requires Node 6+**
+
 Global installation:
 
 ```bash
