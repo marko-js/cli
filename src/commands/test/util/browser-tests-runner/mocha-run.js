@@ -6,7 +6,7 @@ runner.once('fail', () => {
     success = false
 });
 
-runner.on('end', async (event) => {
+runner.on('end', (event) => {
     console.log('result:', {
         success,
         coverage: window.__coverage__
