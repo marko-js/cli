@@ -35,7 +35,7 @@
     "object-assign": "^4.1.0",
     "ora": "^1.2.0",
     "porti": "^1.0.2",
-    "puppeteer": "^0.10.1",
+    "puppeteer": "^0.10.2",
     "raptor-renderer": "^1.4.6",
     "resolve-from": "^2.0.0",
     "unzip": "^0.1.11"
