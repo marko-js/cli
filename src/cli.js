@@ -1,6 +1,11 @@
 var MarkoDevTools = require('./MarkoDevTools');
+const checkForMarkoCliUpdates = require('./util/checkForMarkoCliUpdates');
 
 exports.run = function(argv) {
+    if (process.env.SKIP_UPDATE_CHECK !== '1') {
+        checkForMarkoCliUpdates();
+    }
+
     var markoDevTools = new MarkoDevTools();
 
     var commandName = argv[2];
