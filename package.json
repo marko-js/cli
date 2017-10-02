@@ -49,6 +49,7 @@
     "marko": "bin/marko"
   },
   "devDependencies": {
-    "ava": "^0.22.0"
+    "ava": "^0.22.0",
+    "require-self-ref": "^2.0.1"
   }
 }
