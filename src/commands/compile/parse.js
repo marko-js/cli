@@ -20,6 +20,10 @@ module.exports = function parse(argv) {
             '--files --file -f *': {
                 type: 'string[]',
                 description: 'File patterns'
+            },
+            '--ignore -i': {
+                type: 'string[]',
+                description: 'File patterns to ignore'
             }
         })
         .usage('Usage: $0 [options]')

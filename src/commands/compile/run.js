@@ -16,6 +16,10 @@ module.exports = function run(options, devTools) {
 
     globOptions.cwd = devTools.cwd;
 
+    if (options.ignore) {
+        globOptions.ignore = options.ignore;
+    }
+
     return Promise.all(options.patterns.map((pattern) =>
         new Promise((resolve, reject) => {
             glob(pattern, globOptions, function (err, files) {
