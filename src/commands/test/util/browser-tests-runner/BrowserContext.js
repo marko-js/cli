@@ -85,15 +85,22 @@ BrowserContext.prototype = {
             renderResult = component.renderSync(data);
             if (!renderResult.html) {
                 // this is a v4 component
-                var docFragment = renderResult.getOutput().actualize(document);
+                var output = renderResult.getOutput();
+                var html;
 
-                // generate html from childNodes
-                var html = '';
-                if (docFragment.hasChildNodes()) {
-                    var children = docFragment.childNodes;
-                    for (var i = 0; i < children.length; i++) {
-                        html += children[i].outerHTML;
+                if (output.actualize) {
+                    var docFragment = output.actualize(document);
+
+                    // generate html from childNodes
+                    html = '';
+                    if (docFragment.hasChildNodes()) {
+                        var children = docFragment.childNodes;
+                        for (var i = 0; i < children.length; i++) {
+                            html += children[i].outerHTML;
+                        }
                     }
+                } else {
+                    html = output.toString();
                 }
 
                 renderResult.html = html;
