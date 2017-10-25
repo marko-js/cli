@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
 module.exports = function printDeclaration(node, printContext, writer) {
-    var declaration = node.declaration.value;
+  var declaration = node.declaration.value;
 
-    if (printContext.preserveWhitespace !== true) {
-        declaration = declaration.trim();
-    }
+  if (printContext.preserveWhitespace !== true) {
+    declaration = declaration.trim();
+  }
 
-    writer.write('<?' + declaration + '?>');
+  writer.write("<?" + declaration + "?>");
 };
