@@ -1,28 +1,30 @@
-var path = require('path');
-var prettyPrintAST = require('./prettyPrintAST');
-var getMarkoCompiler = require('./util/getMarkoCompiler');
+var path = require("path");
+var prettyPrintAST = require("./prettyPrintAST");
+var getMarkoCompiler = require("./util/getMarkoCompiler");
 
 module.exports = function prettyPrintSource(src, options) {
-    if (!options) {
-        throw new Error('"options" argument is required and "filename" is a required property');
-    }
+  if (!options) {
+    throw new Error(
+      '"options" argument is required and "filename" is a required property'
+    );
+  }
 
-    var filename = options.filename;
+  var filename = options.filename;
 
-    if (!filename) {
-        throw new Error('The "filename" option is required');
-    }
+  if (!filename) {
+    throw new Error('The "filename" option is required');
+  }
 
-    options = Object.assign({}, options);
+  options = Object.assign({}, options);
 
-    src = src.replace(/(\r\n|\r)/g, '\n');
+  src = src.replace(/(\r\n|\r)/g, "\n");
 
-    var dirname = path.dirname(filename);
-    options.dirname = dirname;
+  var dirname = path.dirname(filename);
+  options.dirname = dirname;
 
-    var markoCompiler = options.markoCompiler || getMarkoCompiler(dirname);
-    options.markoCompiler = markoCompiler;
+  var markoCompiler = options.markoCompiler || getMarkoCompiler(dirname);
+  options.markoCompiler = markoCompiler;
 
-    var ast = markoCompiler.parseRaw(src, filename);
-    return prettyPrintAST(ast, options);
+  var ast = markoCompiler.parseRaw(src, filename);
+  return prettyPrintAST(ast, options);
 };

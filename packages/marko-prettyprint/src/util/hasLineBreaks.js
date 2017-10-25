@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 module.exports = function hasLineBreaks(str) {
-    return /\n/.test(str);
+  return /\n/.test(str);
 };
