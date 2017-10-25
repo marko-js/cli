@@ -58,10 +58,17 @@ function handleCodeTag(node, printContext, writer) {
 
   if (codeTagInfo.prettyprint === true) {
     if (codeTagInfo.type === "js") {
+      if (tagName === "static") {
+        outputCode = outputCode.replace(/^\s*static\s*/, "");
+      }
       outputCode = jsBeautify(outputCode, {
         indent_char: printContext.indentString[0],
         indent_size: printContext.indentString.length
-      });
+      }).trim();
+
+      if (tagName === "static") {
+        outputCode = "static " + outputCode;
+      }
     } else if (codeTagInfo.type === "css") {
       let cssCodeStart = outputCode.indexOf("{");
       let cssCodeEnd = outputCode.lastIndexOf("}");
