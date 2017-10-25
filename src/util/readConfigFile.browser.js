@@ -1,5 +1,5 @@
 function readConfigFile(filename) {
-    return {};
+  return {};
 }
 
 module.exports = readConfigFile;
