@@ -7,8 +7,9 @@ const printers = require("./printers");
 const Writer = require("./util/Writer");
 const formattingTags = require("./formatting-tags");
 const trim = require("./util/trim");
-const jsBeautify = require("js-beautify").js_beautify;
-const cssBeautify = require("cssbeautify");
+
+const beautifyJS = require("./util/beautifyJS");
+const beautifyCSS = require("cssbeautify");
 const redent = require("redent");
 
 const codeTags = {
@@ -61,10 +62,7 @@ function handleCodeTag(node, printContext, writer) {
       if (tagName === "static") {
         outputCode = outputCode.replace(/^\s*static\s*/, "");
       }
-      outputCode = jsBeautify(outputCode, {
-        indent_char: printContext.indentString[0],
-        indent_size: printContext.indentString.length
-      }).trim();
+      outputCode = beautifyJS(outputCode, printContext);
 
       if (tagName === "static") {
         outputCode = "static " + outputCode;
@@ -75,7 +73,7 @@ function handleCodeTag(node, printContext, writer) {
       let beforeCode = outputCode.substring(0, cssCodeStart);
       let afterCode = outputCode.substring(cssCodeEnd);
       let cssCode = outputCode.substring(cssCodeStart + 1, cssCodeEnd);
-      cssCode = cssBeautify(cssCode, {
+      cssCode = beautifyCSS(cssCode, {
         indent: printContext.indentString
       });
       cssCode = redent(cssCode, 1, printContext.indentString);
