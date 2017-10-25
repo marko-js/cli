@@ -9,6 +9,12 @@ var constants = require("./constants");
 
 var SYNTAX_HTML = constants.SYNTAX_HTML;
 
+const breakAfterTags = {
+  class: true,
+  static: true,
+  style: true
+};
+
 function inspectNodes(nodes) {
   var allSimple = true;
   var hasSpaceAfterIndexes = {};
@@ -110,11 +116,28 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
     }
   }
 
-  var prevChild;
-  var firstChild;
+  let prevChild;
+  let firstChild;
+  let prevElement;
 
   nodes.forEach((child, i) => {
     var childWriter = new Writer(writer.col);
+
+    if (
+      printContext.preserveWhitespace !== true &&
+      printContext.depth === 0 &&
+      prevChild
+    ) {
+      // Insert line break after a group of imports
+      if (child.tagName !== "import" && prevChild.tagName === "import") {
+        writer.write(printContext.eol);
+      }
+
+      // Insert line break between certain top-level tags
+      if (breakAfterTags[prevChild.tagName]) {
+        writer.write(printContext.eol);
+      }
+    }
 
     printers.printNode(child, printContext, childWriter);
 
@@ -162,6 +185,11 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
       }
     }
     prevChild = child;
+    if (child.type === "HtmlElement") {
+      prevElement = child;
+    } else if (child.type != "Text") {
+      prevElement = null;
+    }
   });
 
   if (printContext.isHtmlSyntax && printContext.preserveWhitespace !== true) {
