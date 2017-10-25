@@ -7,12 +7,27 @@ const printers = require("./printers");
 const Writer = require("./util/Writer");
 const formattingTags = require("./formatting-tags");
 const trim = require("./util/trim");
+const jsBeautify = require("js-beautify").js_beautify;
+const cssBeautify = require("cssbeautify");
+const redent = require("redent");
 
 const codeTags = {
-  class: true,
-  import: true,
-  static: true,
-  style: true
+  class: {
+    type: "js",
+    prettyprint: true
+  },
+  import: {
+    type: "js",
+    prettyprint: false
+  },
+  static: {
+    type: "js",
+    prettyprint: true
+  },
+  style: {
+    type: "css",
+    prettyprint: true
+  }
 };
 
 function isComponentStyleTag(node) {
@@ -26,17 +41,42 @@ function isComponentStyleTag(node) {
   return /\s*\{/.test(lastAttr.name);
 }
 
-function handleCodeTag(node, writer) {
+function handleCodeTag(node, printContext, writer) {
   var tagName = node.tagName;
 
-  if (!codeTags[tagName]) {
+  let codeTagInfo = codeTags[tagName];
+
+  if (!codeTagInfo) {
     return false;
   }
 
   if (tagName === "style" && !isComponentStyleTag(node)) {
     return false;
   }
-  writer.write(node.tagString);
+
+  let outputCode = node.tagString;
+
+  if (codeTagInfo.prettyprint === true) {
+    if (codeTagInfo.type === "js") {
+      outputCode = jsBeautify(outputCode, {
+        indent_char: printContext.indentString[0],
+        indent_size: printContext.indentString.length
+      });
+    } else if (codeTagInfo.type === "css") {
+      let cssCodeStart = outputCode.indexOf("{");
+      let cssCodeEnd = outputCode.lastIndexOf("}");
+      let beforeCode = outputCode.substring(0, cssCodeStart);
+      let afterCode = outputCode.substring(cssCodeEnd);
+      let cssCode = outputCode.substring(cssCodeStart + 1, cssCodeEnd);
+      cssCode = cssBeautify(cssCode, {
+        indent: printContext.indentString
+      });
+      cssCode = redent(cssCode, 1, printContext.indentString);
+      outputCode = beforeCode + "{\n" + cssCode + afterCode;
+    }
+  }
+
+  writer.write(outputCode);
 
   return true;
 }
@@ -48,7 +88,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     printContext = printContext.startPreservingWhitespace();
   }
 
-  if (printContext.depth === 0 && handleCodeTag(node, writer)) {
+  if (printContext.depth === 0 && handleCodeTag(node, printContext, writer)) {
     return;
   }
 
