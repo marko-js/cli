@@ -66,7 +66,7 @@ _my-project/.marko-prettyprint:_
 ```json
 {
     "indent": "\t",
-    "syntax": "concise",    
+    "syntax": "concise"
 }
 ```
 
