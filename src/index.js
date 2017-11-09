@@ -1,5 +1,5 @@
-var MarkoDevTools = require('./MarkoDevTools');
+var MarkoDevTools = require("./MarkoDevTools");
 
 exports.create = function(cwd) {
-    return new MarkoDevTools(cwd);
+  return new MarkoDevTools(cwd);
 };

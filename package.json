@@ -31,6 +31,7 @@
     "lasso-marko": "^2.3.0",
     "lasso-package-root": "^1.0.0",
     "lasso-require": "^3.4.1",
+    "marko-prettyprint": "^1.3.6",
     "mkdirp": "^0.5.1",
     "mocha": "^2",
     "object-assign": "^4.1.0",
@@ -50,6 +51,7 @@
   },
   "devDependencies": {
     "ava": "^0.22.0",
+    "prettier": "^1.7.4",
     "require-self-ref": "^2.0.1"
   }
 }

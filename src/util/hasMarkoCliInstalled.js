@@ -1,8 +1,8 @@
-function dependenciesHasMarkoCli (dependencies) {
+function dependenciesHasMarkoCli(dependencies) {
   if (dependencies) {
     const packageNames = Object.keys(dependencies);
     for (const packageName of packageNames) {
-      if (packageName === 'marko-cli') {
+      if (packageName === "marko-cli") {
         return true;
       }
     }
@@ -11,7 +11,7 @@ function dependenciesHasMarkoCli (dependencies) {
   return false;
 }
 
-module.exports = function (pkg) {
+module.exports = function(pkg) {
   if (dependenciesHasMarkoCli(pkg.dependencies)) {
     return true;
   }

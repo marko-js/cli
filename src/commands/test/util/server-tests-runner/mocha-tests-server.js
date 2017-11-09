@@ -1,88 +1,92 @@
-'use strict';
+"use strict";
 /* globals describe,it */
 
-var path = require('path');
+var path = require("path");
 var markoDevToolsRoot = process.env.MARKO_DEVTOOLS_ROOT;
-var MarkoDevTools = require(path.join(markoDevToolsRoot, 'MarkoDevTools'));
+var MarkoDevTools = require(path.join(markoDevToolsRoot, "MarkoDevTools"));
 
-require('marko/node-require').install();
+require("marko/node-require").install();
 
-function requireNoOp(module, filename) { /* no-op */ }
+function requireNoOp(module, filename) {
+  /* no-op */
+}
 
-['.css', '.less'].forEach((ext) => {
-    require.extensions[ext] = requireNoOp;
+[".css", ".less"].forEach(ext => {
+  require.extensions[ext] = requireNoOp;
 });
 
 var devTools = new MarkoDevTools();
-devTools.emit('beforeRunServerTests');
+devTools.emit("beforeRunServerTests");
 
-var ServerContext = require('./ServerContext');
+var ServerContext = require("./ServerContext");
 var testsJSON = process.env.MARKO_DEVTOOLS_TESTS;
 
 var tests = JSON.parse(testsJSON);
 
 function groupTests(tests) {
-    var componentNodes = {};
-    var groupedTests = [];
+  var componentNodes = {};
+  var groupedTests = [];
 
-    tests.forEach((test) => {
-        var componentName = test.componentName;
-        var componentNode = componentNodes[componentName];
-        if (!componentNode) {
-            componentNodes[componentName] = componentNode = { componentName, tests: [] };
-            groupedTests.push(componentNode);
-        }
+  tests.forEach(test => {
+    var componentName = test.componentName;
+    var componentNode = componentNodes[componentName];
+    if (!componentNode) {
+      componentNodes[componentName] = componentNode = {
+        componentName,
+        tests: []
+      };
+      groupedTests.push(componentNode);
+    }
 
-        componentNode.tests.push(test);
-    });
+    componentNode.tests.push(test);
+  });
 
-    return groupedTests;
+  return groupedTests;
 }
 
 tests = groupTests(tests);
 
-tests.forEach((componentNode) => {
-    var componentName = componentNode.componentName;
+tests.forEach(componentNode => {
+  var componentName = componentNode.componentName;
 
-    function loadTest(test) {
-        devTools.emit('beforeLoadServerTest', test);
+  function loadTest(test) {
+    devTools.emit("beforeLoadServerTest", test);
 
-        var file = test.file;
-        var context = new ServerContext(test);
+    var file = test.file;
+    var context = new ServerContext(test);
 
-        function runTest(it, name, handler) {
-            if(handler.length <= 1) {
-                it(name, function() {
-                    context.name = name;
-                    handler.call(this, context);
-                });
-            } else if(handler.length >= 2) {
-                it(name, function(done) {
-                    context.name = name;
-                    handler.call(this, context, done);
-                });
-            }
-        }
-
-        global.test = function(name, handler) {
-            runTest(it, name, handler);
-        };
-
-        global.test.only = function(name, handler) {
-            runTest(it.only, name, handler);
-        };
-
-        if (test.groupName) {
-            describe(test.groupName, function() {
-                require(file);
-            });
-        } else {
-            require(file);
-        }
+    function runTest(it, name, handler) {
+      if (handler.length <= 1) {
+        it(name, function() {
+          context.name = name;
+          handler.call(this, context);
+        });
+      } else if (handler.length >= 2) {
+        it(name, function(done) {
+          context.name = name;
+          handler.call(this, context, done);
+        });
+      }
     }
 
-    describe(componentName, function() {
-        componentNode.tests.forEach(loadTest);
+    global.test = function(name, handler) {
+      runTest(it, name, handler);
+    };
 
-    });
+    global.test.only = function(name, handler) {
+      runTest(it.only, name, handler);
+    };
+
+    if (test.groupName) {
+      describe(test.groupName, function() {
+        require(file);
+      });
+    } else {
+      require(file);
+    }
+  }
+
+  describe(componentName, function() {
+    componentNode.tests.forEach(loadTest);
+  });
 });
