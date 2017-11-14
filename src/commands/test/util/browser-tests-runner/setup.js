@@ -43,9 +43,9 @@ function runTest(it, name, handler, context) {
   } else if (handler.length >= 2) {
     it(name, function(done) {
       context.name = name;
-      handler.call(this, context, function() {
+      handler.call(this, context, function(err) {
         context._afterTest();
-        done();
+        done(err);
       });
     });
   }
