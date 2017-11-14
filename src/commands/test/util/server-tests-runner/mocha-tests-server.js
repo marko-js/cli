@@ -59,7 +59,7 @@ tests.forEach(componentNode => {
       if (handler.length <= 1) {
         it(name, function() {
           context.name = name;
-          handler.call(this, context);
+          return handler.call(this, context);
         });
       } else if (handler.length >= 2) {
         it(name, function(done) {
