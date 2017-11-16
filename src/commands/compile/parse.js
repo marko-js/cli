@@ -41,18 +41,8 @@ module.exports = function parse(argv) {
     })
     .parse(argv);
 
-  var patterns = options.files;
-
-  if (!patterns || !patterns.length) {
-    patterns = ["**/*.marko"];
-  }
-
-  options.patterns = patterns;
+  options.patterns = options.files;
   delete options.files;
-
-  if (!options.server && !options.browser) {
-    options.server = options.browser = true;
-  }
 
   return options;
 };
