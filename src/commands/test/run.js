@@ -1,26 +1,23 @@
 "use strict";
 
-var loadTests = require("./util/loadTests");
-var serverTestsRunner = require("./util/server-tests-runner");
-var browserTestsRunner = require("./util/browser-tests-runner");
-var path = require("path");
+const markoTest = require('@marko/test');
 
-module.exports = function run(options, devTools) {
-  return loadTests(devTools.cwd, options.patterns, devTools).then(tests => {
-    var promise = Promise.resolve();
+module.exports = function run(options, markoCli) {
+  const {
+    mochaOptions,
+    testMatcher,
+    browserBuilder,
+    workDir,
+    browserTestDependencies
+  } = markoCli.config;
 
-    if (options.server) {
-      promise = promise.then(() => {
-        return serverTestsRunner.run(tests, options, devTools);
-      });
-    }
-
-    if (options.browser) {
-      promise = promise.then(() => {
-        return browserTestsRunner.run(tests, options, devTools);
-      });
-    }
-
-    return promise;
-  });
+  return markoTest.run(Object.assign({
+    mochaOptions,
+    testMatcher,
+    browserBuilder,
+    workDir,
+    browserTestDependencies,
+    dir: markoCli.cwd,
+    cliRoot: markoCli.__dirname,
+  }, options));
 };

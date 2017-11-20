@@ -21,6 +21,8 @@ module.exports = function parse(argv) {
         type: "string[]",
         description: "File patterns"
       }
+      // TODO: Add `--test-template-path` option, which should ultimately map to
+      // the `pageTemplate` option in the browser tests runner.
     })
     .usage("Usage: $0 [options]")
     .example("Run all tests", "marko test")
@@ -53,25 +55,7 @@ module.exports = function parse(argv) {
     })
     .parse(argv);
 
-  var patterns = options.files;
-
-  if (options.server == null) {
-    if (options.browser == null) {
-      options.server = options.browser = true;
-    } else {
-      options.server = options.browser !== true;
-    }
-  }
-
-  if (options.browser == null) {
-    options.browser = options.server !== true;
-  }
-
-  if (!patterns || !patterns.length) {
-    patterns = ["**/test.js", "**/test.*.js", "**/test/*.js"];
-  }
-
-  options.patterns = patterns;
+  options.patterns = options.files;
   delete options.files;
 
   return options;
