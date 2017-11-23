@@ -8,7 +8,7 @@ const Writer = require("./util/Writer");
 const formattingTags = require("./formatting-tags");
 const trim = require("./util/trim");
 
-const beautifyJS = require("./util/beautifyJS");
+const formatJS = require("./util/formatJS");
 const beautifyCSS = require("cssbeautify");
 const redent = require("redent");
 
@@ -62,7 +62,7 @@ function handleCodeTag(node, printContext, writer) {
       if (tagName === "static") {
         outputCode = outputCode.replace(/^\s*static\s*/, "");
       }
-      outputCode = beautifyJS(outputCode, printContext);
+      outputCode = formatJS(outputCode, printContext);
 
       if (tagName === "static") {
         outputCode = "static " + outputCode;
