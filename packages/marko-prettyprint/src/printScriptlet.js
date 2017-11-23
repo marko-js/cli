@@ -1,6 +1,6 @@
 "use strict";
 
-let beautifyJS = require("./util/beautifyJS");
+let formatJS = require("./util/formatJS");
 
 module.exports = function printScriptlet(node, printContext, writer) {
   const currentIndentString = printContext.currentIndentString;
@@ -14,7 +14,7 @@ module.exports = function printScriptlet(node, printContext, writer) {
     writer.write("%>");
   } else {
     if (code.startsWith("\n")) {
-      code = beautifyJS(code, printContext, printContext.depth + 1).trim();
+      code = formatJS(code, printContext, printContext.depth + 1).trim();
       // Multi-line scriptlet
 
       writer.write(
@@ -28,7 +28,7 @@ module.exports = function printScriptlet(node, printContext, writer) {
           "}"
       );
     } else {
-      code = beautifyJS(code, printContext, printContext.depth).trim();
+      code = formatJS(code, printContext, printContext.depth).trim();
       writer.write("$ ");
       writer.write(code);
     }

@@ -27,7 +27,7 @@ function autoTest(name, dir, run, options, done) {
         var expected;
 
         try {
-            expected = fs.readFileSync(expectedPath, { encoding: 'utf8' });
+            expected = fs.readFileSync(expectedPath, { encoding: 'utf8' }).trim();
         } catch(e) {
             expected = isJSON ? '"TBD"' : 'TBD';
             fs.writeFileSync(expectedPath, expected, {encoding: 'utf8'});
