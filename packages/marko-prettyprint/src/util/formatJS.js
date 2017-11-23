@@ -13,7 +13,7 @@ module.exports = function(code, printContext, indent) {
   if (code.slice(0, 5) === 'class') {
     // When parsing classes prettier (babylon) requires a class name.
     // Marko does not, we get around this by parsing as an expression.
-    code = format('(' + code + ');', config).slice(1, -3);
+    code = format('(' + code + ');', config).trim().slice(1, -2);
   } else {
     code = format(code, config);
   }
