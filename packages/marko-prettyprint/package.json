@@ -7,9 +7,8 @@
     "marko-prettyprint": "bin/marko-prettyprint"
   },
   "scripts": {
-    "init-tests": "./test/init-tests.sh",
     "test": "npm run mocha && npm run jshint",
-    "mocha": "node_modules/.bin/mocha --ui bdd --reporter spec ./test/",
+    "mocha": "node_modules/.bin/mocha --ui bdd --reporter spec --bail ./test/",
     "jshint": "node_modules/.bin/jshint src/"
   },
   "repository": {
@@ -31,17 +30,16 @@
     "argly": "^1.0.0",
     "cssbeautify": "^0.3.1",
     "editorconfig": "^0.13.2",
-    "js-beautify": "^1.7.4",
     "lasso-package-root": "^1.0.0",
     "marko": "^4.0.0",
     "minimatch": "^3.0.0",
+    "prettier": "^1.8.2",
     "redent": "^2.0.0",
     "resolve-from": "^3.0.0"
   },
   "devDependencies": {
     "chai": "^4.0.0",
     "jshint": "^2.9.1",
-    "mocha": "^4.0.0",
-    "prettier": "^1.7.4"
+    "mocha": "^4.0.0"
   }
 }
