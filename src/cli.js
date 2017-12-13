@@ -1,7 +1,7 @@
 var MarkoDevTools = require("./MarkoDevTools");
 const checkForMarkoCliUpdates = require("./util/checkForMarkoCliUpdates");
 
-exports.run = async function(argv) {
+exports.run = function(argv) {
   if (process.env.SKIP_UPDATE_CHECK !== "1") {
     checkForMarkoCliUpdates();
   }
@@ -22,13 +22,12 @@ exports.run = async function(argv) {
     process.exit(1);
   }
 
-  try {
-    await markoDevTools.runCommand(commandName, argv.slice(3));
-  } catch (err) {
-    console.error(
-      `An error occurred while running command ${commandName}:`,
-      err.stack || err
-    );
-    process.exit(1);
-  }
+  return markoDevTools.runCommand(commandName, argv.slice(3))
+    .catch((err) => {
+      console.error(
+        `An error occurred while running command ${commandName}:`,
+        err.stack || err
+      );
+      process.exit(1);
+    });
 };
