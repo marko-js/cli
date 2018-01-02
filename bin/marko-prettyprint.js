@@ -52,6 +52,14 @@ var args = require('argly').createParser({
         '--max-len': {
             type: 'int',
             description: 'The maximum line length. Defaults to 80'
+        },
+        '--no-semi': {
+            type: 'boolean',
+            description: 'If set, will format JS without semicolons'
+        },
+        '--single-quote': {
+            type: 'boolean',
+            description: 'If set, will prefer single quotes'
         }
     })
     .usage('Usage: $0 <pattern> [options]')
@@ -85,6 +93,8 @@ var args = require('argly').createParser({
 
 var syntax = args.syntax || 'html';
 var maxLen = args.maxLen || 80;
+var noSemi = args.noSemi || false;
+var singleQuote = args.singleQuote || false;
 
 var ignoreRules = args.ignore;
 
@@ -205,6 +215,8 @@ var prettyprint = function(path, context) {
     var outputSrc = markoPrettyprint(src, {
         syntax: syntax,
         maxLen: maxLen,
+        noSemi: noSemi,
+        singleQuote: singleQuote,
         filename: path
     });
 
