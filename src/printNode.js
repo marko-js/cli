@@ -3,6 +3,12 @@
 module.exports = function printNode(node, printContext, writer) {
   switch (node.type) {
     case "HtmlElement":
+    /**
+     * CustomTag nodes are not created in raw parsing mode but should have
+     * the same output as an HTMlElement node. This is added here to support
+     * using Marko prettyprint when serializing a template for transform testing.
+     */
+    case "CustomTag":
       return this.printHtmlElement(node, printContext, writer);
     case "Text":
       return this.printText(node, printContext, writer);
