@@ -293,6 +293,20 @@ module.exports = function(markoCli) {
 }
 ```
 
+### Configuring Puppeteer
+You can configure Puppeteer using `markoCli.config.puppeteerOptions`, which will be passed through `puppeteer.launch()`.
+Supported options can be found in the [Puppeteer documentation](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions).
+
+_my-app/marko-cli.js:_
+
+```javascript
+module.exports = function(markoCli) {
+    markoCli.config.puppeteerOptions = {
+        headless: false
+    };
+}
+```
+
 # TODO
 
 - Don't write compiled templates to disk
