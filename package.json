@@ -16,7 +16,7 @@
   "dependencies": {
     "@marko/compile": "^1.0.0",
     "@marko/create": "^1.0.0",
-    "@marko/test": "^1.0.1",
+    "@marko/test": "^1.0.5",
     "app-root-dir": "^1.0.2",
     "argly": "^1.0.0",
     "chalk": "^1.1.3",
