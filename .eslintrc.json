@@ -1,5 +1,5 @@
 {
-  "extends": "eslint:recommended",
+  "extends": ["eslint:recommended", "prettier"],
   "parserOptions": {
     "ecmaVersion": 2017,
     "sourceType": "script",
@@ -7,12 +7,13 @@
       "jsx": false
     }
   },
+  "rules": {
+    "no-console": "off"
+  },
   "env": {
     "browser": true,
     "node": true,
-    "es6": true
-  },
-  "rules": {
-    "no-console": "off"
+    "es6": true,
+    "mocha": true
   }
 }
