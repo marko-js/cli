@@ -22,12 +22,11 @@ exports.run = function(argv) {
     process.exit(1);
   }
 
-  return markoDevTools.runCommand(commandName, argv.slice(3))
-    .catch((err) => {
-      console.error(
-        `An error occurred while running command ${commandName}:`,
-        err.stack || err
-      );
-      process.exit(1);
-    });
+  return markoDevTools.runCommand(commandName, argv.slice(3)).catch(err => {
+    console.error(
+      `An error occurred while running command ${commandName}:`,
+      err.stack || err
+    );
+    process.exit(1);
+  });
 };

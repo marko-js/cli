@@ -1,0 +1,25 @@
+{
+  "name": "@marko/create",
+  "description": "Create Marko projects",
+  "version": "1.0.2",
+  "bugs": "https://github.com/marko-js/marko-cli/issues",
+  "dependencies": {
+    "got": "^8.3.0",
+    "ora": "^2.0.0",
+    "unzip": "^0.1.11"
+  },
+  "homepage": "https://github.com/marko-js/marko-cli",
+  "keywords": ["create", "demo", "marko", "util", "utility"],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    "Patrick Steele-Idem <pnidem@gmail.com>",
+    "Michael Rawlings <ml.rawlings@gmail.com>",
+    "Austin Kelleher <a@alk.im>",
+    "Dylan Piercey <pierceydylan@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marko-js/marko-cli.git"
+  }
+}

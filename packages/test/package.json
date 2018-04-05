@@ -1,0 +1,39 @@
+{
+  "name": "@marko/test",
+  "description": "Testing Marko components",
+  "version": "1.0.5",
+  "bugs": "https://github.com/marko-js/marko-cli/issues",
+  "dependencies": {
+    "async": "^2.6.0",
+    "browser-refresh-taglib": "^1.1.0",
+    "chai": "^4.1.2",
+    "cheerio": "^1.0.0-rc.2",
+    "child-process-promise": "^2.2.1",
+    "express": "^4.16.3",
+    "lasso": "^3.1.4",
+    "lasso-istanbul-instrument-transform": "0.0.4",
+    "lasso-marko": "^2.4.0",
+    "lasso-require": "^3.4.10",
+    "marko": "^4.9.6",
+    "mocha": "^5.0.5",
+    "object-assign": "^4.1.1",
+    "porti": "^1.0.4",
+    "puppeteer": "^1.2.0",
+    "raptor-renderer": "^1.5.0",
+    "resolve-from": "^4.0.0"
+  },
+  "homepage": "https://github.com/marko-js/marko-cli",
+  "keywords": ["component", "marko", "test", "util", "utility"],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    "Patrick Steele-Idem <pnidem@gmail.com>",
+    "Michael Rawlings <ml.rawlings@gmail.com>",
+    "Austin Kelleher <a@alk.im>",
+    "Dylan Piercey <pierceydylan@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marko-js/marko-cli.git"
+  }
+}

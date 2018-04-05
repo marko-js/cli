@@ -1,5 +1,10 @@
+*.swp
+*.log
+*.DS_Store
+*.marko.js
+*.history/
+.cache/
+.nyc_output
 node_modules
 snapshots
-*.marko.js
-*.swp
-.cache/
+coverage

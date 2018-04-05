@@ -1,0 +1,35 @@
+{
+  "name": "marko-cli",
+  "description": "Marko CLI",
+  "version": "2.2.2",
+  "author": "Michael Rawlings <ml.rawlings@gmail.com>",
+  "bin": {
+    "marko": "bin/marko"
+  },
+  "bugs": "https://github.com/marko-js/marko-cli/issues",
+  "dependencies": {
+    "@marko/compile": "^1.0.3",
+    "@marko/create": "^1.0.2",
+    "@marko/test": "^1.0.5",
+    "app-root-dir": "^1.0.2",
+    "argly": "^1.2.0",
+    "chalk": "^2.3.2",
+    "complain": "^1.2.0",
+    "resolve-from": "^4.0.0",
+    "update-notifier": "^2.4.0"
+  },
+  "homepage": "https://github.com/marko-js/marko-cli",
+  "keywords": ["build", "cli", "compile", "create", "marko", "test"],
+  "license": "MIT",
+  "main": "src/index.js",
+  "maintainers": [
+    "Patrick Steele-Idem <pnidem@gmail.com>",
+    "Michael Rawlings <ml.rawlings@gmail.com>",
+    "Austin Kelleher <a@alk.im>",
+    "Dylan Piercey <pierceydylan@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marko-js/marko-cli.git"
+  }
+}

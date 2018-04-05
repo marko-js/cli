@@ -1,6 +1,6 @@
-const markoCompile = require('@marko/compile')
+const markoCompile = require("@marko/compile");
 
-module.exports = function run (options, markoCli) {
+module.exports = function run(options, markoCli) {
   const { ignore, server, browser, clean, patterns } = options;
   return markoCompile.run({
     dir: markoCli.cwd,
