@@ -6,10 +6,11 @@
   "dependencies": {
     "lasso": "3.0.1-0"
   },
+  "files": ["dist"],
   "homepage": "https://github.com/marko-js/marko-cli",
   "keywords": ["build", "marko", "page", "prebuild"],
   "license": "MIT",
-  "main": "index.js",
+  "main": "dist/index.js",
   "maintainers": [
     "Patrick Steele-Idem <pnidem@gmail.com>",
     "Michael Rawlings <ml.rawlings@gmail.com>",

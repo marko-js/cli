@@ -1,5 +1,3 @@
-"use strict";
-
 const loadTests = require("./util/loadTests");
 const serverTestsRunner = require("./util/server-tests-runner");
 const browserTestsRunner = require("./util/browser-tests-runner");

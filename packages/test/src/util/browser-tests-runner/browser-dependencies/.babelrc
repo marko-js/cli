@@ -1,0 +1,13 @@
+{
+  "presets": [
+    ["env", {
+      "loose": true,
+      "targets": {
+        "browsers": ["extends @ebay/browserslist-config"]
+      }
+    }]
+  ],
+  "plugins": [
+    "transform-object-rest-spread"
+  ]
+}

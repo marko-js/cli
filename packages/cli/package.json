@@ -4,7 +4,7 @@
   "version": "2.2.2",
   "author": "Michael Rawlings <ml.rawlings@gmail.com>",
   "bin": {
-    "marko": "bin/marko"
+    "marko": "dist/bin.js"
   },
   "bugs": "https://github.com/marko-js/marko-cli/issues",
   "dependencies": {
@@ -18,10 +18,11 @@
     "resolve-from": "^4.0.0",
     "update-notifier": "^2.4.0"
   },
+  "files": ["dist"],
   "homepage": "https://github.com/marko-js/marko-cli",
   "keywords": ["build", "cli", "compile", "create", "marko", "test"],
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "maintainers": [
     "Patrick Steele-Idem <pnidem@gmail.com>",
     "Michael Rawlings <ml.rawlings@gmail.com>",

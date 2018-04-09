@@ -5,9 +5,9 @@ const markoTest = require("@marko/test");
 module.exports = function run(options, markoCli) {
   const {
     mochaOptions,
-    puppeteerOptions,
+    lassoOptions,
+    capabilities,
     testMatcher,
-    browserBuilder,
     workDir,
     browserTestDependencies
   } = markoCli.config;
@@ -16,9 +16,9 @@ module.exports = function run(options, markoCli) {
     Object.assign(
       {
         mochaOptions,
-        puppeteerOptions,
+        lassoOptions,
+        capabilities,
         testMatcher,
-        browserBuilder,
         workDir,
         browserTestDependencies,
         dir: markoCli.cwd,
