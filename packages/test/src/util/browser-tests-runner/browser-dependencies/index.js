@@ -85,10 +85,6 @@ window.$marko_test = (test, component, func) => {
 
   let desc = test.componentName;
 
-  if (options.name) {
-    desc = `[${options.name}] ${desc}`;
-  }
-
   if (test.groupName) {
     desc += " - " + test.groupName;
   }

@@ -1,8 +1,15 @@
 const { env } = process;
 const path = require("path");
 
-module.exports = dir => {
-  const config = env.BROWSERSTACK_USERNAME
+module.exports = options => {
+  const wdioOptions = (options.wdioOptions = options.wdioOptions || {});
+
+  // When a custom launcher is used skip default values.
+  if (wdioOptions.launcher) {
+    return;
+  }
+
+  let { launcher, ...defaults } = env.BROWSERSTACK_USERNAME
     ? {
         launcher: "wdio-browserstack-service",
         user: env.BROWSERSTACK_USERNAME,
@@ -28,23 +35,19 @@ module.exports = dir => {
             capabilities: [{ browserName: "chrome" }]
           };
 
-  // Ensure the webdriver service exists.
+  // Ensure the webdriver launcher exists.
   try {
-    if (config.launcher[0] !== ".") {
-      config.launcher = path.join(
-        require("resolve-from")(dir, config.launcher),
-        ".."
-      );
-    }
-
-    config.launcher = require(path.join(config.launcher, "/launcher.js"));
+    wdioOptions.launcher = require(path.join(
+      launcher[0] === "."
+        ? launcher
+        : path.join(require("resolve-from")(options.dir, launcher), ".."),
+      "/launcher.js"
+    ));
+    Object.assign(wdioOptions, defaults);
   } catch (_) {
-    const launcherName = config.launcher;
-    const serviceName = launcherName.slice(5, -8);
+    const serviceName = launcher.slice(5, -8);
     throw new Error(
-      `Unable to run tests using the "${serviceName}" testing service. Please install "${launcherName}" to continue.`
+      `Unable to run tests using the "${serviceName}" testing service. Please install "${launcher}" to continue.`
     );
   }
-
-  return config;
 };

@@ -6,7 +6,7 @@ module.exports = function run(options, markoCli) {
   const {
     mochaOptions,
     lassoOptions,
-    capabilities,
+    wdioOptions,
     testMatcher,
     workDir,
     browserTestDependencies
@@ -17,7 +17,7 @@ module.exports = function run(options, markoCli) {
       {
         mochaOptions,
         lassoOptions,
-        capabilities,
+        wdioOptions,
         testMatcher,
         workDir,
         browserTestDependencies,

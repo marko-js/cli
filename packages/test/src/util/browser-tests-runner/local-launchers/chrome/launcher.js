@@ -1,7 +1,7 @@
 const cp = require("mz/child_process");
 const pEvent = require("p-event");
+const getPort = require("get-port");
 const chromeDriver = require("chromedriver");
-const getPort = require("porti").getUnusedPort;
 let browser;
 
 exports.onPrepare = async config => {
