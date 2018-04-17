@@ -12,8 +12,14 @@ window.addEventListener("error", ({ error }) => console.error(error));
 
 require("chai").config.includeStack = true;
 const BrowserContext = require("./browser-context");
-let options = JSON.parse(decodeURIComponent(window.location.search.slice(1)));
 let buffer = [];
+let options;
+
+try {
+  options = JSON.parse(decodeURIComponent(window.location.search.slice(1)));
+} catch (_) {
+  options = {};
+}
 
 // Apply mocha options.
 const mochaOptions = {
@@ -29,7 +35,7 @@ Object.keys(mochaOptions).forEach(key => {
   }
 });
 
-window.$marko_test_run = done => {
+window.__run_tests__ = done => {
   const socket = require("engine.io-client")(`ws://${location.host}`);
   socket.once("open", () => {
     const runner = mocha.run();
@@ -72,7 +78,7 @@ window.$marko_test_run = done => {
   });
 };
 
-window.$marko_test = (test, component, func) => {
+window.__init_test__ = (test, component, func) => {
   test.component = component;
   const context = new BrowserContext(test);
   window.test = (name, handler) => runTest(it, name, handler, context);

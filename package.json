@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build":
-      "for pkg in ./packages/*; do (cd $pkg && rm -rf ./dist && babel ./src --out-dir ./dist --source-maps); done",
+      "for pkg in ./packages/*; do (cd $pkg && rm -rf ./dist && babel ./src --out-dir ./dist); done",
     "clean": "lerna clean && rm -rf ./packages/*/dist",
     "format": "prettier \"packages/**/*.{js,css,less}\" *.js --write",
     "lint": "eslint -f visualstudio packages/",

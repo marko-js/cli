@@ -80,9 +80,9 @@ function toVirtualModule(test) {
           .createReadStream(file, { encoding: "utf8" })
           .pipe(
             new WrapStream(
-              `$marko_test(${JSON.stringify(test)}, require(${JSON.stringify(
+              `__init_test__(${JSON.stringify(test)}, require(${JSON.stringify(
                 relativePath
-              )}), function() { `,
+              )}), function() {\n`,
               `\n});`
             )
           );

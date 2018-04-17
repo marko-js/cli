@@ -13,26 +13,13 @@ exports.run = async (tests, options) => {
   }
 
   wdioDefaults(options);
-  const willExit = !options.noExit;
   const bundler = await createBundler(tests, options);
   const server = await startServer(bundler, options);
-
-  server.wss.on("connection", socket =>
-    socket.on("message", msg => {
-      for (const [type, ...args] of JSON.parse(msg)) {
-        if (type === "console") {
-          const [method, parts] = args;
-          console[method](...parts);
-        }
-      }
-    })
-  );
-
-  const driver = await startDriver(server, options);
+  const driver = await startDriver(server.href, options);
   const { success, coverages } = await driver.runTests();
 
   await Promise.all([
-    willExit && ensureCalled(),
+    ensureCalled(),
     coverages.length &&
       Promise.all(
         coverages.map(coverage =>
@@ -44,9 +31,7 @@ exports.run = async (tests, options) => {
       )
   ]);
 
-  if (willExit && !success) {
-    process.exit(1);
-  }
+  process.exit(success ? 0 : 1);
 };
 
 function isBrowserTest(test) {

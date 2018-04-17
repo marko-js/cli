@@ -307,6 +307,8 @@ module.exports = function(markoCli) {
          * By default chromedriver will be used if capabilities are left blank.
          */
         capabilities: ...,
+        maxInstances: 5, // Run at most 5 drivers in parallel by default.
+        idleTimeout: 60000, // Automatically disconnect after 1min by default.
         /**
          * The launcher option allows you change the WDIO config before running, and cleanup afterward.
          * By default the chromedriver is launched, however if `BROWSERSTACK_USERNAME`, `SAUCE_USERNAME`
