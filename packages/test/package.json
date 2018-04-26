@@ -13,6 +13,7 @@
     "cheerio": "^1.0.0-rc.2",
     "child-process-promise": "^2.2.1",
     "chromedriver": "^2.37.0",
+    "complain": "^1.2.0",
     "engine.io": "^3.2.0",
     "engine.io-client": "^3.2.1",
     "express": "^4.16.3",
