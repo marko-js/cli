@@ -106,10 +106,15 @@ function runTest(it, name, handler, context) {
       context.name = name;
       const testFunction = handler.call(this, context);
       if (isPromise(testFunction)) {
-        return testFunction.then(() => context._afterTest()).catch(err => {
-          context._afterTest();
-          throw err;
-        });
+        return testFunction
+          .then(result => {
+            context._afterTest();
+            return result;
+          })
+          .catch(err => {
+            context._afterTest();
+            throw err;
+          });
       } else {
         context._afterTest();
       }
