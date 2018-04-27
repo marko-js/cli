@@ -1,16 +1,16 @@
 {
   "name": "marko-cli",
   "description": "Marko CLI",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "author": "Michael Rawlings <ml.rawlings@gmail.com>",
   "bin": {
     "marko": "dist/bin.js"
   },
   "bugs": "https://github.com/marko-js/marko-cli/issues",
   "dependencies": {
-    "@marko/compile": "^3.0.0",
-    "@marko/create": "^3.0.0",
-    "@marko/test": "^3.0.0",
+    "@marko/compile": "^3.0.1",
+    "@marko/create": "^3.0.1",
+    "@marko/test": "^3.0.1",
     "app-root-dir": "^1.0.2",
     "argly": "^1.2.0",
     "chalk": "^2.3.2",
@@ -18,9 +18,18 @@
     "resolve-from": "^4.0.0",
     "update-notifier": "^2.4.0"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "homepage": "https://github.com/marko-js/marko-cli",
-  "keywords": ["build", "cli", "compile", "create", "marko", "test"],
+  "keywords": [
+    "build",
+    "cli",
+    "compile",
+    "create",
+    "marko",
+    "test"
+  ],
   "license": "MIT",
   "main": "dist/index.js",
   "maintainers": [
