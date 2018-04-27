@@ -1,5 +1,4 @@
-Marko CLI
-==============
+# Marko CLI
 
 Developer tools for Marko.
 
@@ -91,50 +90,51 @@ Marko CLI includes a testing framework (built on top of [mocha](https://mochajs.
 component may include test files alongside components or in a `test/` directory that consists of one or more JavaScript test files with a name in any of the
 following formats:
 
-- `test.js` - runs only in the browser
-- `test.server.js` _or_ `test-server.js` - runs only on the server
-- `test.browser.js` _or_ `test-browser.js` - runs only in the browser
+* `test.js` - runs only in the browser
+* `test.server.js` _or_ `test-server.js` - runs only on the server
+* `test.browser.js` _or_ `test-browser.js` - runs only in the browser
 
 An optional prefix can also be provided for grouping tests:
 
-- `foo.test.js` _or_ `foo-test.js`
-- `foo.test.server.js` _or_ `foo-test-server.js`
-- `foo.test.browser.js` _or_ `foo-test-browser.js`
+* `foo.test.js` _or_ `foo-test.js`
+* `foo.test.server.js` _or_ `foo-test-server.js`
+* `foo.test.browser.js` _or_ `foo-test-browser.js`
 
 Below is a sample set of tests:
 
 ```javascript
 /* globals test */
 
-var expect = require('chai').expect;
+var expect = require("chai").expect;
 
-
-test('variant-danger', function(context) {
-    var output = context.render({ variant: 'danger' });
-    expect(output.html).to.contain('app-button-danger');
+test("variant-danger", function(context) {
+  var output = context.render({ variant: "danger" });
+  expect(output.html).to.contain("app-button-danger");
 });
 
 // A similar test can be done using jQuery selectors (powered by cheerio):
-test('variant-info', function(context) {
-    var output = context.render({ variant: 'info' });
-    expect(output.$('button').attr('class')).to.equal('app-button app-button-info');
+test("variant-info", function(context) {
+  var output = context.render({ variant: "info" });
+  expect(output.$("button").attr("class")).to.equal(
+    "app-button app-button-info"
+  );
 });
 
 // Async test:
-test('my async test', function(context, done) {
-    setTimeout(function() {
-        done();
-    }, 100);
+test("my async test", function(context, done) {
+  setTimeout(function() {
+    done();
+  }, 100);
 });
 
 // Use test.only to only run a single test:
-test.only('foo', function(context) {
-    // ...
+test.only("foo", function(context) {
+  // ...
 });
 
 // Use test.skip to skip tests
-test.skip('bar', function(context) {
-    // ...
+test.skip("bar", function(context) {
+  // ...
 });
 ```
 
@@ -166,13 +166,13 @@ The output HTML string.
 
 #### `component`
 
-***In-browser only***
+**_In-browser only_**
 
 Returns a rendered instance of the component.
 
 #### `widget`
 
-***In-browser only***
+**_In-browser only_**
 
 This is an alias for the above `component` getter.
 
@@ -188,7 +188,7 @@ _.gitignore_
 
 ## Code coverage
 
-Use [`nyc`](https://github.com/istanbuljs/nyc) to generate coverage reports.  Just prefix any test commands with `nyc`:
+Use [`nyc`](https://github.com/istanbuljs/nyc) to generate coverage reports. Just prefix any test commands with `nyc`:
 
 ```
 nyc marko test
@@ -200,27 +200,27 @@ Marko CLI supports plugins as JavaScript functions:
 
 ```javascript
 module.exports = function(markoCli) {
-    // Run any initialization code:
-    require('app-module-path').addPath(__dirname);
+  // Run any initialization code:
+  require("app-module-path").addPath(__dirname);
 
-    // Register new commands...
-    //
-    // Add support for: `marko my-command arg0 arg1 ... argn`
-    markoCli.addCommand('my-command', {
-        run(options) {
-            return new Promise((resolve, reject) => {
-                // Run the command
-            });
-        },
+  // Register new commands...
+  //
+  // Add support for: `marko my-command arg0 arg1 ... argn`
+  markoCli.addCommand("my-command", {
+    run(options) {
+      return new Promise((resolve, reject) => {
+        // Run the command
+      });
+    },
 
-        parse(args) {
-            var options = {};
-            return options;
-        }
-    });
+    parse(args) {
+      var options = {};
+      return options;
+    }
+  });
 
-    markoCli.plugin(require('marko-cli-my-plugin'));
-}
+  markoCli.plugin(require("marko-cli-my-plugin"));
+};
 ```
 
 ## `marko-cli.js`
@@ -231,8 +231,8 @@ _my-app/marko-cli.js:_
 
 ```javascript
 module.exports = function(markoCli) {
-    // ...
-}
+  // ...
+};
 ```
 
 A package-specific plugin will automatically be loaded when `marko` is launched.
@@ -243,37 +243,36 @@ For example, shared test dependencies can be specified with the `dependencies` o
 
 ```javascript
 module.exports = function(markoCli) {
-    markoCli.config.browserTestDependencies = [
-        'bluebird/js/browser/bluebird.core.js',
-        'require-run: ./tools/myDependency.js',
-    ];
-}
+  markoCli.config.browserTestDependencies = [
+    "bluebird/js/browser/bluebird.core.js",
+    "require-run: ./tools/myDependency.js"
+  ];
+};
 ```
 
 For more info on how to specify dependencies can be found [here](https://github.com/lasso-js/lasso#dependencies).
 
 ### Configuring Lasso
 
-Lasso plugins and transforms can also be specified using the `browserBuilder` option.
+Lasso plugins and transforms can also be specified using the `lassoOptions` option.
 
 _my-app/marko-cli.js:_
 
 ```javascript
 module.exports = function(markoCli) {
-    markoCli.config.browserBuilder = {
-        plugins: [
-            'lasso-marko',
-            'lasso-less'
-        ],
-        require: {
-           transforms: [
-               {
-                   transform: 'lasso-babel-transform'
-               }
-           ]
+  markoCli.config.lassoOptions = {
+    plugins: [
+      "lasso-less" // Marko plugin is included by default.
+    ],
+    require: {
+      transforms: [
+        {
+          transform: "lasso-babel-transform"
         }
-    };
-}
+      ]
+    }
+  };
+};
 ```
 
 ### Configuring Mocha
@@ -286,39 +285,64 @@ _my-app/marko-cli.js:_
 
 ```javascript
 module.exports = function(markoCli) {
-    markoCli.config.mochaOptions = {
-        timeout: 5000,
-        colors: true
-    };
-}
+  markoCli.config.mochaOptions = {
+    timeout: 5000,
+    colors: true
+  };
+};
 ```
 
-### Configuring Puppeteer
-You can configure Puppeteer using `markoCli.config.puppeteerOptions`, which will be passed through `puppeteer.launch()`.
-Supported options can be found in the [Puppeteer documentation](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions).
+### Browser Testing with Webdriver.io
+
+Under the hood `marko test` uses [Webdriver.io](http://webdriver.io) to speak to various browsers.
+The test command operates differently than a standard WDIO utility by compiling the tests themselves and running everything in the browser. A websocket is setup with the browser instance to stream logs. A subset of WDIO options are exposed under `markoCli.config.wdioOptions`.
 
 _my-app/marko-cli.js:_
 
 ```javascript
 module.exports = function(markoCli) {
-    markoCli.config.puppeteerOptions = {
-        headless: false
+    markoCli.config.wdioOptions = {
+        /**
+         * Capabilities are always run in parallel.
+         * By default chromedriver will be used if capabilities are left blank.
+         */
+        capabilities: ...,
+        maxInstances: 5, // Run at most 5 drivers in parallel by default.
+        idleTimeout: 60000, // Automatically disconnect after 1min by default.
+        viewport: {
+          // Configure the screen size for any drivers started (defaults below).
+          width: 800,
+          height: 600
+        }
+        /**
+         * The launcher option allows you change the WDIO config before running, and cleanup afterward.
+         * By default the chromedriver is launched, however if `BROWSERSTACK_USERNAME`, `SAUCE_USERNAME`
+         * or `TB_KEY` is found in the environment variables a service for that provider will automatically be used.
+         */
+        launcher: {
+            onPrepare(config, capabilities) {
+                // Setup WDIO config.
+            },
+            onComplete() {
+                // Cleanup after tests.
+            }
+        }
     };
 }
 ```
 
 # TODO
 
-- Don't write compiled templates to disk
-- Allow mocks for custom tags
-- File watching when running tests
-    - `marko test --watch`
-- Helper API for simulating DOM events
-- Plugin API for adding helpers to `context`
-- In-browser UI component viewer with file watching
-    - Drop down for inputs
-    - Editor for input data
-- In-browser project explorer (with links to run browser tests and view UI components)
-- Image snapshots
-- Testing in jsdom
-- Launching tests in multiple browsers (both headless and real browsers)
+* Don't write compiled templates to disk
+* Allow mocks for custom tags
+* File watching when running tests
+  * `marko test --watch`
+* Helper API for simulating DOM events
+* Plugin API for adding helpers to `context`
+* In-browser UI component viewer with file watching
+  * Drop down for inputs
+  * Editor for input data
+* In-browser project explorer (with links to run browser tests and view UI components)
+* Image snapshots
+* Testing in jsdom
+* Launching tests in multiple browsers (both headless and real browsers)

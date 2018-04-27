@@ -5,9 +5,10 @@ const markoTest = require("@marko/test");
 module.exports = function run(options, markoCli) {
   const {
     mochaOptions,
-    puppeteerOptions,
+    browserBuilder, // Deprecated, will be removed in the next major.
+    lassoOptions,
+    wdioOptions,
     testMatcher,
-    browserBuilder,
     workDir,
     browserTestDependencies
   } = markoCli.config;
@@ -16,9 +17,10 @@ module.exports = function run(options, markoCli) {
     Object.assign(
       {
         mochaOptions,
-        puppeteerOptions,
-        testMatcher,
         browserBuilder,
+        lassoOptions,
+        wdioOptions,
+        testMatcher,
         workDir,
         browserTestDependencies,
         dir: markoCli.cwd,
