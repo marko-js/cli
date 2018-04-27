@@ -101,6 +101,8 @@ function connect(options, capability) {
     }
   });
 
+  driver.timeouts("script", options.idleTimeout || 60000);
+
   return driver
     .init()
     .url("")

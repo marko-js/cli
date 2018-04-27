@@ -9,31 +9,36 @@ module.exports = options => {
     return;
   }
 
-  let { launcher, ...defaults } = env.BROWSERSTACK_USERNAME
-    ? {
-        launcher: "wdio-browserstack-service",
-        user: env.BROWSERSTACK_USERNAME,
-        key: env.BROWSERSTACK_ACCESS_KEY,
-        browserstackLocal: true
-      }
-    : env.SAUCE_USERNAME
-      ? {
-          launcher: "wdio-sauce-service",
-          user: env.SAUCE_USERNAME,
-          key: env.SAUCE_ACCESS_KEY,
-          sauceConnect: true
-        }
-      : env.TB_KEY
-        ? {
-            launcher: "wdio-testingbot-service",
-            user: env.TB_KEY,
-            key: env.TB_SECRET,
-            tbTunnel: true
-          }
-        : {
-            launcher: "../local-launchers/chrome",
-            capabilities: [{ browserName: "chrome" }]
-          };
+  let launcher;
+  let defaults;
+
+  if (env.BROWSERSTACK_USERNAME) {
+    launcher = "wdio-browserstack-service";
+    defaults = {
+      user: env.BROWSERSTACK_USERNAME,
+      key: env.BROWSERSTACK_ACCESS_KEY,
+      browserstackLocal: true
+    };
+  } else if (env.SAUCE_USERNAME) {
+    launcher = "wdio-sauce-service";
+    defaults = {
+      user: env.SAUCE_USERNAME,
+      key: env.SAUCE_ACCESS_KEY,
+      sauceConnect: true
+    };
+  } else if (env.TB_KEY) {
+    launcher = "wdio-testingbot-service";
+    defaults = {
+      user: env.TB_KEY,
+      key: env.TB_SECRET,
+      tbTunnel: true
+    };
+  } else {
+    launcher = "../local-launchers/chrome";
+    defaults = {
+      capabilities: [{ browserName: "chrome" }]
+    };
+  }
 
   // Ensure the webdriver launcher exists.
   try {

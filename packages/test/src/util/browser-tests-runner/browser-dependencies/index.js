@@ -1,5 +1,5 @@
 // Capture client logs and forward to server.
-["log", "info", "error"].forEach(method => {
+["log", "info", "warn", "trace", "error"].forEach(method => {
   const fn = console[method] || console.log || (() => {});
   console[method] = (...args) => {
     send(["console", method, args]);
@@ -106,8 +106,10 @@ function runTest(it, name, handler, context) {
       context.name = name;
       const testFunction = handler.call(this, context);
       if (isPromise(testFunction)) {
-        testFunction.then(() => context._afterTest());
-        return testFunction;
+        return testFunction.then(() => context._afterTest()).catch(err => {
+          context._afterTest();
+          throw err;
+        });
       } else {
         context._afterTest();
       }

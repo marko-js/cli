@@ -19,7 +19,7 @@ exports.create = async (tests, options) => {
     options.browserDependencies || [],
     options.dir
   );
-  const customLassoOptions = options.lassoOptions;
+  const customLassoOptions = options.lassoOptions || {};
   const lassoOptions = {
     outputDir: path.join(outputDir, "static"),
     urlPrefix: "/static",

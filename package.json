@@ -15,17 +15,19 @@
     "prettier": "^1.8.2"
   },
   "lint-staged": {
-    "*.{json,css,md}": ["prettier --write", "git add"],
+    "*.{json,css,less,md}": ["prettier --write", "git add"],
     "*.js": ["prettier --write", "eslint -f visualstudio", "git add"]
   },
   "scripts": {
     "build":
       "for pkg in ./packages/*; do (cd $pkg && rm -rf ./dist && babel ./src --out-dir ./dist); done",
     "clean": "lerna clean && rm -rf ./packages/*/dist",
-    "format": "prettier \"packages/**/*.{js,css,less}\" *.js --write",
+    "format":
+      "prettier \"packages/**/*.{json,css,less,md,js}\" \"*.{json,md,js}\" --write",
     "lint": "eslint -f visualstudio packages/",
     "postinstall": "lerna bootstrap --hoist",
     "precommit": "lint-staged",
+    "prepublishOnly": "npm run build",
     "test": "ava --verbose"
   }
 }
