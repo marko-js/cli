@@ -8,17 +8,9 @@
     "ora": "^2.0.0",
     "unzip": "^0.1.11"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "homepage": "https://github.com/marko-js/marko-cli",
-  "keywords": [
-    "create",
-    "demo",
-    "marko",
-    "util",
-    "utility"
-  ],
+  "keywords": ["create", "demo", "marko", "util", "utility"],
   "license": "MIT",
   "main": "dist/index.js",
   "maintainers": [

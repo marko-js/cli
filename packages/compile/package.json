@@ -8,16 +8,9 @@
     "lasso-package-root": "^1.0.1",
     "resolve-from": "^4.0.0"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "homepage": "https://github.com/marko-js/marko-cli",
-  "keywords": [
-    "compile",
-    "marko",
-    "util",
-    "utility"
-  ],
+  "keywords": ["compile", "marko", "util", "utility"],
   "license": "MIT",
   "main": "dist/index.js",
   "maintainers": [

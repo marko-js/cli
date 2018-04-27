@@ -26,8 +26,7 @@
       "prettier \"packages/**/*.{json,css,less,md,js}\" \"*.{json,md,js}\" --write",
     "lint": "eslint -f visualstudio packages/",
     "postinstall": "lerna bootstrap --hoist",
-    "precommit": "lint-staged",
-    "prepublishOnly": "npm run build",
+    "precommit": "lint-staged && npm run build",
     "test": "ava --verbose"
   }
 }

@@ -18,18 +18,9 @@
     "resolve-from": "^4.0.0",
     "update-notifier": "^2.4.0"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "homepage": "https://github.com/marko-js/marko-cli",
-  "keywords": [
-    "build",
-    "cli",
-    "compile",
-    "create",
-    "marko",
-    "test"
-  ],
+  "keywords": ["build", "cli", "compile", "create", "marko", "test"],
   "license": "MIT",
   "main": "dist/index.js",
   "maintainers": [

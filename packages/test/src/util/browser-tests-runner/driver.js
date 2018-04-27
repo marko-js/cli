@@ -16,6 +16,7 @@ const DEFAULT_VIEWPORT = {
 };
 
 exports.start = async (href, options) => {
+  let exitCode = 1;
   const {
     noExit,
     mochaOptions,
@@ -26,7 +27,7 @@ exports.start = async (href, options) => {
   wdioOptions.baseUrl = `${href}?${qs}`;
 
   await launcher.onPrepare(wdioOptions, capabilities);
-  ensureCalled(() => launcher.onComplete());
+  ensureCalled(() => launcher.onComplete(exitCode, wdioOptions));
 
   return {
     async runTests() {
@@ -81,6 +82,8 @@ exports.start = async (href, options) => {
           pendingTests.push(connect(wdioOptions, remaining.pop()));
         }
       }
+
+      exitCode = success ? 0 : 1;
 
       return {
         success,
