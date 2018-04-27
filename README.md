@@ -309,6 +309,11 @@ module.exports = function(markoCli) {
         capabilities: ...,
         maxInstances: 5, // Run at most 5 drivers in parallel by default.
         idleTimeout: 60000, // Automatically disconnect after 1min by default.
+        viewport: {
+          // Configure the screen size for any drivers started (defaults below).
+          width: 800,
+          height: 600
+        }
         /**
          * The launcher option allows you change the WDIO config before running, and cleanup afterward.
          * By default the chromedriver is launched, however if `BROWSERSTACK_USERNAME`, `SAUCE_USERNAME`

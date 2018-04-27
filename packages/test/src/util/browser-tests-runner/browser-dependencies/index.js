@@ -69,6 +69,8 @@ window.__run_tests__ = done => {
       if (buffer.length) {
         socket.send(JSON.stringify(buffer), cb);
         buffer = [];
+      } else {
+        cb();
       }
     }
 

@@ -10,6 +10,10 @@ const {
 const TEST_NAME = `${REPO_SLUG} build #${BUILD_NUMBER}${
   PULL_REQUEST_SLUG ? ` (PR: ${PULL_REQUEST_SLUG})` : ""
 }`;
+const DEFAULT_VIEWPORT = {
+  width: 800,
+  height: 600
+};
 
 exports.start = async (href, options) => {
   const {
@@ -90,7 +94,7 @@ exports.start = async (href, options) => {
  * Creates a new driver based on the provided capability and
  * resolves to a function which will run tests for that driver.
  */
-function connect(options, capability) {
+function connect({ viewport = DEFAULT_VIEWPORT, ...options }, capability) {
   const driver = webdriver.remote({
     ...options,
     capabilities: undefined,
@@ -101,11 +105,11 @@ function connect(options, capability) {
     }
   });
 
-  driver.timeouts("script", options.idleTimeout || 60000);
-
   return driver
     .init()
     .url("")
+    .timeouts("script", options.idleTimeout || 60000)
+    .setViewportSize(viewport)
     .then(() => () => {
       const {
         browserName,
