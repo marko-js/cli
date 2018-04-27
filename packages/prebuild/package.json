@@ -1,14 +1,21 @@
 {
   "name": "@marko/prebuild",
   "description": "Prebuild Marko pages",
-  "version": "0.0.2",
+  "version": "3.0.0",
   "bugs": "https://github.com/marko-js/marko-cli/issues",
   "dependencies": {
     "lasso": "3.0.1-0"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "homepage": "https://github.com/marko-js/marko-cli",
-  "keywords": ["build", "marko", "page", "prebuild"],
+  "keywords": [
+    "build",
+    "marko",
+    "page",
+    "prebuild"
+  ],
   "license": "MIT",
   "main": "dist/index.js",
   "maintainers": [
