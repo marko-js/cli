@@ -16,13 +16,10 @@ module.exports = (...fns) => {
   }
 };
 
-async function run() {
+function run() {
   if (handlers) {
     const pending = handlers.reverse();
     handlers = undefined;
-
-    for (const handler of pending) {
-      await handler();
-    }
+    return Promise.all(pending.map(fn => fn()));
   }
 }

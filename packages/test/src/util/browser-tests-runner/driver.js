@@ -1,4 +1,5 @@
 const chalk = require("chalk");
+const delay = require("delay");
 const webdriver = require("webdriverio");
 const ensureCalled = require("./util/ensure-called");
 const { env } = process;
@@ -20,69 +21,70 @@ exports.start = async (href, options) => {
   const {
     noExit,
     mochaOptions,
-    wdioOptions: { launcher, maxInstances = 5, ...wdioOptions }
+    wdioOptions: { launcher, ...wdioOptions }
   } = options;
   const { capabilities } = wdioOptions;
-  const qs = encodeURIComponent(JSON.stringify({ mochaOptions }));
-  wdioOptions.baseUrl = `${href}?${qs}`;
+  wdioOptions.baseUrl = `${href}?${encodeURIComponent(
+    JSON.stringify({ mochaOptions })
+  )}`;
 
   await launcher.onPrepare(wdioOptions, capabilities);
-  ensureCalled(() => launcher.onComplete(exitCode, wdioOptions));
+  ensureCalled(() =>
+    Promise.race([launcher.onComplete(exitCode, wdioOptions), delay(3000)])
+  );
 
   return {
     async runTests() {
+      let driver;
+      const results = {};
       const coverages = [];
-      const remaining = capabilities.slice(maxInstances);
-      const pendingTests = capabilities
-        .slice(0, maxInstances)
-        .map(capability => connect(wdioOptions, capability));
-      let success = true;
+      ensureCalled(() => driver && driver.end());
 
-      // Automatically close any started tests on exit.
-      ensureCalled(() => Promise.all(pendingTests.map(driver => driver.end())));
+      for (const capability of capabilities) {
+        const { testName } = (driver = connect(wdioOptions, capability));
+        results[testName] = false;
 
-      // Run tests serially as connections complete.
-      while (pendingTests.length) {
-        const [driver, test] = await Promise.race(
-          pendingTests.map(toPromiseAndValue)
-        );
-        pendingTests.splice(pendingTests.indexOf(driver), 1);
+        console.log(`\n${format(testName, "starting...")}\n`);
 
         try {
-          const { value } = await test();
+          const test = await driver;
+          const { value: { success, coverage } } = await test();
+          results[testName] = success;
 
-          if (!value.success) {
-            success = false;
+          if (coverage) {
+            coverages.push(coverage);
           }
-
-          if (value.coverage) {
-            coverages.push(value.coverage);
-          }
-        } catch (err) {
-          success = false;
-          console.error(err);
-        }
-
-        if (noExit) {
-          // Poll browser to check if the connection is closed.
-          let open = true;
-          while (open) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            try {
-              await driver.url();
-            } catch (_) {
-              open = false;
+        } catch (error) {
+          console.error(error);
+        } finally {
+          if (await isAlive(driver)) {
+            if (noExit) {
+              // Wait for the driver to die by pinging it every 3 seconds.
+              do {
+                await delay(3000);
+              } while (isAlive(driver));
+            } else {
+              await driver.end();
             }
           }
         }
-
-        await driver.end();
-
-        if (remaining.length) {
-          pendingTests.push(connect(wdioOptions, remaining.pop()));
-        }
       }
 
+      let success = true;
+      console.log(
+        "\n" +
+          Object.keys(results)
+            .map(name => {
+              const passed = results[name];
+              if (!passed) {
+                success = false;
+              }
+
+              return format(name, passed ? chalk.green("✓") : chalk.red("✗"));
+            })
+            .join("\n") +
+          "\n"
+      );
       exitCode = success ? 0 : 1;
 
       return {
@@ -98,49 +100,48 @@ exports.start = async (href, options) => {
  * resolves to a function which will run tests for that driver.
  */
 function connect({ viewport = DEFAULT_VIEWPORT, ...options }, capability) {
-  const driver = webdriver.remote({
-    ...options,
-    capabilities: undefined,
-    desiredCapabilities: {
-      ...capability,
-      name: TEST_NAME,
-      build: BUILD_NUMBER
-    }
-  });
+  const browser = capability.browser || capability.browserName;
+  const version =
+    capability.browser_version || capability.platformVersion || "latest";
+  const platform =
+    (capability.os && `${capability.os} ${capability.os_version}`) ||
+    capability.platformName ||
+    "latest";
 
-  return driver
+  const driver = webdriver
+    .remote({
+      ...options,
+      capabilities: undefined,
+      desiredCapabilities: {
+        ...capability,
+        name: TEST_NAME,
+        build: BUILD_NUMBER
+      }
+    })
     .init()
     .url("")
     .timeouts("script", options.idleTimeout || 60000)
     .setViewportSize(viewport)
     .then(() => () => {
-      const {
-        browserName,
-        version = capability.platformVersion,
-        platform = capability.platformName
-      } = capability;
-
-      console.log(
-        chalk.bgWhite(
-          chalk.black(
-            chalk.bold(
-              ` ${browserName}${version ? `@${version}` : ""}${
-                platform ? ` on ${platform}` : ""
-              } `
-            )
-          )
-        )
-      );
-
       return driver.executeAsync(function(done) {
         window.__run_tests__(done);
       });
     });
+
+  driver.testName = `${browser}@${version}${platform ? ` on ${platform}` : ""}`;
+
+  return driver;
 }
 
-/**
- * Takes a promise and resolves to the original promise and the value.
- */
-function toPromiseAndValue(p) {
-  return p.then(val => [p, val]);
+async function isAlive(driver) {
+  try {
+    await driver.url();
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+function format(name, str) {
+  return chalk.bgWhite(` ${chalk.black(chalk.bold(`${name}: ${str}`))} `);
 }

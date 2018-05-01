@@ -38,6 +38,7 @@ Object.keys(mochaOptions).forEach(key => {
 window.__run_tests__ = done => {
   const socket = require("engine.io-client")(`ws://${location.host}`);
   socket.once("open", () => {
+    window.addEventListener("beforeunload", onUnload);
     const runner = mocha.run();
     const fails = [];
     let timeout;
@@ -56,6 +57,7 @@ window.__run_tests__ = done => {
     runner.on("end", () => {
       window.mochaResults = runner.stats;
       window.mochaResults.reports = fails;
+      window.removeEventListener("beforeunload", onUnload);
       clearTimeout(timeout);
       flush(() =>
         done({
@@ -76,6 +78,16 @@ window.__run_tests__ = done => {
 
     function queueFlush() {
       timeout = setTimeout(() => flush(queueFlush), 100);
+    }
+
+    function onUnload() {
+      // If the browser navigates before the tests have finished mark the test as failing.
+      console.log(
+        "\nBrowser unexpectedly navigated during tests." +
+          "\n@marko/test does not support navigation.\n"
+      );
+      flush();
+      done({ success: false });
     }
   });
 };
