@@ -12,7 +12,13 @@ exports.run = async (tests, options) => {
     return;
   }
 
-  wdioDefaults(options);
+  options.wdioOptions = {
+    ...wdioDefaults.defaults,
+    ...options.wdioOptions,
+    ...wdioDefaults.required,
+    launcher: wdioDefaults.getLauncher(options.dir)
+  };
+
   const bundler = await createBundler(tests, options);
   const server = await startServer(bundler, options);
   const driver = await startDriver(server.href, options);
