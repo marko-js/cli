@@ -1,7 +1,7 @@
 {
   "name": "@marko/test",
   "description": "Testing Marko components",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "bugs": "https://github.com/marko-js/marko-cli/issues",
   "dependencies": {
     "@lasso/marko-taglib": "^1.0.10",
