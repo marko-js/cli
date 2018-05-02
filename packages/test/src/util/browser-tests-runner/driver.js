@@ -105,8 +105,7 @@ function connect({ viewport = DEFAULT_VIEWPORT, ...options }, capability) {
     capability.browser_version || capability.platformVersion || "latest";
   const platform =
     (capability.os && `${capability.os} ${capability.os_version}`) ||
-    capability.platformName ||
-    "latest";
+    capability.platformName;
 
   const driver = webdriver
     .remote({
