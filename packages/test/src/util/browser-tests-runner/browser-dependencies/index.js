@@ -1,9 +1,10 @@
+const stripAnsi = require("strip-ansi");
 // Capture client logs and forward to server.
 ["log", "info", "warn", "trace", "error"].forEach(method => {
   const fn = console[method] || console.log || (() => {});
   console[method] = (...args) => {
     send(["console", method, args]);
-    fn.apply(console, args);
+    fn.apply(console, args.map(stripAnsi));
   };
 });
 
