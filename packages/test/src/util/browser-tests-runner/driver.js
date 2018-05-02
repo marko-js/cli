@@ -62,7 +62,7 @@ exports.start = async (href, options) => {
               // Wait for the driver to die by pinging it every 3 seconds.
               do {
                 await delay(3000);
-              } while (isAlive(driver));
+              } while (await isAlive(driver));
             } else {
               await driver.end();
             }
