@@ -31,29 +31,8 @@ class BrowserContext {
       // component exposes renderer function
       renderResult = raptorRenderer.render(component.renderer, data);
     } else if (component.renderSync) {
-      // potentially a v4 or v3 component
+      // potentially a v4 or v3 component.
       renderResult = component.renderSync(data);
-      if (!renderResult.html) {
-        // this is a v4 component
-        const output = renderResult.getOutput();
-        let html;
-
-        if (output.actualize) {
-          // generate html from childNodes
-          const fragment = output.actualize(document);
-          html = "";
-
-          if (fragment.hasChildNodes()) {
-            for (const child of fragment.childNodes) {
-              html += child.outerHTML;
-            }
-          }
-        } else {
-          html = output.toString();
-        }
-
-        renderResult.html = html;
-      }
     } else {
       // assume older version of marko
       renderResult = component.render(data);
@@ -74,7 +53,7 @@ class BrowserContext {
 class WrappedRenderResult {
   constructor(renderResult, context) {
     this._renderResult = renderResult;
-    this.html = renderResult.html;
+    this.html = renderResult.toString();
     this._$ = null;
     this._widget = null;
     this.context = context;
