@@ -48,7 +48,9 @@ exports.start = async (href, options) => {
 
         try {
           const test = await driver;
-          const { value: { success, coverage } } = await test();
+          const {
+            value: { success, coverage }
+          } = await test();
           results[testName] = success;
 
           if (coverage) {

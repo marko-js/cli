@@ -7,7 +7,7 @@ let ports;
 let required;
 let defaults;
 
-if (env.BROWSERSTACK_USERNAME) {
+if (env.BROWSERSTACK_USER) {
   name = "browserstack";
   ports = [
     22,
@@ -58,7 +58,7 @@ if (env.BROWSERSTACK_USERNAME) {
     64000
   ];
   defaults = {
-    user: env.BROWSERSTACK_USERNAME,
+    user: env.BROWSERSTACK_USER,
     key: env.BROWSERSTACK_ACCESS_KEY,
     browserstackLocal: true
   };
