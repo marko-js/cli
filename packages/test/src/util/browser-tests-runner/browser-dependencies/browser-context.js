@@ -1,10 +1,11 @@
 const cheerio = require("cheerio");
 const raptorRenderer = require("raptor-renderer");
+const { hasOwnProperty } = Object;
 
 class BrowserContext {
   constructor(props) {
     for (const key in props) {
-      if (Object.hasOwnProperty(props, key)) {
+      if (hasOwnProperty.call(props, key)) {
         this[key] = props[key];
       }
     }

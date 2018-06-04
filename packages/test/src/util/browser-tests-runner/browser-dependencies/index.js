@@ -1,9 +1,12 @@
 const stripAnsi = require("strip-ansi");
+const { inspect } = require("util");
+const INSPECT_OPTIONS = { colors: true };
+
 // Capture client logs and forward to server.
 ["log", "info", "warn", "trace", "error"].forEach(method => {
   const fn = console[method] || console.log || (() => {});
   console[method] = (...args) => {
-    send(["console", method, args]);
+    send(["console", method, args.map(inspectObject)]);
     fn.apply(console, args.map(stripAnsi));
   };
 });
@@ -158,6 +161,14 @@ function flattenTitles(test) {
   return titles.reverse();
 }
 
+function inspectObject(val) {
+  return isObject(val) ? inspect(val, INSPECT_OPTIONS) : val;
+}
+
 function isPromise(obj) {
   return obj && obj.then && typeof obj.then === "function";
+}
+
+function isObject(val) {
+  return val !== null && typeof val === "object";
 }
