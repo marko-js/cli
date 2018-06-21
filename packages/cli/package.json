@@ -14,10 +14,10 @@
     "app-root-dir": "^1.0.2",
     "argly": "^1.2.0",
     "babel-runtime": "^6.26.0",
-    "chalk": "^2.3.2",
+    "chalk": "^2.4.1",
     "complain": "^1.2.0",
     "resolve-from": "^4.0.0",
-    "update-notifier": "^2.4.0"
+    "update-notifier": "^2.5.0"
   },
   "files": [
     "dist"
