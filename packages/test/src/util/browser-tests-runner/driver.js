@@ -29,6 +29,7 @@ exports.start = async (href, options) => {
   )}`;
 
   await launcher.onPrepare(wdioOptions, capabilities);
+  await delay(500); // Give the launcher (esp the local chrome launcher) some time to init.
   ensureCalled(() =>
     Promise.race([launcher.onComplete(exitCode, wdioOptions), delay(3000)])
   );
@@ -108,6 +109,7 @@ function connect({ viewport = DEFAULT_VIEWPORT, ...options }, capability) {
   const platform =
     (capability.os && `${capability.os} ${capability.os_version}`) ||
     capability.platformName;
+  const timeout = options.idleTimeout || 60000;
 
   const driver = webdriver
     .remote({
@@ -121,7 +123,9 @@ function connect({ viewport = DEFAULT_VIEWPORT, ...options }, capability) {
     })
     .init()
     .url("")
-    .timeouts("script", options.idleTimeout || 60000)
+    .timeouts("script", timeout)
+    .timeouts("implicit", timeout)
+    .timeouts("page load", timeout)
     .setViewportSize(viewport)
     .then(() => () => {
       return driver.executeAsync(function(done) {
