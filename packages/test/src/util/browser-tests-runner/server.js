@@ -4,6 +4,7 @@ require("marko/express");
 const pEvent = require("p-event");
 const express = require("express");
 const engine = require("engine.io");
+const fetch = require("node-fetch");
 const wdioDefaults = require("./util/wdio-defaults");
 const ensureCalled = require("./util/ensure-called");
 const defaultPageTemplate = require("./template.marko");
@@ -52,6 +53,10 @@ exports.start = async (templateData, options) => {
     console.log(`Server running at http://localhost:${port}`);
   }
 
+  // Warmup lasso cache.
+  const href = `http://localhost:${port}`;
+  await (await fetch(href, { method: "GET" })).text();
+
   // Stream logs from client via websocket.
   wss.on("connection", socket =>
     socket.on("message", msg => {
@@ -69,7 +74,5 @@ exports.start = async (templateData, options) => {
     return pEvent(server, "close");
   });
 
-  return {
-    href: `http://localhost:${port}`
-  };
+  return { href };
 };

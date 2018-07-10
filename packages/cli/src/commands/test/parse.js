@@ -1,5 +1,7 @@
+const parseNodeArgs = require("parse-node-args");
 module.exports = function parse(argv) {
-  var options = require("argly")
+  const { cliArgs, nodeArgs } = parseNodeArgs(argv);
+  const options = require("argly")
     .createParser({
       "--help": {
         type: "string",
@@ -53,9 +55,10 @@ module.exports = function parse(argv) {
       console.error(err);
       process.exit(1);
     })
-    .parse(argv);
+    .parse(cliArgs);
 
   options.patterns = options.files;
+  options.nodeArgs = nodeArgs;
   delete options.files;
 
   return options;
