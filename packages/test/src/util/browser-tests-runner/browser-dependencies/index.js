@@ -1,6 +1,7 @@
 const socket = require("engine.io-client")(`ws://${location.host}`);
 const stripAnsi = require("strip-ansi");
 const { inspect } = require("util");
+const path = require("path");
 const INSPECT_OPTIONS = { colors: true };
 const STACK_REGEXP = /\((?:https?:\/\/localhost:\d+\/)?(?:[^/]+\/){2}([^$]+)\$[^/]+([^)]+)\)/g;
 
@@ -53,11 +54,11 @@ setTimeout(() => {
   const fails = [];
 
   runner.on("fail", (test, err) => {
-    err.stack = err.stack.replace(STACK_REGEXP, (_, pkg, path) => {
+    err.stack = err.stack.replace(STACK_REGEXP, (_, pkg, filePath) => {
       if (pkg === options.packageName) {
-        return `.${path}`;
+        return path.join(".", filePath);
       } else {
-        return `./node_modules/${pkg + path}`;
+        return path.join("./node_modules", pkg, filePath);
       }
     });
 

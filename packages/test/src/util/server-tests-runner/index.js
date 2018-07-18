@@ -60,7 +60,7 @@ exports.run = function(allTests, options) {
     const convertedMochaArgs = convertMochaConfigToArgs(mochaOptions);
 
     if (convertedMochaArgs.length) {
-      spawnArgs = spawnArgs.concat(convertedMochaArgs).concat(nodeArgs);
+      spawnArgs = spawnArgs.concat(convertedMochaArgs, nodeArgs);
     }
   }
 
