@@ -1,3 +1,4 @@
+const path = require("path");
 const complain = require("complain");
 const loadTests = require("./util/loadTests");
 const serverTestsRunner = require("./util/server-tests-runner");
@@ -5,6 +6,7 @@ const browserTestsRunner = require("./util/browser-tests-runner");
 
 exports.run = function(options) {
   options.dir = options.dir || process.cwd();
+  options.packageName = require(path.join(options.dir, "package.json")).name;
 
   if (options.server == null) {
     if (options.browser == null) {

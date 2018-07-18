@@ -5,9 +5,11 @@ const resolveFrom = require("resolve-from");
 let name;
 let ports;
 let required;
+let startDelay;
 let defaults;
 
 if (env.BROWSERSTACK_USER) {
+  startDelay = 1000;
   name = "browserstack";
   ports = [
     22,
@@ -60,9 +62,11 @@ if (env.BROWSERSTACK_USER) {
   defaults = {
     user: env.BROWSERSTACK_USER,
     key: env.BROWSERSTACK_ACCESS_KEY,
+    browserstackLocalForcedStop: true,
     browserstackLocal: true
   };
 } else if (env.SAUCE_USERNAME) {
+  startDelay = 0;
   name = "sauce";
   ports = [
     80,
@@ -130,6 +134,7 @@ if (env.BROWSERSTACK_USER) {
     sauceConnect: true
   };
 } else if (env.TB_KEY) {
+  startDelay = 0;
   name = "testingbot";
   ports = [4445, 4444];
   defaults = {
@@ -138,6 +143,7 @@ if (env.BROWSERSTACK_USER) {
     tbTunnel: true
   };
 } else {
+  startDelay = 500;
   name = "chromedriver";
   required = {
     capabilities: [{ browserName: "chrome" }]
@@ -153,6 +159,7 @@ module.exports = {
   ports,
   required,
   defaults,
+  startDelay,
   isValidPort(port) {
     return !ports || ports.indexOf(port) !== -1;
   },

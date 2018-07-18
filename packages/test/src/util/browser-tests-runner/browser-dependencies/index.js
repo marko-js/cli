@@ -1,6 +1,8 @@
+const socket = require("engine.io-client")(`ws://${location.host}`);
 const stripAnsi = require("strip-ansi");
 const { inspect } = require("util");
 const INSPECT_OPTIONS = { colors: true };
+const STACK_REGEXP = /\((?:https?:\/\/localhost:\d+\/)?(?:[^/]+\/){2}([^$]+)\$[^/]+([^)]+)\)/g;
 
 // Capture client logs and forward to server.
 ["log", "info", "warn", "trace", "error"].forEach(method => {
@@ -13,10 +15,17 @@ const INSPECT_OPTIONS = { colors: true };
 
 // Forward uncaught excpections.
 window.addEventListener("error", ({ error }) => console.error(error));
+window.addEventListener("beforeunload", () => {
+  // If the browser navigates before the tests have finished mark the test as failing.
+  console.log(
+    "\nBrowser unexpectedly navigated during tests." +
+      "\n@marko/test does not support navigation.\n"
+  );
+  window.__test_result__ = { success: false };
+});
 
 require("chai").config.includeStack = true;
 const BrowserContext = require("./browser-context");
-let buffer = [];
 let options;
 
 try {
@@ -39,62 +48,37 @@ Object.keys(mochaOptions).forEach(key => {
   }
 });
 
-window.__run_tests__ = done => {
-  const socket = require("engine.io-client")(`ws://${location.host}`);
-  socket.once("open", () => {
-    window.addEventListener("beforeunload", onUnload);
-    const runner = mocha.run();
-    const fails = [];
-    let timeout;
-    queueFlush(); // We write the buffered console output on an interval.
+setTimeout(() => {
+  const runner = mocha.run();
+  const fails = [];
 
-    runner.on("fail", (test, err) => {
-      fails.push({
-        name: test.title,
-        result: false,
-        message: err.message,
-        stack: err.stack,
-        titles: flattenTitles(test)
-      });
-    });
-
-    runner.on("end", () => {
-      window.mochaResults = runner.stats;
-      window.mochaResults.reports = fails;
-      window.removeEventListener("beforeunload", onUnload);
-      clearTimeout(timeout);
-      flush(() =>
-        done({
-          success: !fails.length,
-          coverage: window.__coverage__
-        })
-      );
-    });
-
-    function flush(cb) {
-      if (buffer.length) {
-        socket.send(JSON.stringify(buffer), cb);
-        buffer = [];
+  runner.on("fail", (test, err) => {
+    err.stack = err.stack.replace(STACK_REGEXP, (_, pkg, path) => {
+      if (pkg === options.packageName) {
+        return `.${path}`;
       } else {
-        cb();
+        return `./node_modules/${pkg + path}`;
       }
-    }
+    });
 
-    function queueFlush() {
-      timeout = setTimeout(() => flush(queueFlush), 100);
-    }
-
-    function onUnload() {
-      // If the browser navigates before the tests have finished mark the test as failing.
-      console.log(
-        "\nBrowser unexpectedly navigated during tests." +
-          "\n@marko/test does not support navigation.\n"
-      );
-      flush();
-      done({ success: false });
-    }
+    fails.push({
+      name: test.title,
+      result: false,
+      message: err.message,
+      stack: err.stack,
+      titles: flattenTitles(test)
+    });
   });
-};
+
+  runner.on("end", () => {
+    window.mochaResults = runner.stats;
+    window.mochaResults.reports = fails;
+    window.__test_result__ = {
+      success: !fails.length,
+      coverage: window.__coverage__
+    };
+  });
+});
 
 window.__init_test__ = (test, component, func) => {
   test.component = component;
@@ -149,7 +133,7 @@ function runTest(it, name, handler, context) {
 }
 
 function send(...args) {
-  buffer.push(...args);
+  socket.send(JSON.stringify(args));
 }
 
 function flattenTitles(test) {

@@ -84,21 +84,28 @@ Run only server tests:
 marko test ./src/components/**/test*server.js --server
 ```
 
+All node options are forwarded to the mocha process for server testing, allowing the following:
+
+```bash
+# Will start a debugging session on the spawned mocha process.
+marko test --server --inspect-brk
+```
+
 # Component testing
 
 Marko CLI includes a testing framework (built on top of [mocha](https://mochajs.org/)) that targets UI components built using Marko or Marko Widgets. Each UI
 component may include test files alongside components or in a `test/` directory that consists of one or more JavaScript test files with a name in any of the
 following formats:
 
-* `test.js` - runs only in the browser
-* `test.server.js` _or_ `test-server.js` - runs only on the server
-* `test.browser.js` _or_ `test-browser.js` - runs only in the browser
+- `test.js` - runs only in the browser
+- `test.server.js` _or_ `test-server.js` - runs only on the server
+- `test.browser.js` _or_ `test-browser.js` - runs only in the browser
 
 An optional prefix can also be provided for grouping tests:
 
-* `foo.test.js` _or_ `foo-test.js`
-* `foo.test.server.js` _or_ `foo-test-server.js`
-* `foo.test.browser.js` _or_ `foo-test-browser.js`
+- `foo.test.js` _or_ `foo-test.js`
+- `foo.test.server.js` _or_ `foo-test-server.js`
+- `foo.test.browser.js` _or_ `foo-test-browser.js`
 
 Below is a sample set of tests:
 
@@ -308,7 +315,8 @@ module.exports = function(markoCli) {
          */
         capabilities: ...,
         serverPort: 0, // The port to start the test server on (serves your components).
-        idleTimeout: 60000, // Automatically disconnect after 1min by default.
+        idleTimeout: 60000, // Automatically disconnect after 1min of inactivity by default.
+        suiteTimeout: 600000, // Automatically disconnect after 10 minutes if the tests have not completed by default.
         viewport: {
           // Configure the screen size for any drivers started (defaults below).
           width: 800,
@@ -333,16 +341,16 @@ module.exports = function(markoCli) {
 
 # TODO
 
-* Don't write compiled templates to disk
-* Allow mocks for custom tags
-* File watching when running tests
-  * `marko test --watch`
-* Helper API for simulating DOM events
-* Plugin API for adding helpers to `context`
-* In-browser UI component viewer with file watching
-  * Drop down for inputs
-  * Editor for input data
-* In-browser project explorer (with links to run browser tests and view UI components)
-* Image snapshots
-* Testing in jsdom
-* Launching tests in multiple browsers (both headless and real browsers)
+- Don't write compiled templates to disk
+- Allow mocks for custom tags
+- File watching when running tests
+  - `marko test --watch`
+- Helper API for simulating DOM events
+- Plugin API for adding helpers to `context`
+- In-browser UI component viewer with file watching
+  - Drop down for inputs
+  - Editor for input data
+- In-browser project explorer (with links to run browser tests and view UI components)
+- Image snapshots
+- Testing in jsdom
+- Launching tests in multiple browsers (both headless and real browsers)

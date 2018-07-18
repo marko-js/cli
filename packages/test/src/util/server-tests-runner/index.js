@@ -33,7 +33,7 @@ function convertMochaConfigToArgs(config) {
 }
 
 exports.run = function(allTests, options) {
-  let { dir, cliRoot, mochaOptions } = options;
+  let { dir, cliRoot, mochaOptions, nodeArgs } = options;
   var filteredTests = allTests.filter(test => {
     return test.env === "server" || test.env === "both";
   });
@@ -60,7 +60,7 @@ exports.run = function(allTests, options) {
     const convertedMochaArgs = convertMochaConfigToArgs(mochaOptions);
 
     if (convertedMochaArgs.length) {
-      spawnArgs = spawnArgs.concat(convertedMochaArgs);
+      spawnArgs = spawnArgs.concat(convertedMochaArgs).concat(nodeArgs);
     }
   }
 
@@ -72,8 +72,5 @@ exports.run = function(allTests, options) {
     cwd: dir,
     env,
     stdio: "inherit"
-  }).catch(err => {
-    console.error("Error spawning mocha from marko-cli", err);
-    process.exit(1);
-  });
+  }).catch(() => process.exit(1));
 };
