@@ -7,7 +7,8 @@ module.exports = function(code, printContext, indent) {
     printWidth: printContext.maxLen,
     singleQuote: printContext.singleQuote,
     useTabs: printContext.indentString[0] === '\t',
-    tabWidth: printContext.indentString.length
+    tabWidth: printContext.indentString.length,
+    parser: 'babylon'
   };
 
   if (code.slice(0, 5) === 'class') {
