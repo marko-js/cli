@@ -1,12 +1,12 @@
 "use strict";
 
 const unescapePlaceholdersInStringExpression = require("./util/unescapePlaceholdersInStringExpression");
+const hasUnenclosedWhitespace = require("./util/hasUnenclosedWhitespace");
 const getBodyText = require("./util/getBodyText");
 const hasLineBreaks = require("./util/hasLineBreaks");
 const printers = require("./printers");
 const Writer = require("./util/Writer");
 const formattingTags = require("./formatting-tags");
-const trim = require("./util/trim");
 
 const formatJS = require("./util/formatJS");
 const beautifyCSS = require("cssbeautify");
@@ -155,11 +155,9 @@ module.exports = function printHtmlElement(node, printContext, writer) {
       attrStr += attr.name;
       var attrValue = attr.value;
       if (attrValue) {
-        if (attrValue.isCompoundExpression()) {
+        if (hasUnenclosedWhitespace(attrValue)) {
           attrStr +=
-            "=(" +
-            unescapePlaceholdersInStringExpression(attrValue.toString()) +
-            ")";
+            "=(" + unescapePlaceholdersInStringExpression(attrValue.toString()) + ")";
         } else {
           attrStr +=
             "=" + unescapePlaceholdersInStringExpression(attrValue.toString());
@@ -178,27 +176,15 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     // We have attributes
     // Let's see if all of the attributes will fit on the same line
     if (printContext.isHtmlSyntax) {
-      attrStringsArray.forEach((attrString, i) => {
-        let stringToAppend = " " + attrString;
-        if (i === attrStringsArray.length - 1) {
-          if (hasBody) {
-            stringToAppend += ">";
-          } else {
-            stringToAppend += "/>";
-          }
-        }
+      var oneLineAttrs = attrStringsArray.join(" ");
+      var fitsOneLine = attrStringsArray.length <= 1 || writer.col + oneLineAttrs.length < maxLen;
+      var attrIndentation = printContext.eol + printContext.currentIndentString + printContext.indentString;
+      writer.write(fitsOneLine ?
+        " " + oneLineAttrs :
+        attrIndentation + attrStringsArray.join(attrIndentation)
+      );
 
-        if (i === 0 || writer.col + stringToAppend.length < maxLen) {
-          writer.write(stringToAppend);
-        } else {
-          writer.write(
-            printContext.eol +
-              printContext.currentIndentString +
-              printContext.indentString +
-              trim.ltrim(stringToAppend)
-          );
-        }
-      });
+      writer.write(hasBody ? ">" : "/>");
     } else {
       var useCommas = node.tagName === "var";
 
