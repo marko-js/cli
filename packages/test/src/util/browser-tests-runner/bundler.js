@@ -82,8 +82,8 @@ function toVirtualModule(test) {
             new WrapStream(
               `__init_test__(${JSON.stringify(test)}, require(${JSON.stringify(
                 relativePath
-              )}), function() {\n`,
-              `\n});`
+              )}), function() {`,
+              `});`
             )
           );
       },
