@@ -146,7 +146,18 @@ if (env.BROWSERSTACK_USER) {
   startDelay = 500;
   name = "chromedriver";
   required = {
-    capabilities: [{ browserName: "chrome" }]
+    capabilities: [
+      {
+        browserName: "chrome",
+        chromeOptions: {
+          args: [
+            "no-sandbox",
+            "disable-dev-shm-usage",
+            "disable-setuid-sandbox"
+          ]
+        }
+      }
+    ]
   };
   defaults = {
     path: "/",

@@ -24,7 +24,7 @@ const DEFAULT_TIMEOUTS = {
 exports.start = async (href, options) => {
   let exitCode = 1;
   const {
-    noExit,
+    debug,
     packageName,
     mochaOptions,
     wdioOptions: { launcher, ...wdioOptions }
@@ -70,7 +70,7 @@ exports.start = async (href, options) => {
           console.error(error);
         } finally {
           if (await isAlive(driver)) {
-            if (noExit) {
+            if (debug) {
               // Wait for the driver to die by pinging it every 3 seconds.
               do {
                 await delay(3000);
