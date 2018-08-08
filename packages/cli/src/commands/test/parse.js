@@ -11,9 +11,10 @@ module.exports = function parse(argv) {
         type: "boolean",
         description: "Run only server tests"
       },
-      "--no-exit": {
+      "--debug": {
         type: "boolean",
-        description: "Do not shutdown the test server"
+        description:
+          "Does not shutdown the test server and disables headless mode for browser tests"
       },
       "--browser": {
         type: "boolean",

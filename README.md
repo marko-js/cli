@@ -84,6 +84,12 @@ Run only server tests:
 marko test ./src/components/**/test*server.js --server
 ```
 
+Keep server open after the tests finish and disable headless mode for browser tests:
+
+```bash
+marko test --debug
+```
+
 All node options are forwarded to the mocha process for server testing, allowing the following:
 
 ```bash
@@ -352,5 +358,3 @@ module.exports = function(markoCli) {
   - Editor for input data
 - In-browser project explorer (with links to run browser tests and view UI components)
 - Image snapshots
-- Testing in jsdom
-- Launching tests in multiple browsers (both headless and real browsers)

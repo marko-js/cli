@@ -49,7 +49,7 @@ exports.start = async (templateData, options) => {
     );
   }
 
-  if (options.noExit) {
+  if (options.debug) {
     console.log(`Server running at http://localhost:${port}`);
   }
 

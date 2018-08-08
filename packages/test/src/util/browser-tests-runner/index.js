@@ -19,6 +19,15 @@ exports.run = async (tests, options) => {
     launcher: wdioDefaults.getLauncher(options.dir)
   };
 
+  if (wdioDefaults.name === "chromedriver") {
+    const args = options.wdioOptions.capabilities[0].chromeOptions.args;
+
+    // Run chromedriver in headless mode unless running with debug option.
+    if (!options.debug) {
+      args.push("headless", "disable-gpu");
+    }
+  }
+
   const bundler = await createBundler(tests, options);
   const server = await startServer(bundler, options);
   const driver = await startDriver(server.href, options);
