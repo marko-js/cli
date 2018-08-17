@@ -54,13 +54,13 @@ exports.run = function(allTests, options) {
     env.MARKO_TESTS_ROOT = cliRoot;
   }
 
-  let spawnArgs = [mochaTestsServer];
+  let spawnArgs = [mochaTestsServer].concat(nodeArgs);
 
   if (mochaOptions) {
     const convertedMochaArgs = convertMochaConfigToArgs(mochaOptions);
 
     if (convertedMochaArgs.length) {
-      spawnArgs = spawnArgs.concat(convertedMochaArgs, nodeArgs);
+      spawnArgs = spawnArgs.concat(convertedMochaArgs);
     }
   }
 
