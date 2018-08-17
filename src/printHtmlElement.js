@@ -165,6 +165,8 @@ module.exports = function printHtmlElement(node, printContext, writer) {
       } else if (attr.argument != null) {
         attrStr += "(" + attr.argument + ")";
       }
+    } else if (attr.spread) {
+      attrStr += "..." + attr.value;
     } else {
       attrStr += "${" + attr.value + "}";
     }
