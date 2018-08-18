@@ -32,6 +32,12 @@ exports.run = function(options) {
     );
   }
 
+  if (options.mochaOptions) {
+    if (options.debug) {
+      options.mochaOptions.timeout = Number.MAX_VALUE;
+    }
+  }
+
   return loadTests(options.dir, options.patterns, {
     testMatcher: options.testMatcher
   }).then(tests => {

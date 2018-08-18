@@ -22,8 +22,10 @@ exports.run = async (tests, options) => {
   if (wdioDefaults.name === "chromedriver") {
     const args = options.wdioOptions.capabilities[0].chromeOptions.args;
 
-    // Run chromedriver in headless mode unless running with debug option.
-    if (!options.debug) {
+    if (options.debug) {
+      args.push("auto-open-devtools-for-tabs");
+    } else {
+      // Run chromedriver in headless mode unless running with debug option.
       args.push("headless", "disable-gpu");
     }
   }
