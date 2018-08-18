@@ -32,10 +32,9 @@ exports.run = function(options) {
     );
   }
 
-  if (options.mochaOptions) {
-    if (options.debug) {
-      options.mochaOptions.timeout = Number.MAX_VALUE;
-    }
+  if (options.debug) {
+    options.mochaOptions = options.mochaOptions || {};
+    options.mochaOptions.timeout = 3600000;
   }
 
   return loadTests(options.dir, options.patterns, {
