@@ -9,8 +9,7 @@ const Writer = require("./util/Writer");
 const formattingTags = require("./formatting-tags");
 
 const formatJS = require("./util/formatJS");
-const beautifyCSS = require("cssbeautify");
-const redent = require("redent");
+const formatStyles = require('./util/formatStyles');
 
 const codeTags = {
   class: {
@@ -26,7 +25,7 @@ const codeTags = {
     prettyprint: true
   },
   style: {
-    type: "css",
+    type: "style",
     prettyprint: true
   }
 };
@@ -67,17 +66,8 @@ function handleCodeTag(node, printContext, writer) {
       if (tagName === "static") {
         outputCode = "static " + outputCode;
       }
-    } else if (codeTagInfo.type === "css") {
-      let cssCodeStart = outputCode.indexOf("{");
-      let cssCodeEnd = outputCode.lastIndexOf("}");
-      let beforeCode = outputCode.substring(0, cssCodeStart);
-      let afterCode = outputCode.substring(cssCodeEnd);
-      let cssCode = outputCode.substring(cssCodeStart + 1, cssCodeEnd);
-      cssCode = beautifyCSS(cssCode, {
-        indent: printContext.indentString
-      });
-      cssCode = redent(cssCode, 1, printContext.indentString);
-      outputCode = beforeCode + "{\n" + cssCode + afterCode;
+    } else if (codeTagInfo.type === "style") {
+      outputCode = formatStyles(outputCode, printContext);
     }
   }
 
