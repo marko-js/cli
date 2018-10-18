@@ -1,5 +1,3 @@
-root = true
-
 [*.marko]
 indent_style = space
 indent_size = 8
