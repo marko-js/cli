@@ -16,7 +16,7 @@ exports.create = async (tests, options) => {
   const outputDir = path.resolve(workDir, "browser-build");
   const testDependencies = tests.map(toVirtualModule);
   const additionalDependencies = resolveTestDependencies(
-    options.browserDependencies || [],
+    options.browserTestDependencies || [],
     options.dir
   );
   const customLassoOptions = options.lassoOptions || {};
