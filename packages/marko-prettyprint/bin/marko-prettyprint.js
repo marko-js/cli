@@ -246,4 +246,3 @@ if (foundCount) {
 } else {
     console.log(`No templates found!`);
 }
-
