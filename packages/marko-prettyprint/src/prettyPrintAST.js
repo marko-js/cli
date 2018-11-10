@@ -20,7 +20,7 @@ module.exports = function prettyPrintAST(ast, options) {
     if (filename) {
       var configFileOptions = readConfigFile(filename);
       if (configFileOptions) {
-        options = Object.assign({}, configFileOptions, options);
+        options = Object.assign({}, options, configFileOptions);
       }
     }
   }
