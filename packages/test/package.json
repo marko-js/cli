@@ -21,7 +21,7 @@
     "get-port": "^3.2.0",
     "is-port-free": "^1.0.7",
     "lasso": "^3.2.0",
-    "lasso-istanbul-instrument-transform": "2.0.0",
+    "lasso-istanbul-instrument-transform": "^2.0.1",
     "lasso-marko": "^2.4.2",
     "lasso-require": "^3.4.10",
     "marko": "^4.12.0",
