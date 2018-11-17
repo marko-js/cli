@@ -156,7 +156,11 @@ module.exports = function printHtmlElement(node, printContext, writer) {
         attrStr += "(" + attr.argument + ")";
       }
     } else if (attr.spread) {
-      attrStr += "..." + attr.value;
+      if (hasUnenclosedWhitespace(attr.value)) {
+        attrStr += "...(" + attr.value + ")";
+      } else {
+        attrStr += "..." + attr.value;
+      }
     } else {
       attrStr += "${" + attr.value + "}";
     }
