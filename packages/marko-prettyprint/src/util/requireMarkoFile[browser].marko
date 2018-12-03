@@ -1,0 +1,24 @@
+module-code(function(require) {
+  var isDebug = require('./env').isDebug;
+  var markoPath = isDebug ? 'src' : 'dist';
+  return `
+    var markoCompiler = ;
+    var CodeWriter = require("./${markoPath}/compiler/CodeWriter");
+    module.exports = function (dir, file) {
+      switch (file) {
+        case "compiler":
+          return require("./${markoPath}/compiler");
+        case "compiler/CodeWriter":
+          return require("./${markoPath}/compiler/CodeWriter");
+        default:
+          throw new Error("Could not fine Marko file: " + file);
+      }
+    }
+  `;
+});
+
+// What's going on here? We are using Marko to do JavaScript code generation
+// during the module bundling phase to conditionally export either the
+// "src" or the "dist" folder based on whether or not we are doing a
+// debug or non-debug build. We are using Marko since we know the Marko compiler
+// is enabled already (no extra babel transform required).

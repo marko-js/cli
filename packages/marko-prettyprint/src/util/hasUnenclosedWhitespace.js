@@ -3,7 +3,9 @@ const WHITE_SPACE_EXPRESSION_TYPES = [
   "AssignmentExpression",
   "ConditionalExpression",
   "BinaryExpression",
-  "NewExpression"
+  "NewExpression",
+  "FunctionDeclaration",
+  "Assignment"
 ];
 
 module.exports = function hasUnenclosedWhitespace(node) {

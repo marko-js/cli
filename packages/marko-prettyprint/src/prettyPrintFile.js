@@ -1,7 +1,7 @@
 var fs = require("fs");
 var path = require("path");
 var prettyPrintAST = require("./prettyPrintAST");
-var getMarkoCompiler = require("./util/getMarkoCompiler");
+var requireMarkoFile = require("./util/requireMarkoFile");
 
 module.exports = function prettyPrintFile(filename, options) {
   if (!filename) {
@@ -20,8 +20,10 @@ module.exports = function prettyPrintFile(filename, options) {
   options.filename = filename;
   options.dirname = dirname;
 
-  var markoCompiler = getMarkoCompiler(dirname);
+  var markoCompiler = requireMarkoFile(dirname, "compiler");
+  var CodeWriter = requireMarkoFile(dirname, "compiler/CodeWriter");
   options.markoCompiler = markoCompiler;
+  options.CodeWriter = CodeWriter;
 
   var sourceCode = fs.readFileSync(filename, { encoding: "utf8" });
   var ast = markoCompiler.parseRaw(sourceCode, filename);

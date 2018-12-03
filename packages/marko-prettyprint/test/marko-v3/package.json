@@ -1,7 +1,0 @@
-{
-  "name": "marko-prettyprint-test",
-  "version": "0.0.0",
-  "dependencies": {
-    "marko": "^3.14.0"
-  }
-}

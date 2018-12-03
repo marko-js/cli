@@ -10,6 +10,7 @@ const formattingTags = require("./formatting-tags");
 
 const formatJS = require("./util/formatJS");
 const formatStyles = require('./util/formatStyles');
+const toCode = require("./util/toCode");
 
 const codeTags = {
   class: {
@@ -87,11 +88,11 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     return;
   }
 
-  var isDynamicTagName = node.tagName.startsWith("$");
+  var tagNameExpression = node.rawTagNameExpression;
   var preserveBodyWhitespace = printContext.preserveWhitespace === true;
   var maxLen = printContext.maxLen;
 
-  if (preserveBodyWhitespace || isDynamicTagName) {
+  if (preserveBodyWhitespace || tagNameExpression) {
     // We can only reliably preserve whitespace in HTML mode so we force the HTML
     // syntax if we detect that whitespace preserval is enabled
     printContext = printContext.switchToHtmlSyntax();
@@ -100,8 +101,12 @@ module.exports = function printHtmlElement(node, printContext, writer) {
   if (!printContext.isConciseSyntax) {
     writer.write("<");
   }
-
-  writer.write(node.tagName);
+  
+  if (tagNameExpression) {
+    writer.write(`\${${tagNameExpression}}`);
+  } else {
+    writer.write(node.tagName);
+  }
 
   if (node.rawShorthandId) {
     writer.write("#" + node.rawShorthandId);
@@ -140,29 +145,29 @@ module.exports = function printHtmlElement(node, printContext, writer) {
   // append them to the output while avoiding putting too many attributes on one line.
   attrs.forEach((attr, i) => {
     var attrStr = "";
+    var attrValueStr = toCode(attr.value, printContext, printContext.depth + 1, true);
 
     if (attr.name) {
       attrStr += attr.name;
-      var attrValue = attr.value;
-      if (attrValue) {
-        if (hasUnenclosedWhitespace(attrValue)) {
+      if (attrValueStr) {
+        if (hasUnenclosedWhitespace(attr.value)) {
           attrStr +=
-            "=(" + unescapePlaceholdersInStringExpression(attrValue.toString()) + ")";
+            "=(" + unescapePlaceholdersInStringExpression(attrValueStr) + ")";
         } else {
           attrStr +=
-            "=" + unescapePlaceholdersInStringExpression(attrValue.toString());
+            "=" + unescapePlaceholdersInStringExpression(attrValueStr);
         }
       } else if (attr.argument != null) {
-        attrStr += "(" + attr.argument + ")";
+        attrStr += "(" + toCode(attr.argument, printContext, printContext.depth + 1, true) + ")";
       }
     } else if (attr.spread) {
       if (hasUnenclosedWhitespace(attr.value)) {
-        attrStr += "...(" + attr.value + ")";
+        attrStr += "...(" + attrValueStr + ")";
       } else {
-        attrStr += "..." + attr.value;
+        attrStr += "..." + attrValueStr;
       }
     } else {
-      attrStr += "${" + attr.value + "}";
+      attrStr += "${" + attrValueStr + "}";
     }
 
     attrStringsArray.push(attrStr);

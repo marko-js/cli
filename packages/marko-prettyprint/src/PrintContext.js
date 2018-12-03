@@ -19,6 +19,8 @@ class PrintContext {
     this.depth = 0;
     this.forceHtml = false;
     this.currentIndentString = "";
+    this.markoCompiler = options.markoCompiler;
+    this.CodeWriter = options.CodeWriter;
   }
 
   get isConciseSyntax() {
@@ -27,10 +29,6 @@ class PrintContext {
 
   get isHtmlSyntax() {
     return this.syntax === SYNTAX_HTML;
-  }
-
-  get markoCompiler() {
-    return this.options.markoCompiler;
   }
 
   beginNested() {

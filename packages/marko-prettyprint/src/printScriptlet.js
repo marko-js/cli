@@ -1,36 +1,39 @@
 "use strict";
 
-let formatJS = require("./util/formatJS");
+const redent = require("redent");
+const formatJS = require("./util/formatJS");
 
 module.exports = function printScriptlet(node, printContext, writer) {
   const currentIndentString = printContext.currentIndentString;
   const indentString = printContext.indentString;
-
-  let code = node.code;
+  const code = node.code;
+  let isBlock = node.block;
 
   if (node.tag) {
     writer.write("<%");
     writer.write(code);
     writer.write("%>");
   } else {
-    if (code.startsWith("\n")) {
-      code = formatJS(code, printContext, printContext.depth + 1).trim();
+    const output = formatJS(code, printContext, printContext.depth);
+
+    if (!isBlock && /[\r\n]/g.test(output)) {
+      isBlock = true;
+    }
+
+    if (isBlock) {
       // Multi-line scriptlet
 
       writer.write(
         currentIndentString +
           "$ {\n" +
-          currentIndentString +
-          indentString +
-          code +
+          redent(output, printContext.depth + 1, indentString) +
           "\n" +
           currentIndentString +
           "}"
       );
     } else {
-      code = formatJS(code, printContext, printContext.depth).trim();
       writer.write("$ ");
-      writer.write(code);
+      writer.write(output);
     }
   }
 };
