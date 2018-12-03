@@ -1,6 +1,6 @@
 var path = require("path");
 var prettyPrintAST = require("./prettyPrintAST");
-var getMarkoCompiler = require("./util/getMarkoCompiler");
+var requireMarkoFile = require("./util/requireMarkoFile");
 
 module.exports = function prettyPrintSource(src, options) {
   if (!options) {
@@ -22,8 +22,9 @@ module.exports = function prettyPrintSource(src, options) {
   var dirname = path.dirname(filename);
   options.dirname = dirname;
 
-  var markoCompiler = options.markoCompiler || getMarkoCompiler(dirname);
+  var markoCompiler = options.markoCompiler || requireMarkoFile(dirname, "compiler");
   options.markoCompiler = markoCompiler;
+  options.CodeWriter = options.CodeWriter || requireMarkoFile(dirname, "compiler/CodeWriter");
 
   var ast = markoCompiler.parseRaw(src, filename);
   return prettyPrintAST(ast, options);

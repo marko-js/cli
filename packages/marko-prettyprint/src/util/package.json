@@ -1,6 +1,6 @@
 {
     "browser": {
-        "./readConfigFile.js": "./readConfigFile.browser.js",
-        "./getMarkoCompiler.js": "./getMarkoCompiler.browser.js"
+        "./readConfigFile.js": "./readConfigFile[browser].js",
+        "./requireMarkoFile.js": "./requireMarkoFile[browser].marko"
     }
 }

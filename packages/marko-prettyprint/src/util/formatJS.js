@@ -1,7 +1,7 @@
 const format = require("prettier").format;
 const redent = require("redent");
 
-module.exports = function(code, printContext, indent) {
+module.exports = function(code, printContext, indent, expression) {
   const config = {
     semi: !printContext.noSemi,
     printWidth: printContext.maxLen,
@@ -11,16 +11,26 @@ module.exports = function(code, printContext, indent) {
     parser: 'babylon'
   };
 
-  if (code.slice(0, 5) === 'class') {
-    // When parsing classes prettier (babylon) requires a class name.
-    // Marko does not, we get around this by parsing as an expression.
-    code = format('(' + code + ');', config).trim().slice(1, -2);
-  } else {
-    code = format(code, config);
+  const isExpression = expression || /^class *?\{/.test(code);
+
+  if (isExpression) {
+    code = '(' + code + ');';
   }
 
+  code = format(code, config).trim();
+
+  if (isExpression) {
+    if (code[code.length - 1] === ";") {
+      code = code.slice(0, -1);
+    }
+  
+    if (code[0] === "(") {
+      code = code.slice(1, -1);
+    }
+  }
+  
   if (indent) {
-    code = redent(code, indent, printContext.indentString);
+    code = redent(code, indent, printContext.indentString).trim();
   }
 
   return code;
