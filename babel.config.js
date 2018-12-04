@@ -13,10 +13,5 @@ module.exports = {
   plugins: [
     "@babel/transform-runtime",
     "@babel/proposal-object-rest-spread"
-  ],
-  env: {
-    test: {
-      plugins: ["babel-plugin-istanbul"]
-    }
-  }
+  ]
 };
