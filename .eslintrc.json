@@ -2,7 +2,7 @@
   "extends": ["eslint:recommended", "prettier"],
   "parserOptions": {
     "ecmaVersion": 2018,
-    "sourceType": "script",
+    "sourceType": "module",
     "ecmaFeatures": {
       "jsx": false
     }

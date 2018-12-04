@@ -1,7 +1,15 @@
 {
-  "lerna": "2.9.0",
+  "command": {
+    "publish": {
+      "conventionalCommits": true
+    }
+  },
   "packages": [
     "packages/*"
   ],
-  "version": "4.0.7"
+  "ignoreChanges": [
+    "**/test/**",
+    "**/*.md"
+  ],
+  "version": "independent"
 }

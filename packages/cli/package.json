@@ -8,12 +8,12 @@
   },
   "bugs": "https://github.com/marko-js/marko-cli/issues",
   "dependencies": {
+    "@babel/runtime": "^7.2.0",
     "@marko/compile": "^3.2.0",
     "@marko/create": "^3.1.6",
     "@marko/test": "^4.0.7",
     "app-root-dir": "^1.0.2",
     "argly": "^1.2.0",
-    "babel-runtime": "^6.26.0",
     "chalk": "^2.4.1",
     "complain": "^1.2.0",
     "parse-node-args": "1.1.1",

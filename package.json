@@ -1,19 +1,32 @@
 {
   "devDependencies": {
+    "@babel/cli": "^7.2.0",
+    "@babel/core": "^7.2.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
+    "@babel/register": "^7.0.0",
+    "@commitlint/cli": "^7.2.1",
+    "@commitlint/config-conventional": "^7.1.2",
+    "@commitlint/config-lerna-scopes": "^7.2.1",
     "@ebay/browserslist-config": "^1.0.0",
-    "ava": "^0.25.0",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "eslint": "^5.1.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-prettier": "^2.6.2",
-    "husky": "^0.14.3",
-    "lerna": "^2.11.0",
-    "lint-staged": "^7.2.0",
-    "prettier": "^1.13.7"
+    "codecov": "^3.1.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.9.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "husky": "^1.2.0",
+    "lerna": "^3.5.1",
+    "lint-staged": "^8.1.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "prettier": "^1.15.3"
+  },
+  "husky": {
+    "hooks": {
+      "commitmsg": "echo $GIT_PARAMS && commitlint -e $GIT_PARAMS",
+      "precommit": "lint-staged"
+    }
   },
   "lint-staged": {
     "*.{json,css,less,md}": [
@@ -27,12 +40,17 @@
     ]
   },
   "scripts": {
-    "build": "for pkg in ./packages/*; do (cd $pkg && rm -rf ./dist && babel ./src --out-dir ./dist --copy-files); done",
+    "build": "lerna exec --parallel -- babel src --out-dir dist --config-file ../../babel.config.js --delete-dir-on-start --copy-files",
+    "build:watch": "npm run build -- --watch",
+    "ci:codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "ci:test": "cross-env NODE_ENV=test nyc --reporter=text npm run mocha",
     "clean": "lerna clean && rm -rf ./packages/*/{dist,package-lock.json} ./package-lock.json ./node_modules",
-    "format": "prettier \"packages/**/*.{json,css,less,md,js}\" \"*.{json,md,js}\" --write",
+    "format": "prettier \"**/*.{json,md,js}\" --write",
     "lint": "eslint -f visualstudio packages/",
-    "postinstall": "lerna bootstrap --hoist",
-    "precommit": "lint-staged && npm run build",
-    "test": "ava --verbose"
+    "mocha": "mocha -r @babel/register packages/*/test/**/*.test.js",
+    "postinstall": "lerna bootstrap --hoist --no-ci",
+    "publish": "npm run build && lerna publish",
+    "report": "open ./coverage/lcov-report/index.html",
+    "test": "cross-env NODE_ENV=test nyc npm run mocha"
   }
 }

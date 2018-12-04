@@ -4,7 +4,7 @@
   "version": "4.0.5",
   "bugs": "https://github.com/marko-js/marko-cli/issues",
   "dependencies": {
-    "babel-runtime": "^6.26.0",
+    "@babel/runtime": "^7.2.0",
     "lasso": "3.2.6"
   },
   "files": [

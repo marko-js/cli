@@ -1,0 +1,14 @@
+{
+    "all": true,
+    "cache": true,
+    "include": [
+        "packages/*/src/**/*.js"
+    ],
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ],
+    "require": [
+      "@babel/register"
+    ]
+}
