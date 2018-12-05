@@ -3,8 +3,9 @@
 var trimLinesStart = require("./util/trim").trimLinesStart;
 var trimLinesEnd = require("./util/trim").trimLinesEnd;
 var indentLines = require("./util/indent").indentLines;
+var toCode = require("./util/toCode");
 module.exports = function printText(node, printContext, writer) {
-  var text = node.argument.value;
+  var text = node.argument.type === 'Literal' ? node.argument.value : `\${${toCode(node.argument, printContext, undefined, true)}}`;
 
   var isConciseSyntax =
     printContext.depth === 0 || printContext.isConciseSyntax;

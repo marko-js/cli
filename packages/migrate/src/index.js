@@ -45,6 +45,7 @@ async function getFiles(patterns, globOptions) {
             if (err) return reject(err);
 
             allFiles.push(...files);
+            resolve();
           });
         })
     )
@@ -83,7 +84,7 @@ export default async function(options = {}) {
   for (let file of files) {
     const basename = path.basename(file);
     if (basename.endsWith(".marko")) {
-      const source = fs.readFileSync(file);
+      const source = fs.readFileSync(file, 'utf-8');
       const ast = markoCompiler.parse(source, file, { migrate:true, raw:true });
       const migratedSource = markoPrettyprint.prettyPrintAST(ast, {
         syntax: options.syntax,
@@ -92,7 +93,7 @@ export default async function(options = {}) {
         singleQuote: options.singleQuote,
         filename: file
       });
-      fs.writeFileSync(migratedSource, file, 'utf-8');
+      fs.writeFileSync(file, migratedSource, 'utf-8');
     }
   }
 };
