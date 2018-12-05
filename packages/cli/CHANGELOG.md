@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/marko-js/cli/compare/marko-cli@4.0.8...marko-cli@4.1.0) (2018-12-05)
+
+
+### Features
+
+* add prettyprint package ([158ec29](https://github.com/marko-js/cli/commit/158ec29))
+
+
+
+
+
 ## 4.0.8 (2018-12-05)
 
 

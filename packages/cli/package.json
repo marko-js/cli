@@ -1,7 +1,7 @@
 {
   "name": "marko-cli",
   "description": "Marko CLI",
-  "version": "4.0.8",
+  "version": "4.1.0",
   "author": "Michael Rawlings <ml.rawlings@gmail.com>",
   "bin": {
     "marko": "dist/bin.js"
@@ -9,9 +9,9 @@
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/runtime": "^7.2.0",
-    "@marko/compile": "^3.2.1",
-    "@marko/create": "^3.1.7",
-    "@marko/prettyprint": "^1.0.0",
+    "@marko/compile": "^3.3.0",
+    "@marko/create": "^3.2.0",
+    "@marko/prettyprint": "^1.1.0",
     "@marko/test": "^4.0.8",
     "app-root-dir": "^1.0.2",
     "argly": "^1.2.0",

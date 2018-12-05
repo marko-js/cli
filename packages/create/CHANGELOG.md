@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/marko-js/cli/compare/@marko/create@3.1.7...@marko/create@3.2.0) (2018-12-05)
+
+
+### Features
+
+* add prettyprint package ([158ec29](https://github.com/marko-js/cli/commit/158ec29))
+
+
+
+
+
 ## 3.1.7 (2018-12-05)
 
 

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.7](https://github.com/marko-js/cli/compare/@marko/prebuild@4.0.6...@marko/prebuild@4.0.7) (2018-12-05)
+
+**Note:** Version bump only for package @marko/prebuild
+
+
+
+
+
 ## 4.0.6 (2018-12-05)
 
 
