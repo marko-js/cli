@@ -29,6 +29,8 @@ To use any of the commands below as a CLI you must install the [marko-cli](https
   generates a Marko app boilerplate with marko-starter
 - [prebuild](https://github.com/marko-js/cli/blob/master/packages/prebuild/README.md) -
   precompile Marko templates using [lasso's prebuild functionality](https://github.com/lasso-js/lasso).
+- [prettyprint](https://github.com/marko-js/cli/blob/master/packages/prettyprint/README.md) -
+  Pretty prints Marko templates.
 - [test](https://github.com/marko-js/cli/blob/master/packages/test/README.md) -
   Server side and client sides tests for Marko components using Mocha
 
