@@ -2,7 +2,7 @@
   "name": "@marko/create",
   "description": "Create Marko projects",
   "version": "3.1.6",
-  "bugs": "https://github.com/marko-js/marko-cli/issues",
+  "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/runtime": "^7.2.0",
     "got": "^8.3.1",
@@ -12,7 +12,7 @@
   "files": [
     "dist"
   ],
-  "homepage": "https://github.com/marko-js/marko-cli",
+  "homepage": "https://github.com/marko-js/cli/tree/master/packages/create",
   "keywords": [
     "create",
     "demo",
@@ -30,6 +30,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/marko-js/marko-cli.git"
+    "url": "https://github.com/marko-js/cli"
   }
 }

@@ -2,7 +2,7 @@
   "name": "@marko/test",
   "description": "Testing Marko components",
   "version": "4.0.7",
-  "bugs": "https://github.com/marko-js/marko-cli/issues",
+  "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@lasso/marko-taglib": "^1.0.10",
     "async": "^2.6.1",
@@ -38,7 +38,7 @@
   "files": [
     "dist"
   ],
-  "homepage": "https://github.com/marko-js/marko-cli",
+  "homepage": "https://github.com/marko-js/cli/tree/master/packages/test",
   "keywords": [
     "component",
     "marko",
@@ -56,6 +56,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/marko-js/marko-cli.git"
+    "url": "https://github.com/marko-js/cli"
   }
 }
