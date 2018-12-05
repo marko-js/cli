@@ -1,7 +1,7 @@
 {
   "name": "@marko/prebuild",
   "description": "Prebuild Marko pages",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/runtime": "^7.2.0",
