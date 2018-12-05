@@ -1,0 +1,36 @@
+{
+  "name": "@marko/migrate",
+  "description": "Migrate Marko files",
+  "version": "3.3.0",
+  "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
+  "dependencies": {
+    "@babel/runtime": "^7.2.0",
+    "@marko/prettyprint": "^7.1.2",
+    "argly": "^1.2.0",
+    "glob": "^7.1.2",
+    "lasso-package-root": "^1.0.1",
+    "resolve-from": "^4.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/marko-js/cli/tree/master/packages/migrate",
+  "keywords": [
+    "migrate",
+    "marko",
+    "util",
+    "utility"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "maintainers": [
+    "Patrick Steele-Idem <pnidem@gmail.com>",
+    "Michael Rawlings <ml.rawlings@gmail.com>",
+    "Austin Kelleher <a@alk.im>",
+    "Dylan Piercey <pierceydylan@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marko-js/cli"
+  }
+}
