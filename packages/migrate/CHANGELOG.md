@@ -6,11 +6,3 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ## 1.0.1 (2018-12-05)
 
 **Note:** Version bump only for package @marko/migrate
-
-
-
-
-
-## 3.3.1 (2018-12-05)
-
-**Note:** Version bump only for package @marko/migrate
