@@ -1,5 +1,7 @@
+const markoTest = require(".");
 const parseNodeArgs = require("parse-node-args");
-module.exports = function parse(argv) {
+
+exports.parse = function parse(argv) {
   const { cliArgs, nodeArgs } = parseNodeArgs(argv);
   const options = require("argly")
     .createParser({
@@ -63,4 +65,33 @@ module.exports = function parse(argv) {
   delete options.files;
 
   return options;
+}
+
+exports.run = function run(options, markoCli) {
+  const {
+    mochaOptions,
+    browserBuilder, // Deprecated, will be removed in the next major.
+    lassoOptions,
+    wdioOptions,
+    testMatcher,
+    workDir,
+    browserTestDependencies
+  } = markoCli.config;
+
+  return markoTest.run(
+    Object.assign(
+      {
+        mochaOptions,
+        browserBuilder,
+        lassoOptions,
+        wdioOptions,
+        testMatcher,
+        workDir,
+        browserTestDependencies,
+        dir: markoCli.cwd,
+        cliRoot: markoCli.__dirname
+      },
+      options
+    )
+  );
 };

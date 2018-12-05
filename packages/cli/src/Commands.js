@@ -1,5 +1,8 @@
 "use strict";
 
+const path = require('path');
+const srcOrDist = path.basename(__dirname);
+
 class Commands {
   constructor() {
     this.commands = {};
@@ -11,12 +14,12 @@ class Commands {
 
     commandNames.forEach(commandName => {
       function run() {
-        var runFunc = require(`./commands/${commandName}/run`);
-        return runFunc.apply(null, arguments);
+        var cli = require(`@marko/${commandName}/${srcOrDist}/cli`);
+        return cli.run.apply(null, arguments);
       }
       function parse() {
-        var parseFunc = require(`./commands/${commandName}/parse`);
-        return parseFunc.apply(null, arguments);
+        var cli = require(`@marko/${commandName}/${srcOrDist}/cli`);
+        return cli.parse.apply(null, arguments);
       }
       this.add(commandName, {
         run,

@@ -1,8 +1,9 @@
 "use strict";
 
-var chalk = require("chalk");
+const chalk = require("chalk");
+const markoCreate = require(".");
 
-module.exports = function parse(argv) {
+exports.parse = function parse(argv) {
   var options = require("argly")
     .createParser({
       "--help -h": {
@@ -60,4 +61,8 @@ module.exports = function parse(argv) {
     .parse(argv);
 
   return options;
+}
+
+exports.run = function run(options) {
+  return markoCreate.run(options);
 };

@@ -1,4 +1,6 @@
-module.exports = function parse(argv) {
+const markoCompile = require(".");
+
+exports.parse = function parse(argv) {
   var options = require("argly")
     .createParser({
       "--help": {
@@ -41,8 +43,18 @@ module.exports = function parse(argv) {
     })
     .parse(argv);
 
-  options.patterns = options.files;
-  delete options.files;
+    return options;
+}
 
-  return options;
+exports.run = function run(options) {
+  const { ignore, server, browser, clean, files:patterns } = options;
+  
+  return markoCompile.run({
+    dir: markoCli.cwd,
+    ignore,
+    server,
+    browser,
+    clean,
+    patterns
+  });
 };
