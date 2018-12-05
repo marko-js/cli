@@ -19,6 +19,8 @@ class PrintContext {
     this.depth = 0;
     this.forceHtml = false;
     this.currentIndentString = "";
+    this.noSemi = options.noSemi;
+    this.singleQuote = options.singleQuote;
     this.markoCompiler = options.markoCompiler;
     this.CodeWriter = options.CodeWriter;
   }

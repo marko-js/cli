@@ -5,6 +5,7 @@
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@lasso/marko-taglib": "^1.0.10",
+    "argly": "^1.2.0",
     "async": "^2.6.1",
     "async-exit-hook": "^2.0.1",
     "browser-refresh-taglib": "^1.1.0",
@@ -29,6 +30,7 @@
     "mz": "^2.7.0",
     "node-fetch": "2.1.2",
     "p-event": "^2.1.0",
+    "parse-node-args": "^1.1.2",
     "raptor-renderer": "^1.5.0",
     "resolve-from": "^4.0.0",
     "strip-ansi": "^4.0.0",

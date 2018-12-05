@@ -5,6 +5,7 @@
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/runtime": "^7.2.0",
+    "argly": "^1.2.0",
     "got": "^8.3.1",
     "ora": "^2.1.0",
     "unzip": "^0.1.11"

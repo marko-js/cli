@@ -1,24 +1,24 @@
 {
-  "name": "@marko/compile",
-  "description": "Compile Marko files",
-  "version": "3.2.1",
+  "name": "@marko/prettyprint",
+  "description": "Prettyprint Marko template files in the syntax of your choice",
+  "version": "1.0.0",
+  "author": "Patrick Steele-Idem <pnidem@gmail.com>",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
-    "@babel/runtime": "^7.2.0",
     "argly": "^1.2.0",
-    "glob": "^7.1.2",
+    "editorconfig": "^0.15.0",
     "lasso-package-root": "^1.0.1",
+    "marko": "^4.12.3",
+    "minimatch": "^3.0.4",
+    "prettier": "^1.13.7",
+    "redent": "^2.0.0",
     "resolve-from": "^4.0.0"
   },
-  "files": [
-    "dist"
-  ],
-  "homepage": "https://github.com/marko-js/cli/tree/master/packages/compile",
+  "homepage": "https://github.com/marko-js/cli/tree/master/packages/prettyprint",
   "keywords": [
-    "compile",
     "marko",
-    "util",
-    "utility"
+    "prettyprint",
+    "templates"
   ],
   "license": "MIT",
   "main": "dist/index.js",
@@ -30,6 +30,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/marko-js/cli"
+    "url": "https://github.com/marko-js/cli.git"
   }
 }

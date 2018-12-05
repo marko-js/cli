@@ -69,7 +69,11 @@ class MarkoDevTools extends EventEmitter {
       throw new Error("Command not found: " + commandName);
     }
     var options = command.parse(args);
-    return command.run(options, this);
+    try {
+      return Promise.resolve(command.run(options, this));
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 
   _loadPackagePlugin() {
