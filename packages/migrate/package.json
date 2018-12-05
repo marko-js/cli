@@ -1,11 +1,11 @@
 {
   "name": "@marko/migrate",
   "description": "Migrate Marko files",
-  "version": "3.3.0",
+  "version": "1.0.0",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/runtime": "^7.2.0",
-    "@marko/prettyprint": "^1.1.0",
+    "@marko/prettyprint": "^1.1.1",
     "argly": "^1.2.0",
     "glob": "^7.1.2",
     "lasso-package-root": "^1.0.1",
