@@ -46,9 +46,9 @@ exports.parse = function parse(argv) {
     return options;
 }
 
-exports.run = function run(options) {
+exports.run = function run(options, markoCli) {
   const { ignore, server, browser, clean, files:patterns } = options;
-  
+
   return markoCompile.run({
     dir: markoCli.cwd,
     ignore,
