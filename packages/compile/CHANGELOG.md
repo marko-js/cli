@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.1](https://github.com/marko-js/cli/compare/@marko/compile@3.3.0...@marko/compile@3.3.1) (2018-12-06)
+
+
+### Bug Fixes
+
+* **cli:** add missing argument to run function ([82ae21a](https://github.com/marko-js/cli/commit/82ae21a))
+
+
+
+
+
 # [3.3.0](https://github.com/marko-js/cli/compare/@marko/compile@3.2.1...@marko/compile@3.3.0) (2018-12-05)
 
 
