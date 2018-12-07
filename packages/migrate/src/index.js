@@ -1,6 +1,6 @@
 "use strict";
 
-import fs from "fs";
+import fs from "mz/fs";
 import glob from "glob";
 import path from "path";
 import lassoPackageRoot from "lasso-package-root";
@@ -12,6 +12,61 @@ const defaultGlobOptions = {
   absolute: true,
   ignore: ["node_modules/**"]
 };
+
+export default async function(options = {}) {
+  let { dir, ignore, patterns } = options;
+
+  if (!patterns || !patterns.length) {
+    patterns = ["**/*.marko"];
+  }
+
+  dir = dir || process.cwd();
+
+  const packageRoot = getPackageRoot(dir);
+  const markoCompiler = requireFromRoot("marko/compiler", packageRoot);
+
+  if (!markoCompiler.parse) {
+    const markoVersion = requireFromRoot("marko/package", packageRoot).version;
+    throw new Error(
+      `The version of marko installed (${markoVersion}) does not support migrations. Please update to 4.14.0 or higher.`
+    );
+  }
+
+  const globOptions = {
+    ...defaultGlobOptions,
+    cwd: dir || process.cwd()
+  };
+
+  if (ignore) {
+    globOptions.ignore = ignore;
+  }
+
+  const files = await getFiles(patterns, globOptions);
+
+  return Object.assign(
+    ...(await Promise.all(
+      files.map(async file => {
+        const basename = path.basename(file);
+        if (basename.endsWith(".marko")) {
+          const source = await fs.readFile(file, "utf-8");
+          const ast = markoCompiler.parse(source, file, {
+            migrate: true,
+            raw: true
+          });
+          const migratedSource = markoPrettyprint.prettyPrintAST(ast, {
+            syntax: options.syntax,
+            maxLen: options.maxLen,
+            noSemi: options.noSemi,
+            singleQuote: options.singleQuote,
+            filename: file
+          });
+
+          return { [file]: migratedSource };
+        }
+      })
+    ))
+  );
+}
 
 function getPackageRoot(dir) {
   const rootPackage = lassoPackageRoot.getRootPackage(dir);
@@ -31,14 +86,14 @@ function requireFromRoot(path, packageRoot) {
 }
 
 async function getFiles(patterns, globOptions) {
-  let allFiles = []
+  let allFiles = [];
   await Promise.all(
     patterns.map(
       pattern =>
         new Promise((resolve, reject) => {
-          if (pattern === '.') {
+          if (pattern === ".") {
             pattern = "**/*";
-          } else if (pattern[pattern.length-1] === '/') {
+          } else if (pattern[pattern.length - 1] === "/") {
             pattern += "**/*";
           }
           glob(pattern, globOptions, function(err, files) {
@@ -52,48 +107,3 @@ async function getFiles(patterns, globOptions) {
   );
   return allFiles;
 }
-
-export default async function(options = {}) {
-  let { dir, ignore, patterns } = options;
-
-  if (!patterns || !patterns.length) {
-    patterns = ["**/*.marko"];
-  }
-
-  dir = dir || process.cwd();
-
-  const packageRoot = getPackageRoot(dir);
-  const markoCompiler = requireFromRoot("marko/compiler", packageRoot);
-
-  if (!markoCompiler.parse) {
-    const markoVersion = requireFromRoot("marko/package", packageRoot).version;
-    throw new Error(`The version of marko installed (${markoVersion}) does not support migrations. Please update to 4.14.0 or higher.`);
-  }
-
-  const globOptions = {
-    ...defaultGlobOptions,
-    cwd: dir || process.cwd()
-  };
-
-  if (ignore) {
-    globOptions.ignore = ignore;
-  }
-
-  const files = await getFiles(patterns, globOptions);
-
-  for (let file of files) {
-    const basename = path.basename(file);
-    if (basename.endsWith(".marko")) {
-      const source = fs.readFileSync(file, 'utf-8');
-      const ast = markoCompiler.parse(source, file, { migrate:true, raw:true });
-      const migratedSource = markoPrettyprint.prettyPrintAST(ast, {
-        syntax: options.syntax,
-        maxLen: options.maxLen,
-        noSemi: options.noSemi,
-        singleQuote: options.singleQuote,
-        filename: file
-      });
-      fs.writeFileSync(file, migratedSource, 'utf-8');
-    }
-  }
-};

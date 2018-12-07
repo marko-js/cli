@@ -1,5 +1,5 @@
 exports.getOptions = function() {
-    return {
-        maxLen: 120
-    };
+  return {
+    maxLen: 120
+  };
 };

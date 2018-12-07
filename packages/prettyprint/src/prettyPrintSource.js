@@ -22,9 +22,11 @@ module.exports = function prettyPrintSource(src, options) {
   var dirname = path.dirname(filename);
   options.dirname = dirname;
 
-  var markoCompiler = options.markoCompiler || requireMarkoFile(dirname, "compiler");
+  var markoCompiler =
+    options.markoCompiler || requireMarkoFile(dirname, "compiler");
   options.markoCompiler = markoCompiler;
-  options.CodeWriter = options.CodeWriter || requireMarkoFile(dirname, "compiler/CodeWriter");
+  options.CodeWriter =
+    options.CodeWriter || requireMarkoFile(dirname, "compiler/CodeWriter");
 
   var ast = markoCompiler.parseRaw(src, filename);
   return prettyPrintAST(ast, options);

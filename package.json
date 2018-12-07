@@ -19,13 +19,14 @@
     "lerna": "^3.5.1",
     "lint-staged": "^8.1.0",
     "mocha": "^5.2.0",
+    "mocha-autotest": "^1.0.2",
     "nyc": "^13.1.0",
     "prettier": "^1.15.3"
   },
   "husky": {
     "hooks": {
-      "commitmsg": "echo $GIT_PARAMS && commitlint -e $GIT_PARAMS",
-      "precommit": "lint-staged"
+      "commit-msg": "echo $GIT_PARAMS && commitlint -e $GIT_PARAMS",
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
@@ -43,7 +44,7 @@
     "build": "lerna exec --parallel -- babel src --out-dir dist --config-file ../../babel.config.js --delete-dir-on-start --copy-files",
     "build:watch": "npm run build -- --watch",
     "ci:codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "ci:test": "cross-env NODE_ENV=test nyc --reporter=text npm run mocha",
+    "ci:test": "cross-env NODE_ENV=test npm run build && nyc --reporter=text npm run mocha",
     "clean": "lerna clean && rm -rf ./packages/*/{dist,package-lock.json} ./package-lock.json ./node_modules",
     "format": "prettier \"**/*.{json,md,js}\" --write",
     "lint": "eslint -f visualstudio packages/",

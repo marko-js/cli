@@ -1,0 +1,17 @@
+<!-- packages/migrate/test/fixtures/multiple-templates/a.marko -->
+
+$ var x = 1;
+$ x++;
+-- ${x}
+
+
+<!-- packages/migrate/test/fixtures/multiple-templates/b.marko -->
+
+<if(x)>
+    <div/>
+</if>
+
+
+<!-- packages/migrate/test/fixtures/multiple-templates/components/c.marko -->
+
+<${input}/>

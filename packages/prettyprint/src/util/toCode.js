@@ -12,10 +12,7 @@ module.exports = (node, printContext, indent, expression) => {
   const builder = printContext.markoCompiler.builder;
   const CodeWriter = printContext.CodeWriter;
 
-  const writer = new CodeWriter(
-    {},
-    builder
-  );
+  const writer = new CodeWriter({}, builder);
 
   writer.write(node);
   return formatJS(writer.getCode(), printContext, indent, expression);

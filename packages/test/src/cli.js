@@ -65,7 +65,7 @@ exports.parse = function parse(argv) {
   delete options.files;
 
   return options;
-}
+};
 
 exports.run = function run(options, markoCli) {
   const {

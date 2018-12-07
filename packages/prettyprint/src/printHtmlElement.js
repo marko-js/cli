@@ -9,7 +9,7 @@ const Writer = require("./util/Writer");
 const formattingTags = require("./formatting-tags");
 
 const formatJS = require("./util/formatJS");
-const formatStyles = require('./util/formatStyles');
+const formatStyles = require("./util/formatStyles");
 const toCode = require("./util/toCode");
 
 const codeTags = {
@@ -101,7 +101,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
   if (!printContext.isConciseSyntax) {
     writer.write("<");
   }
-  
+
   if (tagNameExpression) {
     writer.write(`\${${tagNameExpression}}`);
   } else {
@@ -145,7 +145,12 @@ module.exports = function printHtmlElement(node, printContext, writer) {
   // append them to the output while avoiding putting too many attributes on one line.
   attrs.forEach((attr, i) => {
     var attrStr = "";
-    var attrValueStr = toCode(attr.value, printContext, printContext.depth + 1, true);
+    var attrValueStr = toCode(
+      attr.value,
+      printContext,
+      printContext.depth + 1,
+      true
+    );
 
     if (attr.name) {
       attrStr += attr.name;
@@ -154,11 +159,13 @@ module.exports = function printHtmlElement(node, printContext, writer) {
           attrStr +=
             "=(" + unescapePlaceholdersInStringExpression(attrValueStr) + ")";
         } else {
-          attrStr +=
-            "=" + unescapePlaceholdersInStringExpression(attrValueStr);
+          attrStr += "=" + unescapePlaceholdersInStringExpression(attrValueStr);
         }
       } else if (attr.argument != null) {
-        attrStr += "(" + toCode(attr.argument, printContext, printContext.depth + 1, true) + ")";
+        attrStr +=
+          "(" +
+          toCode(attr.argument, printContext, printContext.depth + 1, true) +
+          ")";
       }
     } else if (attr.spread) {
       if (hasUnenclosedWhitespace(attr.value)) {
@@ -178,11 +185,17 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     // Let's see if all of the attributes will fit on the same line
     if (printContext.isHtmlSyntax) {
       var oneLineAttrs = attrStringsArray.join(" ");
-      var fitsOneLine = attrStringsArray.length <= 1 || writer.col + oneLineAttrs.length < maxLen;
-      var attrIndentation = printContext.eol + printContext.currentIndentString + printContext.indentString;
-      writer.write(fitsOneLine ?
-        " " + oneLineAttrs :
-        attrIndentation + attrStringsArray.join(attrIndentation)
+      var fitsOneLine =
+        attrStringsArray.length <= 1 ||
+        writer.col + oneLineAttrs.length < maxLen;
+      var attrIndentation =
+        printContext.eol +
+        printContext.currentIndentString +
+        printContext.indentString;
+      writer.write(
+        fitsOneLine
+          ? " " + oneLineAttrs
+          : attrIndentation + attrStringsArray.join(attrIndentation)
       );
 
       writer.write(hasBody ? ">" : "/>");

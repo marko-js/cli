@@ -61,7 +61,7 @@ exports.parse = function parse(argv) {
     .parse(argv);
 
   return options;
-}
+};
 
 exports.run = function run(options) {
   return markoCreate.run(options);

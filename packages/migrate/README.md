@@ -36,11 +36,12 @@ marko migrate ./components/my-component.marko
 
 ## Options
 
-* `--indent`: The indent string to use when printing the migrated source (defaults to a `String` with four spaces)
-* `--noSemi`: If set, will format JS without semicolons when printing the migrated source.
-* `--singleQuote`: If set, will prefer single quotes when printing the migrated source.
-* `--maxLen`: The max line length to use when printing the migrated source (defaults to `80`, set to `-1` to disable)
-* `--syntax`: The syntax to use when printing the migrated source. Can either be `"html"` or `"concise"` (defaults to `"html"`)
+- `--indent`: The indent string to use when printing the migrated source (defaults to a `String` with four spaces)
+- `--noSemi`: If set, will format JS without semicolons when printing the migrated source.
+- `--singleQuote`: If set, will prefer single quotes when printing the migrated source.
+- `--maxLen`: The max line length to use when printing the migrated source (defaults to `80`, set to `-1` to disable)
+- `--syntax`: The syntax to use when printing the migrated source. Can either be `"html"` or `"concise"` (defaults to `"html"`)
+- `--dry-run`: Runs the migration in memory only.
 
 # API
 
@@ -53,17 +54,22 @@ npm install @marko/migrate
 ## Example
 
 ```javascript
-import migrate from "@marko/migrate"
+import fs from "fs";
+import migrate from "@marko/migrate";
 
 migrate({
-  files: "./components/**/*.marko"
-}).then(() => {
-  // All files are written to disk.
+  patterns: ["./components/**/*.marko"]
+}).then(output => {
+  // Output contains an object with all of the migrated component sources.
   console.log("migrated all files");
+
+  for (const file in output) {
+    // Save all outputs to disk.
+    fs.writeFileSync(file, output[file], "utf-8");
+  }
 });
 ```
 
 ## Options
 
 Options are the same as the CLI options.
-

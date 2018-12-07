@@ -36,7 +36,8 @@ marko create myapp
 ```
 
 ## Options
-* `--dir`: Provide a different directory to setup the project in (default to `pwd`).
+
+- `--dir`: Provide a different directory to setup the project in (default to `pwd`).
 
 # API
 
