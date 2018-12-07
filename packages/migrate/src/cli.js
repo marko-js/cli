@@ -31,6 +31,10 @@ export function parse(argv) {
       "--single-quote": {
         type: "boolean",
         description: "If set, will prefer single quotes"
+      },
+      "--dry-run": {
+        type: "boolean",
+        description: "If set, will only run migrations in memory"
       }
     })
     .usage("Usage: $0 <pattern> [options]")
@@ -72,6 +76,7 @@ export function run(options, markoCli) {
   options = {
     syntax: "html",
     maxLen: 80,
+    dryRun: false,
     noSemi: false,
     singleQuote: false,
     ignore: ["/node_modules", ".*"],
