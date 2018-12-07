@@ -11,3 +11,4 @@ coverage
 dist
 actual.*
 *.actual.*
+.vscode
