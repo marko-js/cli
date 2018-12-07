@@ -8,6 +8,7 @@
     "packages/*"
   ],
   "ignoreChanges": [
+    "**/package-lock.json",
     "**/test/**",
     "**/*.md"
   ],
