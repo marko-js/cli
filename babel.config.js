@@ -10,8 +10,5 @@ module.exports = {
       }
     ]
   ],
-  plugins: [
-    "@babel/transform-runtime",
-    "@babel/proposal-object-rest-spread"
-  ]
+  plugins: ["@babel/transform-runtime", "@babel/proposal-object-rest-spread"]
 };

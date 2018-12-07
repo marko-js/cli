@@ -9,6 +9,7 @@
     "argly": "^1.2.0",
     "glob": "^7.1.2",
     "lasso-package-root": "^1.0.1",
+    "mz": "^2.7.0",
     "resolve-from": "^4.0.0"
   },
   "files": [

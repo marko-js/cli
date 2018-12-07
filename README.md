@@ -19,10 +19,12 @@
 </p>
 
 ## CLI Tool
+
 Each command in this repository has a programmatic API that is distributed as an independent package.
 To use any of the commands below as a CLI you must install the [marko-cli](https://github.com/marko-js/cli/blob/master/packages/cli/README.md) package.
 
 ## Commands
+
 - [compile](https://github.com/marko-js/cli/blob/master/packages/compile/README.md) -
   compiles a Marko template and writes the output to disk
 - [create](https://github.com/marko-js/cli/blob/master/packages/create/README.md) -

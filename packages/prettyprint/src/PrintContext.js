@@ -10,10 +10,11 @@ class PrintContext {
     this.indentString = options.indent || "    ";
     this.preserveWhitespace = options.preserveWhitespace === true;
     this.maxLen =
-      options.maxLen == null ? 80
-        : options.maxLen <= 0 ?
-          MAX_SAFE_INTEGER
-          : options.maxLen;
+      options.maxLen == null
+        ? 80
+        : options.maxLen <= 0
+        ? MAX_SAFE_INTEGER
+        : options.maxLen;
     this.eol = options.eol || "\n";
 
     this.depth = 0;

@@ -40,7 +40,8 @@ import prebuild from "@marko/prebuild";
 prebuild({
   config: "./lasso-config.json", // Either a lasso config object, or a path to one.
   flags: ["skin-ds6"], // Lasso flags to use when building the pages.
-  pages: [ // A list of paths to marko templates to prebuild.
+  pages: [
+    // A list of paths to marko templates to prebuild.
     "src/routes/index/index.marko"
   ]
 }).then(() => {

@@ -1,3 +1,4 @@
+import fs from "mz/fs";
 import markoMigrate from ".";
 
 export function parse(argv) {
@@ -31,10 +32,6 @@ export function parse(argv) {
       "--single-quote": {
         type: "boolean",
         description: "If set, will prefer single quotes"
-      },
-      "--dry-run": {
-        type: "boolean",
-        description: "If set, will only run migrations in memory"
       }
     })
     .usage("Usage: $0 <pattern> [options]")
@@ -70,13 +67,12 @@ export function parse(argv) {
   delete options.files;
 
   return options;
-};
+}
 
-export function run(options, markoCli) {
+export async function run(options, markoCli) {
   options = {
     syntax: "html",
     maxLen: 80,
-    dryRun: false,
     noSemi: false,
     singleQuote: false,
     ignore: ["/node_modules", ".*"],
@@ -84,5 +80,10 @@ export function run(options, markoCli) {
     ...options
   };
 
-  return markoMigrate(options);
-};
+  const outputs = await markoMigrate(options);
+  await Promise.all(
+    Object.entries(outputs).map(([file, source]) => {
+      return fs.writeFile(file, source, "utf-8");
+    })
+  );
+}

@@ -13,7 +13,7 @@ describe("scope(cli)", () => {
         true
       );
     });
-  
+
     it("hasMarkoCliInstalled: project.json with marko-cli as prod dependency", () => {
       assert.equal(
         hasMarkoCliInstalled({
@@ -24,7 +24,7 @@ describe("scope(cli)", () => {
         true
       );
     });
-  
+
     it("hasMarkoCliInstalled: project.json without marko-cli", () => {
       assert.equal(
         hasMarkoCliInstalled({
@@ -33,7 +33,7 @@ describe("scope(cli)", () => {
         false
       );
     });
-  
+
     it("hasMarkoCliInstalled: empty project.json without marko-cli", () => {
       assert.equal(hasMarkoCliInstalled({}), false);
     });

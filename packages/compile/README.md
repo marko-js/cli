@@ -36,11 +36,12 @@ marko compile --browser ./components/my-component.marko
 ```
 
 ## Options
-* `--server`: Compiles a Marko file to render html.
-* `--browser`: Compiles a Marko file to render vdom.
-* `--files --file -f *`: Provide a pattern to match marko file(s).
-* `--ignore`: Provide a pattern to exclude files from being compiled.
-* `--clean`: Deletes any compiled `.marko.js` files.
+
+- `--server`: Compiles a Marko file to render html.
+- `--browser`: Compiles a Marko file to render vdom.
+- `--files --file -f *`: Provide a pattern to match marko file(s).
+- `--ignore`: Provide a pattern to exclude files from being compiled.
+- `--clean`: Deletes any compiled `.marko.js` files.
 
 # API
 
@@ -53,7 +54,7 @@ npm install @marko/compile
 ## Example
 
 ```javascript
-import compile from "@marko/compile"
+import compile from "@marko/compile";
 
 compile({
   files: "./components/**/*.marko"
@@ -66,4 +67,3 @@ compile({
 ## Options
 
 Options are the same as the CLI options.
-

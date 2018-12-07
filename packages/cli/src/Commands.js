@@ -1,6 +1,6 @@
 "use strict";
 
-const path = require('path');
+const path = require("path");
 const srcOrDist = path.basename(__dirname);
 
 class Commands {

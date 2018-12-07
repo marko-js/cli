@@ -40,14 +40,14 @@ marko prettyprint . --syntax html
 
 ## Options
 
-* `--eol`: The EOL sequence (defaults to `require('os').EOL`)
-* `--filename`: The path to the template being pretty printed (required unless `prettyPrintFile(filename, options)` is used)
-* `--indent`: The indent string (defaults to a `String` with four spaces)
-* `--noSemi`: If set, will format JS without semicolons.
-* `--singleQuote`: If set, will prefer single quotes.
-* `--maxLen`: The max line length (defaults to `80`, set to `-1` to disable)
-* `--configFiles`: Should search for `.marko-prettyprint`/`.editorconfig` files? (defaults to `true`)
-* `--syntax`: The syntax to use. Can either be `"html"` or `"concise"` (defaults to `"html"`)
+- `--eol`: The EOL sequence (defaults to `require('os').EOL`)
+- `--filename`: The path to the template being pretty printed (required unless `prettyPrintFile(filename, options)` is used)
+- `--indent`: The indent string (defaults to a `String` with four spaces)
+- `--noSemi`: If set, will format JS without semicolons.
+- `--singleQuote`: If set, will prefer single quotes.
+- `--maxLen`: The max line length (defaults to `80`, set to `-1` to disable)
+- `--configFiles`: Should search for `.marko-prettyprint`/`.editorconfig` files? (defaults to `true`)
+- `--syntax`: The syntax to use. Can either be `"html"` or `"concise"` (defaults to `"html"`)
 
 # API
 
@@ -84,8 +84,8 @@ _my-project/.marko-prettyprint:_
 
 ```json
 {
-    "indent": "\t",
-    "syntax": "concise"
+  "indent": "\t",
+  "syntax": "concise"
 }
 ```
 

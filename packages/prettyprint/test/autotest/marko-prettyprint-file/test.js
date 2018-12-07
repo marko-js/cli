@@ -1,5 +1,5 @@
 exports.getOptions = function() {
-    return {
-        indent: '  '
-    };
+  return {
+    indent: "  "
+  };
 };
