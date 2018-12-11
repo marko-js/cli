@@ -1,6 +1,5 @@
 "use strict";
 
-const unescapePlaceholdersInStringExpression = require("./util/unescapePlaceholdersInStringExpression");
 const hasUnenclosedWhitespace = require("./util/hasUnenclosedWhitespace");
 const getBodyText = require("./util/getBodyText");
 const hasLineBreaks = require("./util/hasLineBreaks");
@@ -102,11 +101,11 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     writer.write("<");
   }
 
-  if (tagNameExpression) {
-    writer.write(`\${${tagNameExpression}}`);
-  } else {
-    writer.write(node.tagName);
-  }
+  var tagNameString = tagNameExpression
+    ? `\${${formatJS(tagNameExpression, printContext, undefined, true)}}`
+    : node.tagName;
+
+  writer.write(tagNameString);
 
   if (node.rawShorthandId) {
     writer.write("#" + node.rawShorthandId);
@@ -114,7 +113,13 @@ module.exports = function printHtmlElement(node, printContext, writer) {
 
   if (node.rawShorthandClassNames) {
     node.rawShorthandClassNames.forEach(className => {
-      writer.write("." + className);
+      if (typeof className === "string") {
+        writer.write("." + className);
+      } else {
+        writer.write(
+          ".${" + toCode(className, printContext, undefined, true) + "}"
+        );
+      }
     });
   }
 
@@ -131,7 +136,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
 
   var hasBody = node.body && node.body.length;
 
-  let bodyText = getBodyText(node);
+  let bodyText = getBodyText(node, printContext);
   if (bodyText && printContext.preserveWhitespace !== true) {
     bodyText = bodyText.trim();
   }
@@ -143,7 +148,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
 
   // We will make one pass to generate all of the strings for each attribute. We will then
   // append them to the output while avoiding putting too many attributes on one line.
-  attrs.forEach((attr, i) => {
+  attrs.forEach(attr => {
     var attrStr = "";
     var attrValueStr = toCode(
       attr.value,
@@ -156,10 +161,9 @@ module.exports = function printHtmlElement(node, printContext, writer) {
       attrStr += attr.name;
       if (attrValueStr) {
         if (hasUnenclosedWhitespace(attr.value)) {
-          attrStr +=
-            "=(" + unescapePlaceholdersInStringExpression(attrValueStr) + ")";
+          attrStr += "=(" + attrValueStr + ")";
         } else {
-          attrStr += "=" + unescapePlaceholdersInStringExpression(attrValueStr);
+          attrStr += "=" + attrValueStr;
         }
       } else if (attr.argument != null) {
         attrStr +=
@@ -231,7 +235,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
           });
         } else {
           writer.write(" [" + printContext.eol);
-          attrStringsArray.forEach((attrString, i) => {
+          attrStringsArray.forEach(attrString => {
             writer.write(printContext.currentIndentString);
             writer.write(printContext.indentString);
             writer.write(printContext.indentString);
@@ -259,7 +263,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     return;
   }
 
-  var endTag = printContext.isHtmlSyntax ? "</" + node.tagName + ">" : "";
+  var endTag = printContext.isHtmlSyntax ? "</" + tagNameString + ">" : "";
 
   if (bodyText && !hasLineBreaks(bodyText)) {
     let endCol = writer.col + bodyText.length + endTag.length;
@@ -268,7 +272,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
       if (printContext.isConciseSyntax) {
         writer.write(" -- " + bodyText);
       } else {
-        writer.write(bodyText + "</" + node.tagName + ">");
+        writer.write(bodyText + "</" + tagNameString + ">");
       }
       return;
     }
