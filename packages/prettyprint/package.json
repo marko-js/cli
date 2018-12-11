@@ -6,11 +6,11 @@
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "argly": "^1.2.0",
-    "editorconfig": "^0.15.0",
+    "editorconfig": "^0.15.2",
     "lasso-package-root": "^1.0.1",
-    "marko": "^4.12.3",
+    "marko": "^4.14.2",
     "minimatch": "^3.0.4",
-    "prettier": "^1.13.7",
+    "prettier": "^1.15.3",
     "redent": "^2.0.0",
     "resolve-from": "^4.0.0"
   },
