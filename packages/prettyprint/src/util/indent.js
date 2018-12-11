@@ -1,5 +1,6 @@
 "use strict";
 var rtrim = require("./trim").rtrim;
+var ltrim = require("./trim").ltrim;
 
 exports.indentCommentLines = function indentCommentLines(lines, printContext) {
   var currentIndentString = printContext.currentIndentString;
@@ -7,7 +8,7 @@ exports.indentCommentLines = function indentCommentLines(lines, printContext) {
 
   var indentedLines = [];
 
-  lines.forEach((line, i) => {
+  lines.forEach(line => {
     if (line.trim() === "") {
       return;
     }
@@ -37,24 +38,26 @@ exports.indentLines = function indentLines(lines, printContext) {
   let blockIndentation = null;
 
   return lines.map((line, i) => {
-    if (blockIndentation == null) {
+    var firstLine = i === 0;
+    var lastLine = i === lines.length - 1;
+
+    if (blockIndentation == null && !firstLine) {
       blockIndentation = line.match(/^\s*/)[0];
     }
 
     if (line.trim()) {
-      if (line.startsWith(blockIndentation)) {
-        line = line.substring(blockIndentation.length);
+      if (!firstLine) {
+        if (line.startsWith(blockIndentation)) {
+          line = line.substring(blockIndentation.length);
+          line = lastLine ? line : rtrim(line);
+        } else {
+          line = lastLine ? ltrim(line) : line.trim();
+        }
 
-        line = rtrim(line);
-      } else {
-        line = line.trim();
-      }
-
-      if (i !== 0) {
         line = currentIndentString + line;
       }
     } else {
-      line = "";
+      line = firstLine || lastLine ? " " : "";
     }
 
     return line;

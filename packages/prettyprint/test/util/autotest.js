@@ -45,26 +45,16 @@ function autoTest(name, dir, run, options, done) {
       if (process.env.UPDATE_EXPECTED) {
         fs.writeFileSync(expectedPath, actual, { encoding: "utf8" });
       } else {
-        throw new Error(
-          'Unexpected output for "' +
-            name +
-            '":\nEXPECTED (' +
-            expectedPath +
-            "):\n---------\n" +
-            (isJSON ? expectedJSON : expected) +
-            "\n---------\nACTUAL (" +
-            actualPath +
-            "):\n---------\n" +
-            (isJSON ? actualJSON : actual) +
-            "\n---------"
-        );
+        throw e;
       }
     }
   }
 
   try {
     fs.unlinkSync(actualPath);
-  } catch (e) {}
+  } catch (e) {
+    /*ignore*/
+  }
 
   if (done) {
     // Async test
@@ -120,7 +110,9 @@ exports.scanDir = function(autoTestDir, run, options) {
     var pendingFiles;
     try {
       pendingFiles = fs.readdirSync(autoTestDir + "-pending");
-    } catch (e) {}
+    } catch (e) {
+      /*ignore*/
+    }
 
     if (pendingFiles) {
       pendingFiles.forEach(function(name) {

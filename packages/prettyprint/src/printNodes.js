@@ -117,8 +117,6 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
   }
 
   let prevChild;
-  let firstChild;
-  let prevElement;
 
   nodes.forEach((child, i) => {
     var childWriter = new Writer(writer.col);
@@ -143,8 +141,6 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
 
     var childOutput = childWriter.getOutput();
     if (childOutput.length) {
-      firstChild = child;
-
       if (
         printContext.isHtmlSyntax &&
         printContext.preserveWhitespace === true
@@ -158,7 +154,7 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
         writer.write(printContext.currentIndentString);
       }
 
-      writer.write(childOutput.trim());
+      writer.write(HTMLTrim(childOutput, child, prevChild));
 
       if (avoidLineBreaks) {
         if (
@@ -185,11 +181,6 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
       }
     }
     prevChild = child;
-    if (child.type === "HtmlElement") {
-      prevElement = child;
-    } else if (child.type != "Text") {
-      prevElement = null;
-    }
   });
 
   if (printContext.isHtmlSyntax && printContext.preserveWhitespace !== true) {
@@ -243,3 +234,25 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
     }
   }
 };
+
+function HTMLTrim(content, child, prevChild) {
+  var startWhitespace = /^\s*/.exec(content)[0];
+  var endWhitespace = /\s*$/.exec(content)[0];
+  content = content.slice(
+    startWhitespace.length,
+    -1 * endWhitespace.length || undefined
+  );
+  if (child.type === "Text") {
+    if (startWhitespace && prevChild && prevChild.type === "Text") {
+      content = " " + content;
+    }
+    if (
+      endWhitespace &&
+      child.nextSibling &&
+      child.nextSibling.type === "Text"
+    ) {
+      content += " ";
+    }
+  }
+  return content;
+}
