@@ -5,7 +5,6 @@ function requireMarkoFile(dir, file) {
   const requirePath = `marko/${file}`;
   let resolvedPath =
     resolveFrom(dir, requirePath) || require.resolve(requirePath);
-
   if (resolvedPath) {
     return require(resolvedPath);
   } else {

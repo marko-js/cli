@@ -1,11 +1,16 @@
 "use strict";
 
 import fs from "mz/fs";
-import glob from "glob";
 import path from "path";
 import lassoPackageRoot from "lasso-package-root";
 import markoPrettyprint from "@marko/prettyprint";
 import resolveFrom from "resolve-from";
+import getFiles from "./util/get-files";
+import MigrateHelper, {
+  addMigration,
+  runAutoMigrations
+} from "./util/migrate-helper";
+import addFileMigrations from "./util/file-migrations";
 
 const defaultGlobOptions = {
   matchBase: true,
@@ -42,30 +47,38 @@ export default async function(options = {}) {
   }
 
   const files = await getFiles(patterns, globOptions);
+  const migratedFiles = {};
 
-  return Object.assign(
-    ...(await Promise.all(
-      files.map(async file => {
-        const basename = path.basename(file);
-        if (basename.endsWith(".marko")) {
-          const source = await fs.readFile(file, "utf-8");
-          const ast = markoCompiler.parse(source, file, {
-            migrate: true,
-            raw: true
-          });
-          const migratedSource = markoPrettyprint.prettyPrintAST(ast, {
-            syntax: options.syntax,
-            maxLen: options.maxLen,
-            noSemi: options.noSemi,
-            singleQuote: options.singleQuote,
-            filename: file
-          });
+  await Promise.all(
+    files.map(async file => {
+      const basename = path.basename(file);
+      if (basename.endsWith(".marko")) {
+        const migrateHelper = new MigrateHelper();
+        const add = opts => addMigration(migrateHelper, opts);
+        const source = await fs.readFile(file, "utf-8");
+        const ast = markoCompiler.parse(source, file, {
+          onContext(ctx) {
+            ctx.addMigration = add;
+            addFileMigrations(ctx, migratedFiles);
+          },
+          migrate: true,
+          raw: true
+        });
 
-          return { [file]: migratedSource };
-        }
-      })
-    ))
+        await runAutoMigrations(migrateHelper);
+
+        migratedFiles[file] = markoPrettyprint.prettyPrintAST(ast, {
+          syntax: options.syntax,
+          maxLen: options.maxLen,
+          noSemi: options.noSemi,
+          singleQuote: options.singleQuote,
+          filename: file
+        });
+      }
+    })
   );
+
+  return migratedFiles;
 }
 
 function getPackageRoot(dir) {
@@ -83,27 +96,4 @@ function requireFromRoot(path, packageRoot) {
   }
 
   return resolvedPath ? require(resolvedPath) : require(path);
-}
-
-async function getFiles(patterns, globOptions) {
-  let allFiles = [];
-  await Promise.all(
-    patterns.map(
-      pattern =>
-        new Promise((resolve, reject) => {
-          if (pattern === ".") {
-            pattern = "**/*";
-          } else if (pattern[pattern.length - 1] === "/") {
-            pattern += "**/*";
-          }
-          glob(pattern, globOptions, function(err, files) {
-            if (err) return reject(err);
-
-            allFiles.push(...files);
-            resolve();
-          });
-        })
-    )
-  );
-  return allFiles;
 }

@@ -14,6 +14,7 @@ describe("scope(migrate)", () => {
 
       snapshot(
         Object.entries(outputs)
+          .sort(([a], [b]) => a.localeCompare(b))
           .map(
             ([file, source]) =>
               `<!-- ${path.relative(CWD, file)} -->\n\n${source}`
