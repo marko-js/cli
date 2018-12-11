@@ -1,6 +1,5 @@
 "use strict";
 
-const unescapePlaceholdersInStringExpression = require("./util/unescapePlaceholdersInStringExpression");
 const hasUnenclosedWhitespace = require("./util/hasUnenclosedWhitespace");
 const getBodyText = require("./util/getBodyText");
 const hasLineBreaks = require("./util/hasLineBreaks");
@@ -162,10 +161,9 @@ module.exports = function printHtmlElement(node, printContext, writer) {
       attrStr += attr.name;
       if (attrValueStr) {
         if (hasUnenclosedWhitespace(attr.value)) {
-          attrStr +=
-            "=(" + unescapePlaceholdersInStringExpression(attrValueStr) + ")";
+          attrStr += "=(" + attrValueStr + ")";
         } else {
-          attrStr += "=" + unescapePlaceholdersInStringExpression(attrValueStr);
+          attrStr += "=" + attrValueStr;
         }
       } else if (attr.argument != null) {
         attrStr +=
