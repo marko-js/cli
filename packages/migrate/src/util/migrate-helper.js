@@ -21,7 +21,10 @@ export default class MigrateHelper {
     }
 
     for (const { description, apply } of migrations) {
-      console.log(description);
+      if (description) {
+        console.log(description);
+      }
+
       await apply(this, ...args);
     }
   }
