@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.com/marko-js/cli/compare/@marko/compile@3.3.2...@marko/compile@3.4.0) (2018-12-12)
+
+
+### Features
+
+* **migrate:** expose optional migration api in migrate command ([#100](https://github.com/marko-js/cli/issues/100)) ([4c9febc](https://github.com/marko-js/cli/commit/4c9febc))
+
+
+
+
+
 ## [3.3.2](https://github.com/marko-js/cli/compare/@marko/compile@3.3.1...@marko/compile@3.3.2) (2018-12-07)
 
 **Note:** Version bump only for package @marko/compile

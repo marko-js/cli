@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/marko-js/cli/compare/marko-cli@4.1.6...marko-cli@4.2.0) (2018-12-12)
+
+
+### Bug Fixes
+
+* dedupe package.json deps when hoisting ([dcf9eac](https://github.com/marko-js/cli/commit/dcf9eac))
+
+
+### Features
+
+* **migrate:** expose optional migration api in migrate command ([#100](https://github.com/marko-js/cli/issues/100)) ([4c9febc](https://github.com/marko-js/cli/commit/4c9febc))
+
+
+
+
+
 ## [4.1.6](https://github.com/marko-js/cli/compare/marko-cli@4.1.5...marko-cli@4.1.6) (2018-12-07)
 
 **Note:** Version bump only for package marko-cli

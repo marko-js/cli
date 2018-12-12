@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/marko-js/cli/compare/@marko/prettyprint@1.1.3...@marko/prettyprint@1.2.0) (2018-12-12)
+
+
+### Bug Fixes
+
+* dedupe package.json deps when hoisting ([dcf9eac](https://github.com/marko-js/cli/commit/dcf9eac))
+
+
+### Features
+
+* **migrate:** expose optional migration api in migrate command ([#100](https://github.com/marko-js/cli/issues/100)) ([4c9febc](https://github.com/marko-js/cli/commit/4c9febc))
+
+
+
+
+
 ## [1.1.3](https://github.com/marko-js/cli/compare/@marko/prettyprint@1.1.2...@marko/prettyprint@1.1.3) (2018-12-07)
 
 

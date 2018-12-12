@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/marko-js/cli/compare/@marko/prebuild@4.0.7...@marko/prebuild@4.1.0) (2018-12-12)
+
+
+### Features
+
+* **migrate:** expose optional migration api in migrate command ([#100](https://github.com/marko-js/cli/issues/100)) ([4c9febc](https://github.com/marko-js/cli/commit/4c9febc))
+
+
+
+
+
 ## [4.0.7](https://github.com/marko-js/cli/compare/@marko/prebuild@4.0.6...@marko/prebuild@4.0.7) (2018-12-05)
 
 **Note:** Version bump only for package @marko/prebuild
