@@ -1,4 +1,5 @@
 import fs from "mz/fs";
+import { prompt } from "enquirer";
 import markoMigrate from ".";
 
 export function parse(argv) {
@@ -63,9 +64,6 @@ export function parse(argv) {
     })
     .parse(argv);
 
-  options.patterns = options.files;
-  delete options.files;
-
   return options;
 }
 
@@ -77,6 +75,7 @@ export async function run(options, markoCli) {
     singleQuote: false,
     ignore: ["/node_modules", ".*"],
     dir: markoCli.cwd,
+    prompt,
     ...options
   };
 
