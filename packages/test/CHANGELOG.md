@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/marko-js/cli/compare/@marko/test@4.0.8...@marko/test@4.1.0) (2018-12-13)
+
+
+### Bug Fixes
+
+* dedupe package.json deps when hoisting ([dcf9eac](https://github.com/marko-js/cli/commit/dcf9eac))
+* **test:** less strict semver range for marko version ([4c935d7](https://github.com/marko-js/cli/commit/4c935d7))
+
+
+### Features
+
+* add prettyprint package ([158ec29](https://github.com/marko-js/cli/commit/158ec29))
+* **migrate:** expose optional migration api in migrate command ([#100](https://github.com/marko-js/cli/issues/100)) ([4c9febc](https://github.com/marko-js/cli/commit/4c9febc))
+
+
+
+
+
 ## 4.0.8 (2018-12-05)
 
 
