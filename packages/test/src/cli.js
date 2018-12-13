@@ -24,7 +24,7 @@ exports.parse = function parse(argv) {
       },
       "--files --file -f *": {
         type: "string[]",
-        description: "File patterns"
+        description: "File patterns to match tests to run"
       }
       // TODO: Add `--test-template-path` option, which should ultimately map to
       // the `pageTemplate` option in the browser tests runner.

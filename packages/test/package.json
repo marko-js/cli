@@ -1,6 +1,6 @@
 {
   "name": "@marko/test",
-  "description": "Testing Marko components",
+  "description": "Utility to test Marko files in both a server and browser environment",
   "version": "4.0.8",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
