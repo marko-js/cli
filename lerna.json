@@ -9,7 +9,7 @@
   ],
   "ignoreChanges": [
     "**/package-lock.json",
-    "**/test/**",
+    "packages/*/test/**",
     "**/*.md"
   ],
   "version": "independent"
