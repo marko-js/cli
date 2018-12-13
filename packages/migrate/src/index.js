@@ -19,10 +19,14 @@ const defaultGlobOptions = {
 };
 
 export default async function(options = {}) {
-  let { dir, ignore, patterns } = options;
+  let { dir, ignore, files: filePatterns, prompt } = options;
 
-  if (!patterns || !patterns.length) {
-    patterns = ["**/*.marko"];
+  if (!filePatterns || !filePatterns.length) {
+    filePatterns = ["**/*.marko"];
+  }
+
+  if (typeof prompt !== "function") {
+    throw new Error("The 'prompt' option is required.");
   }
 
   dir = dir || process.cwd();
@@ -46,15 +50,16 @@ export default async function(options = {}) {
     globOptions.ignore = ignore;
   }
 
-  const files = await getFiles(patterns, globOptions);
+  const files = await getFiles(filePatterns, globOptions);
   const migratedFiles = {};
 
   await Promise.all(
     files.map(async file => {
       const basename = path.basename(file);
       if (basename.endsWith(".marko")) {
-        const migrateHelper = new MigrateHelper();
-        const add = opts => addMigration(migrateHelper, opts);
+        const migrateHelper = new MigrateHelper(options.prompt);
+        const add = migrateOptions =>
+          addMigration(migrateHelper, migrateOptions);
         const source = await fs.readFile(file, "utf-8");
         const ast = markoCompiler.parse(source, file, {
           onContext(ctx) {

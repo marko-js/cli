@@ -1,12 +1,11 @@
-import enquirer from "enquirer";
 export const AUTO_APPLY = Symbol("Auto Apply");
 
 const STORES = new WeakMap();
 
 export default class MigrateHelper {
-  constructor() {
+  constructor(prompt) {
     STORES.set(this, new Map());
-    Object.assign(this, enquirer);
+    this.prompt = options => Promise.resolve(prompt(options));
   }
 
   has(name) {

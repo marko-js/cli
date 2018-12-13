@@ -8,8 +8,9 @@ describe("scope(migrate)", () => {
   autotest("fixtures", async ({ dir, test, snapshot }) => {
     test(async () => {
       const outputs = await migrate({
+        prompt() {},
         ignore: ["**/snapshot-*.*"],
-        patterns: [`${dir}/**/*.marko`]
+        files: [`${dir}/**/*.marko`]
       });
 
       snapshot(

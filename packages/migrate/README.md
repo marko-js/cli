@@ -56,9 +56,16 @@ npm install @marko/migrate
 ```javascript
 import fs from "fs";
 import migrate from "@marko/migrate";
+import { prompt } from "enquirer";
 
 migrate({
-  patterns: ["./components/**/*.marko"]
+  files: ["./components/**/*.marko"],
+  prompt(options) {
+    // This is used for "optional" migrations.
+    // By default the cli mode uses enquirer to prompt the user via cli.
+    // The programtic api does not come with this by default and can be overwritten.
+    return prompt(options);
+  }
 }).then(output => {
   // Output contains an object with all of the migrated component sources.
   console.log("migrated all files");
