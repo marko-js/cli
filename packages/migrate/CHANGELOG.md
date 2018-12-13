@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/marko-js/cli/compare/@marko/migrate@1.1.0...@marko/migrate@1.2.0) (2018-12-13)
+
+
+### Features
+
+* **migrate:** provide ability to override prompts in programatic api ([#102](https://github.com/marko-js/cli/issues/102)) ([cf04092](https://github.com/marko-js/cli/commit/cf04092))
+
+
+
+
+
 # [1.1.0](https://github.com/marko-js/cli/compare/@marko/migrate@1.0.2...@marko/migrate@1.1.0) (2018-12-12)
 
 

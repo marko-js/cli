@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.2](https://github.com/marko-js/cli/compare/marko-cli@4.2.1...marko-cli@4.2.2) (2018-12-13)
+
+**Note:** Version bump only for package marko-cli
+
+
+
+
+
 ## [4.2.1](https://github.com/marko-js/cli/compare/marko-cli@4.2.0...marko-cli@4.2.1) (2018-12-13)
 
 **Note:** Version bump only for package marko-cli
