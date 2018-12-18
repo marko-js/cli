@@ -10,7 +10,7 @@ import MigrateHelper, {
   addMigration,
   runAutoMigrations
 } from "./util/migrate-helper";
-import addFileMigrations from "./util/file-migrations";
+import addDefaultMigrations from "./util/default-migrations";
 
 const defaultGlobOptions = {
   matchBase: true,
@@ -64,7 +64,7 @@ export default async function(options = {}) {
         const ast = markoCompiler.parse(source, file, {
           onContext(ctx) {
             ctx.addMigration = add;
-            addFileMigrations(ctx, migratedFiles);
+            addDefaultMigrations(ctx, migratedFiles);
           },
           migrate: true,
           raw: true
