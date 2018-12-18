@@ -72,7 +72,14 @@ migrate({
 
   for (const file in output) {
     // Save all outputs to disk.
-    fs.writeFileSync(file, output[file], "utf-8");
+
+    if (output[file] === null) {
+      // File was removed.
+      fs.unlinkSync(file);
+    } else {
+      // File was updated.
+      fs.writeFileSync(file, output[file], "utf-8");
+    }
   }
 });
 ```
