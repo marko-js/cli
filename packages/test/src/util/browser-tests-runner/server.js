@@ -16,7 +16,13 @@ exports.start = async (templateData, options) => {
   const pageTemplate = options.pageTemplate || defaultPageTemplate;
   const server = express()
     .use(require("lasso/middleware").serveStatic({ lasso: templateData.lasso }))
-    .get("/", (req, res) => res.marko(pageTemplate, templateData))
+    .get("/", (req, res) => {
+      const out = res.marko(pageTemplate, templateData);
+      // Adds error handler for versions of marko before: https://github.com/marko-js/marko/pull/1119
+      if (!out.stream.listeners("error").includes(req.next)) {
+        out.on("error", req.next);
+      }
+    })
     .listen(serverPort);
   const wss = engine.attach(server);
 
