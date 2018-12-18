@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/marko-js/cli/compare/@marko/test@4.1.0...@marko/test@4.1.1) (2018-12-18)
+
+
+### Bug Fixes
+
+* **test:** ensure errors displayed on older versions of Marko ([#105](https://github.com/marko-js/cli/issues/105)) ([c54a1be](https://github.com/marko-js/cli/commit/c54a1be))
+
+
+
+
+
 # [4.1.0](https://github.com/marko-js/cli/compare/@marko/test@4.0.8...@marko/test@4.1.0) (2018-12-13)
 
 

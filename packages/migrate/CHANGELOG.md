@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/marko-js/cli/compare/@marko/migrate@1.2.0...@marko/migrate@1.3.0) (2018-12-18)
+
+
+### Features
+
+* add migrator for file names ([#104](https://github.com/marko-js/cli/issues/104)) ([8eddfa6](https://github.com/marko-js/cli/commit/8eddfa6))
+
+
+
+
+
 # [1.2.0](https://github.com/marko-js/cli/compare/@marko/migrate@1.1.0...@marko/migrate@1.2.0) (2018-12-13)
 
 
