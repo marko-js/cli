@@ -1,5 +1,6 @@
 import fs from "mz/fs";
 import { prompt } from "enquirer";
+import dependentPathUpdate from "dependent-path-update";
 import markoMigrate from ".";
 
 export function parse(argv) {
@@ -79,10 +80,28 @@ export async function run(options, markoCli) {
     ...options
   };
 
-  const outputs = await markoMigrate(options);
+  const { updated, moved } = await markoMigrate(options);
   await Promise.all(
-    Object.entries(outputs).map(([file, source]) => {
+    Object.entries(updated).map(([file, source]) => {
       return fs.writeFile(file, source, "utf-8");
     })
   );
+
+  for (const from in moved) {
+    const to = moved[from];
+
+    await Promise.all(
+      Object.entries(
+        await dependentPathUpdate({
+          projectRoot: options.dir,
+          exclude: options.exclude,
+          include: ["*.{marko,js,json}"],
+          from,
+          to
+        })
+      )
+        .map(([file, source]) => fs.writeFile(file, source, "utf-8"))
+        .concat(fs.rename(from, to))
+    );
+  }
 }

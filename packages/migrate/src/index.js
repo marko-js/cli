@@ -51,7 +51,8 @@ export default async function(options = {}) {
   }
 
   const files = await getFiles(filePatterns, globOptions);
-  const migratedFiles = {};
+  const updatedFiles = {};
+  const movedFiles = {};
 
   await Promise.all(
     files.map(async file => {
@@ -64,7 +65,7 @@ export default async function(options = {}) {
         const ast = markoCompiler.parse(source, file, {
           onContext(ctx) {
             ctx.addMigration = add;
-            addDefaultMigrations(ctx, migratedFiles);
+            addDefaultMigrations(ctx, updatedFiles, movedFiles);
           },
           migrate: true,
           raw: true
@@ -72,7 +73,7 @@ export default async function(options = {}) {
 
         await runAutoMigrations(migrateHelper);
 
-        migratedFiles[file] = markoPrettyprint.prettyPrintAST(ast, {
+        updatedFiles[file] = markoPrettyprint.prettyPrintAST(ast, {
           syntax: options.syntax,
           maxLen: options.maxLen,
           noSemi: options.noSemi,
@@ -83,7 +84,10 @@ export default async function(options = {}) {
     })
   );
 
-  return migratedFiles;
+  return {
+    moved: movedFiles,
+    updated: updatedFiles
+  };
 }
 
 function getPackageRoot(dir) {
