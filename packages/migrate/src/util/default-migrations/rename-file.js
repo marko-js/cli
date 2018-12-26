@@ -1,16 +1,8 @@
-export default function addComponentMigration(ctx, migratedFiles) {
+export default function addComponentMigration(ctx, _, movedFiles) {
   ctx.addMigration({
     name: "renameFile",
-    async apply(helper, { from, to }) {
-      Object.defineProperty(migratedFiles, from, {
-        enumerable: true,
-        get() {
-          return null;
-        },
-        set(source) {
-          migratedFiles[to] = source;
-        }
-      });
+    async apply(_, { from, to }) {
+      movedFiles[from] = to;
     }
   });
 }
