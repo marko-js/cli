@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/marko-js/cli/compare/@marko/migrate@1.3.0...@marko/migrate@2.0.0) (2018-12-26)
+
+
+### Features
+
+* **migrate:** update dependent paths when renaming files ([#106](https://github.com/marko-js/cli/issues/106)) ([014b7cb](https://github.com/marko-js/cli/commit/014b7cb))
+
+
+### BREAKING CHANGES
+
+* **migrate:** the programatic api now returns an object with seperate `moved` and `updated` files
+
+
+
+
+
 # [1.3.0](https://github.com/marko-js/cli/compare/@marko/migrate@1.2.0...@marko/migrate@1.3.0) (2018-12-18)
 
 

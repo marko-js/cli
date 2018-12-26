@@ -1,7 +1,7 @@
 {
   "name": "marko-cli",
   "description": "Marko CLI",
-  "version": "4.2.3",
+  "version": "4.2.4",
   "author": "Michael Rawlings <ml.rawlings@gmail.com>",
   "bin": {
     "marko": "dist/bin.js"
@@ -11,7 +11,7 @@
     "@babel/runtime": "^7.2.0",
     "@marko/compile": "^3.4.0",
     "@marko/create": "^3.3.0",
-    "@marko/migrate": "^1.3.0",
+    "@marko/migrate": "^2.0.0",
     "@marko/prettyprint": "^1.2.0",
     "@marko/test": "^4.1.1",
     "app-root-dir": "^1.0.2",
