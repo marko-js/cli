@@ -142,12 +142,8 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
     var childOutput = childWriter.getOutput();
     if (
       prevChild &&
-      child.type == "Text" &&
-      /^(?:\n|\r){2,}$/.test(child.argument.value) &&
-      !(
-        prevChild.type == "Text" &&
-        /^(?:\n|\r){2,}$/.test(prevChild.argument.value)
-      )
+      prevChild.type == "Text" &&
+      /(?:\n|\r){2,}/.test(prevChild.argument.value)
     ) {
       writer.write(printContext.eol);
     }
