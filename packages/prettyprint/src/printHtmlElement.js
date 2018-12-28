@@ -104,7 +104,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
   var tagNameString = tagNameExpression
     ? `\${${formatJS(tagNameExpression, printContext, undefined, true)}}`
     : node.tagName;
-  var closeTagNameString = tagNameExpression
+  var closingTagNameString = tagNameExpression
     ? "</>"
     : "</" + node.tagName + ">";
 
@@ -266,7 +266,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     return;
   }
 
-  var endTag = printContext.isHtmlSyntax ? closeTagNameString : "";
+  var endTag = printContext.isHtmlSyntax ? closingTagNameString : "";
 
   if (bodyText && !hasLineBreaks(bodyText)) {
     let endCol = writer.col + bodyText.length + endTag.length;
@@ -275,7 +275,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
       if (printContext.isConciseSyntax) {
         writer.write(" -- " + bodyText);
       } else {
-        writer.write(bodyText + closeTagNameString);
+        writer.write(bodyText + closingTagNameString);
       }
       return;
     }
