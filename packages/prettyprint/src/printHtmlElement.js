@@ -1,5 +1,6 @@
 "use strict";
 
+const redent = require("redent");
 const hasUnenclosedWhitespace = require("./util/hasUnenclosedWhitespace");
 const getBodyText = require("./util/getBodyText");
 const hasLineBreaks = require("./util/hasLineBreaks");
@@ -204,7 +205,10 @@ module.exports = function printHtmlElement(node, printContext, writer) {
         attrsString = " " + attrStringsArray.join(" ");
       }
 
-      if (writer.col + attrsString.length < maxLen) {
+      if (
+        writer.col + attrsString.length < maxLen ||
+        attrStringsArray.length === 1
+      ) {
         writer.write(attrsString);
       } else {
         if (useCommas) {
@@ -213,27 +217,30 @@ module.exports = function printHtmlElement(node, printContext, writer) {
 
           attrStringsArray.forEach((attrString, i) => {
             if (i !== 0) {
-              writer.write(printContext.currentIndentString);
-              writer.write(printContext.indentString);
+              attrString = redent(
+                attrString,
+                printContext.depth + 1,
+                printContext.indentString
+              );
             }
 
-            if (i === lastIndex) {
-              writer.write(attrString + ";" + printContext.eol);
-            } else {
-              writer.write(attrString + "," + printContext.eol);
-            }
+            writer.write(attrString + (i === lastIndex ? ";" : ","));
+            writer.write(printContext.eol);
           });
         } else {
           writer.write(" [" + printContext.eol);
           attrStringsArray.forEach(attrString => {
-            writer.write(printContext.currentIndentString);
-            writer.write(printContext.indentString);
-            writer.write(printContext.indentString);
-            writer.write(attrString + printContext.eol);
+            writer.write(
+              redent(
+                attrString,
+                printContext.depth + 1,
+                printContext.indentString
+              )
+            );
+            writer.write(printContext.eol);
           });
 
           writer.write(printContext.currentIndentString);
-          writer.write(printContext.indentString);
           writer.write("]");
         }
       }
