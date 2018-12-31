@@ -66,18 +66,18 @@ migrate({
     // The programtic api does not come with this by default and can be overwritten.
     return prompt(options);
   }
-}).then(({ updated, moved }) => {
+}).then(({ fileContents, fileNames }) => {
   // Output contains an object with all of the migrated component sources.
   console.log("migrated all files");
 
-  for (const file in updated) {
+  for (const file in fileContents) {
     // Save all updated files to disk.
-    fs.writeFileSync(file, output[file], "utf-8");
+    fs.writeFileSync(file, fileContents[file], "utf-8");
   }
 
-  for (const file in moved) {
+  for (const file in fileNames) {
     // Update locations of moved files on disk.
-    fs.renameSync(file, moved[file]);
+    fs.renameSync(file, fileNames[file]);
   }
 });
 ```
