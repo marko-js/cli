@@ -28,6 +28,11 @@ module.exports = function prettyPrintSource(src, options) {
   options.CodeWriter =
     options.CodeWriter || requireMarkoFile(dirname, "compiler/CodeWriter");
 
-  var ast = markoCompiler.parse(src, filename, { raw: true });
+  var ast = markoCompiler.parse(src, filename, {
+    raw: true,
+    onContext(context) {
+      options.taglibLookup = context.taglibLookup;
+    }
+  });
   return prettyPrintAST(ast, options);
 };

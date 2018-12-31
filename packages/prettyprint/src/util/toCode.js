@@ -1,19 +1,11 @@
-const formatJS = require("./formatJS");
-
-module.exports = (node, printContext, indent, expression) => {
-  if (!node) {
-    return node;
-  }
-
+module.exports = (node, printContext) => {
   if (typeof node === "string") {
     return node;
   }
 
   const builder = printContext.markoCompiler.builder;
   const CodeWriter = printContext.CodeWriter;
-
   const writer = new CodeWriter({}, builder);
-
   const _writeLiteral = writer.writeLiteral;
   writer.writeLiteral = function(value) {
     if (typeof value === "string") {
@@ -26,13 +18,5 @@ module.exports = (node, printContext, indent, expression) => {
   };
   writer.write(node);
   writer.writeLiteral = _writeLiteral;
-
-  const formatted = formatJS(
-    writer.getCode(),
-    printContext,
-    indent,
-    expression
-  );
-
-  return formatted.replace(/__%ESCAPE%__/g, "\\");
+  return writer.getCode();
 };
