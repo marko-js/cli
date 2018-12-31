@@ -31,7 +31,7 @@ module.exports = function prettyPrintSource(src, options) {
   var ast = markoCompiler.parse(src, filename, {
     raw: true,
     onContext(context) {
-      options.taglibLookup = context.taglibLookup;
+      options.context = context;
     }
   });
   return prettyPrintAST(ast, options);

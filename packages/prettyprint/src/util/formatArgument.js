@@ -17,10 +17,18 @@ module.exports = function(node, printContext) {
   if (node.type === "HTMLAttribute") {
     statement = getStatementName(node.name);
   } else {
+    const taglibLookup = printContext.taglibLookup;
     const tagName = node.tagName;
-    const tagDef = tagName && printContext.taglibLookup.getTag(tagName);
-    const featureFlags = tagDef && tagDef.featureFlags;
-    isParams = featureFlags && featureFlags.includes("params");
+
+    if (taglibLookup && tagName) {
+      const tagDef = taglibLookup.getTag(tagName);
+
+      if (tagDef) {
+        const featureFlags = tagDef.featureFlags;
+        isParams = featureFlags && featureFlags.includes("params");
+      }
+    }
+
     statement = getStatementName(tagName);
   }
 
