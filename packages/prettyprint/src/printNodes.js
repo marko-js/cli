@@ -132,9 +132,22 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
       }
 
       // Insert line break between certain top-level tags
-      if (breakAfterTags[prevChild.tagName]) {
+      if (
+        breakAfterTags[prevChild.tagName] &&
+        child.tagName != prevChild.tagName
+      ) {
         writer.write(printContext.eol);
       }
+
+      //Insert line break group of scriptlets
+      if (
+        child.type === "Text" &&
+        child.nextSibling &&
+        (!prevChild.tag &&
+          prevChild.type === "Scriptlet" &&
+          child.nextSibling.type !== "Scriptlet")
+      )
+        writer.write(printContext.eol);
     }
 
     printers.printNode(child, printContext, childWriter);
