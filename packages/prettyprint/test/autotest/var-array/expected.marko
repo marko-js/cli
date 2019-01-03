@@ -1,7 +1,7 @@
 <var
     classNames=["app-checkbox", state.checked && "checked", state.checkboxClassName]
     foo="bar"/>
-<app-button ref="button" class=classNames onClick('handleClick')>
+<app-button ref="button" class=classNames onClick("handleClick")>
     <span class="app-checkbox-icon"/>
     <span ref="checkboxLabel">
         <include(state.body)/>
@@ -10,7 +10,7 @@
 ~~~~~~~
 var classNames=["app-checkbox", state.checked && "checked", state.checkboxClassName],
     foo="bar";
-app-button ref="button" class=classNames onClick('handleClick')
+app-button ref="button" class=classNames onClick("handleClick")
     span class="app-checkbox-icon"
     span ref="checkboxLabel"
         include(state.body)

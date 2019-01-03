@@ -58,12 +58,20 @@ export default async function(options = {}) {
     files.map(async file => {
       const basename = path.basename(file);
       if (basename.endsWith(".marko")) {
+        const prettyPrintOptions = {
+          syntax: options.syntax,
+          maxLen: options.maxLen,
+          noSemi: options.noSemi,
+          singleQuote: options.singleQuote,
+          filename: file
+        };
         const migrateHelper = new MigrateHelper(options.prompt);
         const add = migrateOptions =>
           addMigration(migrateHelper, migrateOptions);
         const source = await fs.readFile(file, "utf-8");
         const ast = markoCompiler.parse(source, file, {
           onContext(ctx) {
+            prettyPrintOptions.context = ctx;
             ctx.addMigration = add;
             addDefaultMigrations(ctx, updatedFiles, movedFiles);
           },
@@ -73,13 +81,10 @@ export default async function(options = {}) {
 
         await runAutoMigrations(migrateHelper);
 
-        updatedFiles[file] = markoPrettyprint.prettyPrintAST(ast, {
-          syntax: options.syntax,
-          maxLen: options.maxLen,
-          noSemi: options.noSemi,
-          singleQuote: options.singleQuote,
-          filename: file
-        });
+        updatedFiles[file] = markoPrettyprint.prettyPrintAST(
+          ast,
+          prettyPrintOptions
+        );
       }
     })
   );

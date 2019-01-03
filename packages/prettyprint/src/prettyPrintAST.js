@@ -34,6 +34,10 @@ module.exports = function prettyPrintAST(ast, options) {
     options.syntax = SYNTAX_HTML;
   }
 
+  if (options.context) {
+    options.taglibLookup = options.context.taglibLookup;
+  }
+
   var dirname = path.dirname(filename);
   options.dirname = dirname;
 
