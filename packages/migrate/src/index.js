@@ -18,19 +18,16 @@ const defaultGlobOptions = {
   ignore: ["node_modules/**"]
 };
 
-export default async function(options = {}) {
-  let { dir, ignore, files: filePatterns, prompt } = options;
-
-  if (!filePatterns || !filePatterns.length) {
-    filePatterns = ["**/*.marko"];
-  }
-
-  if (typeof prompt !== "function") {
+export default async function(options) {
+  if (!options || typeof options.prompt !== "function") {
     throw new Error("The 'prompt' option is required.");
   }
 
-  dir = dir || process.cwd();
-
+  const {
+    dir = process.cwd(),
+    files: filePatterns = ["**/*.marko"],
+    ignore
+  } = options;
   const packageRoot = getPackageRoot(dir);
   const markoCompiler = requireFromRoot("marko/compiler", packageRoot);
 
@@ -51,8 +48,11 @@ export default async function(options = {}) {
   }
 
   const files = await getFiles(filePatterns, globOptions);
-  const updatedFiles = {};
-  const movedFiles = {};
+  const results = {
+    dependentPaths: {},
+    fileContents: {},
+    fileNames: {}
+  };
 
   await Promise.all(
     files.map(async file => {
@@ -73,7 +73,7 @@ export default async function(options = {}) {
           onContext(ctx) {
             prettyPrintOptions.context = ctx;
             ctx.addMigration = add;
-            addDefaultMigrations(ctx, updatedFiles, movedFiles);
+            addDefaultMigrations(ctx, results);
           },
           migrate: true,
           raw: true
@@ -81,7 +81,7 @@ export default async function(options = {}) {
 
         await runAutoMigrations(migrateHelper);
 
-        updatedFiles[file] = markoPrettyprint.prettyPrintAST(
+        results.fileContents[file] = markoPrettyprint.prettyPrintAST(
           ast,
           prettyPrintOptions
         );
@@ -89,10 +89,7 @@ export default async function(options = {}) {
     })
   );
 
-  return {
-    moved: movedFiles,
-    updated: updatedFiles
-  };
+  return results;
 }
 
 function getPackageRoot(dir) {
