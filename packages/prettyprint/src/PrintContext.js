@@ -24,6 +24,7 @@ class PrintContext {
     this.singleQuote = options.singleQuote;
     this.markoCompiler = options.markoCompiler;
     this.CodeWriter = options.CodeWriter;
+    this.taglibLookup = options.taglibLookup;
   }
 
   get isConciseSyntax() {

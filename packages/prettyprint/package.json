@@ -1,14 +1,14 @@
 {
   "name": "@marko/prettyprint",
   "description": "Prettyprint Marko template files in the syntax of your choice",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "author": "Patrick Steele-Idem <pnidem@gmail.com>",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "argly": "^1.2.0",
     "editorconfig": "^0.15.2",
     "lasso-package-root": "^1.0.1",
-    "marko": "^4.14.3",
+    "marko": "^4.14.12",
     "minimatch": "^3.0.4",
     "prettier": "^1.15.3",
     "redent": "^2.0.0",

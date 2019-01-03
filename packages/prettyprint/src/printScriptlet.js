@@ -7,33 +7,34 @@ module.exports = function printScriptlet(node, printContext, writer) {
   const currentIndentString = printContext.currentIndentString;
   const indentString = printContext.indentString;
   const code = node.code;
-  let isBlock = node.block;
 
   if (node.tag) {
     writer.write("<%");
     writer.write(code);
     writer.write("%>");
   } else {
-    const output = formatJS(code, printContext, printContext.depth);
+    const output = formatJS(code, printContext);
+    const newLineCount = countNewLines(output);
+    const isInline =
+      newLineCount === 0 ||
+      (!node.block && newLineCount === countNewLines(code));
 
-    if (!isBlock && /[\r\n]/g.test(output)) {
-      isBlock = true;
-    }
-
-    if (isBlock) {
-      // Multi-line scriptlet
-
-      writer.write(
-        currentIndentString +
-          "$ {\n" +
-          redent(output, printContext.depth + 1, indentString) +
-          "\n" +
-          currentIndentString +
-          "}"
-      );
+    if (isInline) {
+      writer.write(`$ ${output}`);
     } else {
-      writer.write("$ ");
-      writer.write(output);
+      // Multi-line scriptlet
+      writer.write(
+        `$ {\n${redent(
+          output,
+          printContext.depth + 1,
+          indentString
+        )}\n${currentIndentString}}`
+      );
     }
   }
 };
+
+function countNewLines(str) {
+  const match = str.match(/[\r\n]/g);
+  return (match && match.length) || 0;
+}
