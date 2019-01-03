@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/marko-js/cli/compare/@marko/migrate@2.0.0...@marko/migrate@3.0.0) (2019-01-03)
+
+
+### Bug Fixes
+
+* **migrate:** run migrations serially ([#112](https://github.com/marko-js/cli/issues/112)) ([6449d28](https://github.com/marko-js/cli/commit/6449d28))
+
+
+### Features
+
+* **migrate:** Expose dependent path migration ([#110](https://github.com/marko-js/cli/issues/110)) ([9000add](https://github.com/marko-js/cli/commit/9000add))
+
+
+### BREAKING CHANGES
+
+* **migrate:** rename result properties, default path migrations
+
+
+
+
+
 # [2.0.0](https://github.com/marko-js/cli/compare/@marko/migrate@1.3.0...@marko/migrate@2.0.0) (2018-12-26)
 
 

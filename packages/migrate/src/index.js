@@ -18,19 +18,16 @@ const defaultGlobOptions = {
   ignore: ["node_modules/**"]
 };
 
-export default async function(options = {}) {
-  let { dir, ignore, files: filePatterns, prompt } = options;
-
-  if (!filePatterns || !filePatterns.length) {
-    filePatterns = ["**/*.marko"];
-  }
-
-  if (typeof prompt !== "function") {
+export default async function(options) {
+  if (!options || typeof options.prompt !== "function") {
     throw new Error("The 'prompt' option is required.");
   }
 
-  dir = dir || process.cwd();
-
+  const {
+    dir = process.cwd(),
+    files: filePatterns = ["**/*.marko"],
+    ignore
+  } = options;
   const packageRoot = getPackageRoot(dir);
   const markoCompiler = requireFromRoot("marko/compiler", packageRoot);
 
@@ -51,43 +48,45 @@ export default async function(options = {}) {
   }
 
   const files = await getFiles(filePatterns, globOptions);
-  const updatedFiles = {};
-  const movedFiles = {};
-
-  await Promise.all(
-    files.map(async file => {
-      const basename = path.basename(file);
-      if (basename.endsWith(".marko")) {
-        const migrateHelper = new MigrateHelper(options.prompt);
-        const add = migrateOptions =>
-          addMigration(migrateHelper, migrateOptions);
-        const source = await fs.readFile(file, "utf-8");
-        const ast = markoCompiler.parse(source, file, {
-          onContext(ctx) {
-            ctx.addMigration = add;
-            addDefaultMigrations(ctx, updatedFiles, movedFiles);
-          },
-          migrate: true,
-          raw: true
-        });
-
-        await runAutoMigrations(migrateHelper);
-
-        updatedFiles[file] = markoPrettyprint.prettyPrintAST(ast, {
-          syntax: options.syntax,
-          maxLen: options.maxLen,
-          noSemi: options.noSemi,
-          singleQuote: options.singleQuote,
-          filename: file
-        });
-      }
-    })
-  );
-
-  return {
-    moved: movedFiles,
-    updated: updatedFiles
+  const results = {
+    dependentPaths: {},
+    fileContents: {},
+    fileNames: {}
   };
+
+  for (const file of files) {
+    const basename = path.basename(file);
+    if (basename.endsWith(".marko")) {
+      const prettyPrintOptions = {
+        syntax: options.syntax,
+        maxLen: options.maxLen,
+        noSemi: options.noSemi,
+        singleQuote: options.singleQuote,
+        filename: file
+      };
+      const migrateHelper = new MigrateHelper(options.prompt);
+      const add = migrateOptions => addMigration(migrateHelper, migrateOptions);
+      const source = await fs.readFile(file, "utf-8");
+      const ast = markoCompiler.parse(source, file, {
+        onContext(ctx) {
+          prettyPrintOptions.context = ctx;
+          ctx.addMigration = add;
+          addDefaultMigrations(ctx, results);
+        },
+        migrate: true,
+        raw: true
+      });
+
+      await runAutoMigrations(migrateHelper);
+
+      results.fileContents[file] = markoPrettyprint.prettyPrintAST(
+        ast,
+        prettyPrintOptions
+      );
+    }
+  }
+
+  return results;
 }
 
 function getPackageRoot(dir) {

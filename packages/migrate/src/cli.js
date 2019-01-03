@@ -80,16 +80,22 @@ export async function run(options, markoCli) {
     ...options
   };
 
-  const { updated, moved } = await markoMigrate(options);
+  const { fileContents, fileNames, dependentPaths } = await markoMigrate(
+    options
+  );
+
   await Promise.all(
-    Object.entries(updated).map(([file, source]) => {
+    Object.entries(fileContents).map(([file, source]) => {
       return fs.writeFile(file, source, "utf-8");
     })
   );
 
-  for (const from in moved) {
-    const to = moved[from];
+  await Promise.all(
+    Object.entries(fileNames).map(([from, to]) => fs.rename(from, to))
+  );
 
+  for (const from in dependentPaths) {
+    const to = dependentPaths[from];
     await Promise.all(
       Object.entries(
         await dependentPathUpdate({
@@ -99,9 +105,7 @@ export async function run(options, markoCli) {
           from,
           to
         })
-      )
-        .map(([file, source]) => fs.writeFile(file, source, "utf-8"))
-        .concat(fs.rename(from, to))
+      ).map(([file, source]) => fs.writeFile(file, source, "utf-8"))
     );
   }
 }
