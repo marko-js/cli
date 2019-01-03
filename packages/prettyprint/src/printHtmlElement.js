@@ -1,5 +1,6 @@
 "use strict";
 
+const redent = require("redent");
 const hasUnenclosedWhitespace = require("./util/hasUnenclosedWhitespace");
 const getBodyText = require("./util/getBodyText");
 const hasLineBreaks = require("./util/hasLineBreaks");
@@ -8,8 +9,8 @@ const Writer = require("./util/Writer");
 const formattingTags = require("./formatting-tags");
 
 const formatJS = require("./util/formatJS");
+const formatArgument = require("./util/formatArgument");
 const formatStyles = require("./util/formatStyles");
-const toCode = require("./util/toCode");
 
 const codeTags = {
   class: {
@@ -102,7 +103,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
   }
 
   var tagNameString = tagNameExpression
-    ? `\${${formatJS(tagNameExpression, printContext, undefined, true)}}`
+    ? `\${${formatJS(tagNameExpression, printContext, true)}}`
     : node.tagName;
   var endTagString = tagNameExpression ? "</>" : "</" + node.tagName + ">";
 
@@ -117,15 +118,13 @@ module.exports = function printHtmlElement(node, printContext, writer) {
       if (typeof className === "string") {
         writer.write("." + className);
       } else {
-        writer.write(
-          ".${" + toCode(className, printContext, undefined, true) + "}"
-        );
+        writer.write(".${" + formatJS(className, printContext, true) + "}");
       }
     });
   }
 
   if (node.argument != null) {
-    writer.write("(" + node.argument + ")");
+    writer.write(formatArgument(node, printContext));
   }
 
   var attrsWriter = new Writer(writer.col);
@@ -151,12 +150,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
   // append them to the output while avoiding putting too many attributes on one line.
   attrs.forEach(attr => {
     var attrStr = "";
-    var attrValueStr = toCode(
-      attr.value,
-      printContext,
-      printContext.depth + 1,
-      true
-    );
+    var attrValueStr = formatJS(attr.value, printContext, true);
 
     if (attr.name) {
       attrStr += attr.name;
@@ -167,10 +161,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
           attrStr += "=" + attrValueStr;
         }
       } else if (attr.argument != null) {
-        attrStr +=
-          "(" +
-          toCode(attr.argument, printContext, printContext.depth + 1, true) +
-          ")";
+        attrStr += formatArgument(attr, printContext);
       }
     } else if (attr.spread) {
       if (hasUnenclosedWhitespace(attr.value)) {
@@ -215,7 +206,10 @@ module.exports = function printHtmlElement(node, printContext, writer) {
         attrsString = " " + attrStringsArray.join(" ");
       }
 
-      if (writer.col + attrsString.length < maxLen) {
+      if (
+        writer.col + attrsString.length < maxLen ||
+        attrStringsArray.length === 1
+      ) {
         writer.write(attrsString);
       } else {
         if (useCommas) {
@@ -224,27 +218,30 @@ module.exports = function printHtmlElement(node, printContext, writer) {
 
           attrStringsArray.forEach((attrString, i) => {
             if (i !== 0) {
-              writer.write(printContext.currentIndentString);
-              writer.write(printContext.indentString);
+              attrString = redent(
+                attrString,
+                printContext.depth + 1,
+                printContext.indentString
+              );
             }
 
-            if (i === lastIndex) {
-              writer.write(attrString + ";" + printContext.eol);
-            } else {
-              writer.write(attrString + "," + printContext.eol);
-            }
+            writer.write(attrString + (i === lastIndex ? ";" : ","));
+            writer.write(printContext.eol);
           });
         } else {
           writer.write(" [" + printContext.eol);
           attrStringsArray.forEach(attrString => {
-            writer.write(printContext.currentIndentString);
-            writer.write(printContext.indentString);
-            writer.write(printContext.indentString);
-            writer.write(attrString + printContext.eol);
+            writer.write(
+              redent(
+                attrString,
+                printContext.depth + 1,
+                printContext.indentString
+              )
+            );
+            writer.write(printContext.eol);
           });
 
           writer.write(printContext.currentIndentString);
-          writer.write(printContext.indentString);
           writer.write("]");
         }
       }

@@ -7,20 +7,33 @@ const CWD = process.cwd();
 describe("scope(migrate)", () => {
   autotest("fixtures", async ({ dir, test, snapshot }) => {
     test(async () => {
-      const { updated, moved } = await migrate({
+      const { fileContents, fileNames, dependentPaths } = await migrate({
         prompt() {},
         ignore: ["**/snapshot-*.*"],
         files: [`${dir}/**/*.marko`]
       });
 
       snapshot(
-        Object.entries(updated)
+        Object.entries(fileContents)
           .sort(([a], [b]) => a.localeCompare(b))
           .map(
             ([file, source]) =>
               `<!-- ${path.relative(CWD, file)}${
-                moved[file] ? ` => ${path.relative(CWD, moved[file])}` : ""
+                fileNames[file]
+                  ? ` => ${path.relative(CWD, fileNames[file])}`
+                  : ""
               } -->\n\n${source}`
+          )
+          .concat(
+            Object.entries(dependentPaths)
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(
+                ([from, to]) =>
+                  `<!-- dependents: ${path.relative(
+                    CWD,
+                    from
+                  )} => ${path.relative(CWD, to)} -->`
+              )
           )
           .join("\n\n"),
         {
