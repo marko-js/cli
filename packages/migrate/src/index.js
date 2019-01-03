@@ -54,40 +54,37 @@ export default async function(options) {
     fileNames: {}
   };
 
-  await Promise.all(
-    files.map(async file => {
-      const basename = path.basename(file);
-      if (basename.endsWith(".marko")) {
-        const prettyPrintOptions = {
-          syntax: options.syntax,
-          maxLen: options.maxLen,
-          noSemi: options.noSemi,
-          singleQuote: options.singleQuote,
-          filename: file
-        };
-        const migrateHelper = new MigrateHelper(options.prompt);
-        const add = migrateOptions =>
-          addMigration(migrateHelper, migrateOptions);
-        const source = await fs.readFile(file, "utf-8");
-        const ast = markoCompiler.parse(source, file, {
-          onContext(ctx) {
-            prettyPrintOptions.context = ctx;
-            ctx.addMigration = add;
-            addDefaultMigrations(ctx, results);
-          },
-          migrate: true,
-          raw: true
-        });
+  for (const file of files) {
+    const basename = path.basename(file);
+    if (basename.endsWith(".marko")) {
+      const prettyPrintOptions = {
+        syntax: options.syntax,
+        maxLen: options.maxLen,
+        noSemi: options.noSemi,
+        singleQuote: options.singleQuote,
+        filename: file
+      };
+      const migrateHelper = new MigrateHelper(options.prompt);
+      const add = migrateOptions => addMigration(migrateHelper, migrateOptions);
+      const source = await fs.readFile(file, "utf-8");
+      const ast = markoCompiler.parse(source, file, {
+        onContext(ctx) {
+          prettyPrintOptions.context = ctx;
+          ctx.addMigration = add;
+          addDefaultMigrations(ctx, results);
+        },
+        migrate: true,
+        raw: true
+      });
 
-        await runAutoMigrations(migrateHelper);
+      await runAutoMigrations(migrateHelper);
 
-        results.fileContents[file] = markoPrettyprint.prettyPrintAST(
-          ast,
-          prettyPrintOptions
-        );
-      }
-    })
-  );
+      results.fileContents[file] = markoPrettyprint.prettyPrintAST(
+        ast,
+        prettyPrintOptions
+      );
+    }
+  }
 
   return results;
 }
