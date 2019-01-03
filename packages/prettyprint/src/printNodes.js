@@ -140,10 +140,25 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
     printers.printNode(child, printContext, childWriter);
 
     var childOutput = childWriter.getOutput();
+    //Insert line break between tags
     if (
       prevChild &&
       prevChild.type == "Text" &&
-      /(?:\n|\r){2,}/.test(prevChild.argument.value)
+      /(?:\n|\r){2,}/.test(prevChild.argument.value) &&
+      (/[a-zA-Z0-9]/.test(prevChild.argument.value) ||
+        prevChild.previousSibling ||
+        child.parentNode === "TemplateRoot")
+    ) {
+      writer.write(printContext.eol);
+    }
+
+    //Insert line break before text node
+    if (
+      child.type == "Text" &&
+      /(?:\n|\r){2,}/.test(child.argument.value) &&
+      /[a-zA-Z0-9]/.test(child.argument.value) &&
+      prevChild &&
+      prevChild.previousSibling
     ) {
       writer.write(printContext.eol);
     }
