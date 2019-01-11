@@ -1,18 +1,18 @@
 export default function addComponentMigration(
   ctx,
-  { fileNames, dependentPaths }
+  { onRenameFile, onUpdateDependents }
 ) {
   ctx.addMigration({
     name: "updateFilePath",
-    apply(_, { from, to }) {
-      fileNames[from] = to;
+    async apply(_, { from, to }) {
+      await onRenameFile(from, to);
     }
   });
 
   ctx.addMigration({
     name: "updateDependentPaths",
-    apply(_, { from, to }) {
-      dependentPaths[from] = to;
+    async apply(_, { from, to }) {
+      await onUpdateDependents(from, to);
     }
   });
 }
