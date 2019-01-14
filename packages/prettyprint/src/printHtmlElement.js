@@ -10,6 +10,7 @@ const formattingTags = require("./formatting-tags");
 
 const formatJS = require("./util/formatJS");
 const formatArgument = require("./util/formatArgument");
+const formatParams = require("./util/formatParams");
 const formatStyles = require("./util/formatStyles");
 
 const codeTags = {
@@ -125,6 +126,10 @@ module.exports = function printHtmlElement(node, printContext, writer) {
 
   if (node.argument != null) {
     writer.write(formatArgument(node, printContext));
+  }
+
+  if (node.params != null) {
+    writer.write(formatParams(node, printContext));
   }
 
   var attrsWriter = new Writer(writer.col);

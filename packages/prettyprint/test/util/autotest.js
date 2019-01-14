@@ -96,11 +96,11 @@ exports.scanDir = function(autoTestDir, run, options) {
         var dir = path.join(autoTestDir, name);
 
         if (run.length === 2) {
-          itFunc(`[${name}] `, function(done) {
+          itFunc(name, function(done) {
             autoTest(name, dir, run, options, done);
           });
         } else {
-          itFunc(`[${name}] `, function() {
+          itFunc(name, function() {
             autoTest(name, dir, run, options);
           });
         }
@@ -120,7 +120,7 @@ exports.scanDir = function(autoTestDir, run, options) {
           return;
         }
 
-        xit(`[${name}] `, function() {});
+        xit(name, function() {});
       });
     }
   });

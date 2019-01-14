@@ -34,7 +34,7 @@ module.exports = function(code, printContext, expression) {
       code = code.slice(0, -1);
     }
 
-    if (code[0] === "(") {
+    if (code[0] === "(" && code[code.length - 1] === ")") {
       code = code.slice(1, -1);
     }
   }
