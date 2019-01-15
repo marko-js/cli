@@ -69,43 +69,33 @@ export function parse(argv) {
 }
 
 export async function run(options, markoCli) {
-  options = {
+  await markoMigrate({
     syntax: "html",
     maxLen: 80,
     noSemi: false,
     singleQuote: false,
     ignore: ["/node_modules", ".*"],
     dir: markoCli.cwd,
+    ...options,
     prompt,
-    ...options
-  };
-
-  const { fileContents, fileNames, dependentPaths } = await markoMigrate(
-    options
-  );
-
-  await Promise.all(
-    Object.entries(fileContents).map(([file, source]) => {
+    onWriteFile(file, source) {
       return fs.writeFile(file, source, "utf-8");
-    })
-  );
-
-  await Promise.all(
-    Object.entries(fileNames).map(([from, to]) => fs.rename(from, to))
-  );
-
-  for (const from in dependentPaths) {
-    const to = dependentPaths[from];
-    await Promise.all(
-      Object.entries(
-        await dependentPathUpdate({
-          projectRoot: options.dir,
-          exclude: options.exclude,
-          include: ["*.{marko,js,json}"],
-          from,
-          to
-        })
-      ).map(([file, source]) => fs.writeFile(file, source, "utf-8"))
-    );
-  }
+    },
+    onRenameFile(from, to) {
+      return fs.rename(from, to);
+    },
+    async onUpdateDependents(from, to) {
+      await Promise.all(
+        Object.entries(
+          await dependentPathUpdate({
+            projectRoot: options.dir,
+            exclude: options.exclude,
+            include: ["*.{marko,js,json}"],
+            from,
+            to
+          })
+        ).map(([file, source]) => fs.writeFile(file, source, "utf-8"))
+      );
+    }
+  });
 }

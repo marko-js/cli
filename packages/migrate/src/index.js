@@ -18,16 +18,33 @@ const defaultGlobOptions = {
   ignore: ["node_modules/**"]
 };
 
-export default async function(options) {
-  if (!options || typeof options.prompt !== "function") {
-    throw new Error("The 'prompt' option is required.");
-  }
-
+export default async function(options = {}) {
   const {
     dir = process.cwd(),
     files: filePatterns = ["**/*.marko"],
-    ignore
+    ignore,
+    prompt,
+    onWriteFile,
+    onRenameFile,
+    onUpdateDependents
   } = options;
+
+  if (!prompt) {
+    throw new Error("The 'prompt' option is required.");
+  }
+
+  if (!onWriteFile) {
+    throw new Error("The 'onWriteFile' option is required.");
+  }
+
+  if (!onRenameFile) {
+    throw new Error("The 'onRenameFile' option is required.");
+  }
+
+  if (!onUpdateDependents) {
+    throw new Error("The 'onUpdateDependents' option is required.");
+  }
+
   const packageRoot = getPackageRoot(dir);
   const markoCompiler = requireFromRoot("marko/compiler", packageRoot);
 
@@ -40,7 +57,7 @@ export default async function(options) {
 
   const globOptions = {
     ...defaultGlobOptions,
-    cwd: dir || process.cwd()
+    cwd: dir
   };
 
   if (ignore) {
@@ -48,15 +65,12 @@ export default async function(options) {
   }
 
   const files = await getFiles(filePatterns, globOptions);
-  const results = {
-    dependentPaths: {},
-    fileContents: {},
-    fileNames: {}
-  };
 
   for (const file of files) {
     const basename = path.basename(file);
     if (basename.endsWith(".marko")) {
+      console.log(`\nMigrating: ${path.relative(dir, file)}\n`);
+
       const prettyPrintOptions = {
         syntax: options.syntax,
         maxLen: options.maxLen,
@@ -64,29 +78,47 @@ export default async function(options) {
         singleQuote: options.singleQuote,
         filename: file
       };
-      const migrateHelper = new MigrateHelper(options.prompt);
+      const migrateHelper = new MigrateHelper(prompt);
       const add = migrateOptions => addMigration(migrateHelper, migrateOptions);
       const source = await fs.readFile(file, "utf-8");
+      const fileNameUpdates = [];
+      const dependentUpdates = [];
       const ast = markoCompiler.parse(source, file, {
         onContext(ctx) {
           prettyPrintOptions.context = ctx;
           ctx.addMigration = add;
-          addDefaultMigrations(ctx, results);
+          addDefaultMigrations(ctx, {
+            onWriteFile,
+            onRenameFile(from, to) {
+              fileNameUpdates.push(onRenameFile.bind(null, from, to));
+            },
+            onUpdateDependents(from, to) {
+              dependentUpdates.push(onUpdateDependents.bind(null, from, to));
+            }
+          });
         },
         migrate: true,
         raw: true
       });
 
       await runAutoMigrations(migrateHelper);
-
-      results.fileContents[file] = markoPrettyprint.prettyPrintAST(
-        ast,
-        prettyPrintOptions
+      await onWriteFile(
+        file,
+        markoPrettyprint.prettyPrintAST(ast, prettyPrintOptions)
       );
+
+      // Run renames and dependent updates after any file migrations.
+      for (const fileNameUpdate of fileNameUpdates) {
+        await fileNameUpdate();
+      }
+
+      for (const dependentUpdate of dependentUpdates) {
+        await dependentUpdate();
+      }
+
+      console.log();
     }
   }
-
-  return results;
 }
 
 function getPackageRoot(dir) {

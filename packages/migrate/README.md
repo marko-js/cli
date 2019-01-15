@@ -65,8 +65,24 @@ migrate({
     // By default the cli mode uses enquirer to prompt the user via cli.
     // The programtic api does not come with this by default and can be overwritten.
     return prompt(options);
+  },
+  onWriteFile(file, source) {
+    // A file has been modified, we can save it to disk.
+    // Note you can also return a promise.
+    fs.writeFileSync(file, source, "utf-8");
+  },
+  onRenameFile(from, to) {
+    // A file has been renamed, lets move it on the disk.
+    // Note you can also return a promise.
+    fs.renameSync(file, fileNames[file]);
+  },
+  onUpdateDependents(from, to) {
+    // This indicates that the dependents of the `from` file need to update
+    // Their paths to point to the `to` file.
+    // When running in CLI mode this will use https://github.com/marko-js/utils/tree/master/packages/dependent-path-update
   }
-}).then(({ fileContents, fileNames }) => {
+}).then(() => {
+  // Migration has completed.
   // Output contains an object with all of the migrated component sources.
   console.log("migrated all files");
 

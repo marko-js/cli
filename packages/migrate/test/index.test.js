@@ -7,10 +7,23 @@ const CWD = process.cwd();
 describe("scope(migrate)", () => {
   autotest("fixtures", async ({ dir, test, snapshot }) => {
     test(async () => {
-      const { fileContents, fileNames, dependentPaths } = await migrate({
-        prompt() {},
+      const fileContents = {};
+      const fileNames = {};
+      const dependentPaths = {};
+
+      await migrate({
         ignore: ["**/snapshot-*.*"],
-        files: [`${dir}/**/*.marko`]
+        files: [`${dir}/**/*.marko`],
+        prompt() {},
+        onWriteFile(file, contents) {
+          fileContents[file] = contents;
+        },
+        onRenameFile(from, to) {
+          fileNames[from] = to;
+        },
+        onUpdateDependents(from, to) {
+          dependentPaths[from] = to;
+        }
       });
 
       snapshot(
