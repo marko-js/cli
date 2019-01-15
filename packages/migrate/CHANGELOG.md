@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/marko-js/cli/compare/@marko/migrate@3.0.0...@marko/migrate@4.0.0) (2019-01-15)
+
+
+### Bug Fixes
+
+* Multi file migrations no longer can step on eachother causing invalid migrations ([#113](https://github.com/marko-js/cli/issues/113)) ([7628e09](https://github.com/marko-js/cli/commit/7628e09))
+
+
+### BREAKING CHANGES
+
+* The migrate programtic API has been updated to allow performing IO operations while running
+
+
+
+
+
 # [3.0.0](https://github.com/marko-js/cli/compare/@marko/migrate@2.0.0...@marko/migrate@3.0.0) (2019-01-03)
 
 
