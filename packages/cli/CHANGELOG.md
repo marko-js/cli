@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="5.1.0"></a>
+# [5.1.0](https://github.com/marko-js/cli/compare/marko-cli@5.0.1...marko-cli@5.1.0) (2019-01-17)
+
+
+### Features
+
+* **prettyprint:** support for modern tag params ([#114](https://github.com/marko-js/cli/issues/114)) ([6900fa5](https://github.com/marko-js/cli/commit/6900fa5))
+
+
+
+
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
 ## [5.0.1](https://github.com/marko-js/cli/compare/marko-cli@5.0.0...marko-cli@5.0.1) (2019-01-15)
 
 **Note:** Version bump only for package marko-cli

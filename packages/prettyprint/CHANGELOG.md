@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.4.0"></a>
+# [1.4.0](https://github.com/marko-js/cli/compare/@marko/prettyprint@1.3.0...@marko/prettyprint@1.4.0) (2019-01-17)
+
+
+### Bug Fixes
+
+* downgrade lerna ([0420d62](https://github.com/marko-js/cli/commit/0420d62))
+
+
+### Features
+
+* **prettyprint:** support for modern tag params ([#114](https://github.com/marko-js/cli/issues/114)) ([6900fa5](https://github.com/marko-js/cli/commit/6900fa5))
+
+
+
+
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
 # [1.3.0](https://github.com/marko-js/cli/compare/@marko/prettyprint@1.2.0...@marko/prettyprint@1.3.0) (2019-01-03)
 
 
