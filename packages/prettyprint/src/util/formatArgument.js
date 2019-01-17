@@ -41,7 +41,17 @@ module.exports = function(node, printContext) {
     }
 
     if (isParams) {
-      return formatJS(`${code}=>{}`, printContext, true).slice(0, -4);
+      code = formatJS(`${code}=>{}`, printContext, true);
+
+      if (code[0] === "(") {
+        // Match `(x, y) => `
+        code = code.slice(1, -7);
+      } else {
+        // Match `x => `
+        code = code.slice(0, -6);
+      }
+
+      return `(${code})`;
     }
 
     return formatJS(`_${code}`, printContext, true).slice(1);
