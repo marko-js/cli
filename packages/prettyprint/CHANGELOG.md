@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.4.1"></a>
+## [1.4.1](https://github.com/marko-js/cli/compare/@marko/prettyprint@1.4.0...@marko/prettyprint@1.4.1) (2019-01-18)
+
+
+### Bug Fixes
+
+* **prettyprint:** support printing ast nodes as scriptlet values ([#115](https://github.com/marko-js/cli/issues/115)) ([ef92828](https://github.com/marko-js/cli/commit/ef92828))
+
+
+
+
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/marko-js/cli/compare/@marko/prettyprint@1.3.0...@marko/prettyprint@1.4.0) (2019-01-17)
 
