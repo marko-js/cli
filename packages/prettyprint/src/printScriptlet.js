@@ -1,6 +1,7 @@
 "use strict";
 
 const redent = require("redent");
+const toCode = require("./util/toCode");
 const formatJS = require("./util/formatJS");
 
 module.exports = function printScriptlet(node, printContext, writer) {
@@ -13,11 +14,14 @@ module.exports = function printScriptlet(node, printContext, writer) {
     writer.write(code);
     writer.write("%>");
   } else {
-    const output = formatJS(code, printContext);
+    const codeStr = toCode(code, printContext);
+    const output = formatJS(codeStr, printContext);
     const newLineCount = countNewLines(output);
     const isInline =
       newLineCount === 0 ||
-      (!node.block && newLineCount === countNewLines(code));
+      (typeof code === "string" &&
+        !node.block &&
+        newLineCount === countNewLines(codeStr));
 
     if (isInline) {
       writer.write(`$ ${output}`);
