@@ -3,6 +3,7 @@
 const redent = require("redent");
 const toCode = require("./util/toCode");
 const formatJS = require("./util/formatJS");
+const hasUnenclosedNewlines = require("./util/hasUnenclosedNewlines");
 
 module.exports = function printScriptlet(node, printContext, writer) {
   const currentIndentString = printContext.currentIndentString;
@@ -16,13 +17,7 @@ module.exports = function printScriptlet(node, printContext, writer) {
   } else {
     const codeStr = toCode(code, printContext);
     const output = formatJS(codeStr, printContext);
-    const newLineCount = countNewLines(output);
-    const isInline =
-      newLineCount === 0 ||
-      (typeof code === "string" &&
-        !node.block &&
-        newLineCount === countNewLines(codeStr));
-
+    const isInline = !hasUnenclosedNewlines(output);
     if (isInline) {
       writer.write(`$ ${output}`);
     } else {
@@ -37,8 +32,3 @@ module.exports = function printScriptlet(node, printContext, writer) {
     }
   }
 };
-
-function countNewLines(str) {
-  const match = str.match(/[\r\n]/g);
-  return (match && match.length) || 0;
-}
