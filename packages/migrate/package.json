@@ -1,12 +1,12 @@
 {
   "name": "@marko/migrate",
   "description": "Migrate Marko files",
-  "version": "4.1.1",
+  "version": "5.0.0",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/runtime": "^7.2.0",
     "@marko/migrate-v3-widget": "^1.0.7",
-    "@marko/prettyprint": "^1.4.1",
+    "@marko/prettyprint": "^2.0.0",
     "argly": "^1.2.0",
     "dependent-path-update": "^0.1.1",
     "enquirer": "^2.1.1",

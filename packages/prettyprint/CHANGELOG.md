@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/marko-js/cli/compare/@marko/prettyprint@1.4.1...@marko/prettyprint@2.0.0) (2019-01-23)
+
+
+### Features
+
+* **prettyprint:** remove unneeded parens (attrs) & blocks (scriptlets) ([#116](https://github.com/marko-js/cli/issues/116)) ([c00d7c5](https://github.com/marko-js/cli/commit/c00d7c5))
+
+
+### BREAKING CHANGES
+
+* **prettyprint:** RegExp are now parsed and unwrapped - requires marko@>=4.14.21
+
+
+
+
+
 <a name="1.4.1"></a>
 ## [1.4.1](https://github.com/marko-js/cli/compare/@marko/prettyprint@1.4.0...@marko/prettyprint@1.4.1) (2019-01-18)
 
