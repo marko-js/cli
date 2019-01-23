@@ -1,17 +1,5 @@
-const WHITE_SPACE_EXPRESSION_TYPES = [
-  "LogicalExpression",
-  "AssignmentExpression",
-  "ConditionalExpression",
-  "BinaryExpression",
-  "NewExpression",
-  "FunctionDeclaration",
-  "Assignment"
-];
+const getUnenclosedAsString = require("./getUnenclosedAsString");
 
-module.exports = function hasUnenclosedWhitespace(node) {
-  return (
-    node.value instanceof RegExp ||
-    (node.toString().indexOf(" ") !== -1 &&
-      WHITE_SPACE_EXPRESSION_TYPES.indexOf(node.type) !== -1)
-  );
+module.exports = function hasUnenclosedWhitespace(codeString) {
+  return /\s/.test(getUnenclosedAsString(codeString));
 };

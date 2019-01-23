@@ -40,8 +40,8 @@ module.exports = function(code, printContext, expression) {
   }
 
   if (depth) {
-    code = redent(code, depth, indentString).trim();
+    code = redent(code, depth, indentString);
   }
 
-  return code;
+  return code.trim();
 };

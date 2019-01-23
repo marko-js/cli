@@ -160,7 +160,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     if (attr.name) {
       attrStr += attr.name;
       if (attrValueStr) {
-        if (hasUnenclosedWhitespace(attr.value)) {
+        if (hasUnenclosedWhitespace(attrValueStr)) {
           attrStr += "=(" + attrValueStr + ")";
         } else {
           attrStr += "=" + attrValueStr;
@@ -169,7 +169,7 @@ module.exports = function printHtmlElement(node, printContext, writer) {
         attrStr += formatArgument(attr, printContext);
       }
     } else if (attr.spread) {
-      if (hasUnenclosedWhitespace(attr.value)) {
+      if (hasUnenclosedWhitespace(attrValueStr)) {
         attrStr += "...(" + attrValueStr + ")";
       } else {
         attrStr += "..." + attrValueStr;
