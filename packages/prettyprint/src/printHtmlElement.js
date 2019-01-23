@@ -1,6 +1,7 @@
 "use strict";
 
 const redent = require("redent");
+const hasUnenclosedNewlines = require("./util/hasUnenclosedNewlines");
 const hasUnenclosedWhitespace = require("./util/hasUnenclosedWhitespace");
 const getBodyText = require("./util/getBodyText");
 const hasLineBreaks = require("./util/hasLineBreaks");
@@ -157,6 +158,14 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     var attrStr = "";
     var attrValueStr = formatJS(attr.value, printContext, true);
 
+    if (hasUnenclosedNewlines(attrValueStr)) {
+      attrValueStr = `\n${redent(
+        attrValueStr,
+        printContext.depth + 1,
+        printContext.indentString
+      )}\n${printContext.currentIndentString}`;
+    }
+
     if (attr.name) {
       attrStr += attr.name;
       if (attrValueStr) {
@@ -189,14 +198,19 @@ module.exports = function printHtmlElement(node, printContext, writer) {
       var fitsOneLine =
         attrStringsArray.length <= 1 ||
         writer.col + oneLineAttrs.length < maxLen;
-      var attrIndentation =
-        printContext.eol +
-        printContext.currentIndentString +
-        printContext.indentString;
       writer.write(
         fitsOneLine
           ? " " + oneLineAttrs
-          : attrIndentation + attrStringsArray.join(attrIndentation)
+          : "\n" +
+              attrStringsArray
+                .map(attrString =>
+                  redent(
+                    attrString,
+                    printContext.depth + 1,
+                    printContext.indentString
+                  )
+                )
+                .join("\n")
       );
 
       writer.write(hasBody ? ">" : "/>");
