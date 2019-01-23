@@ -17,7 +17,7 @@
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-prettier": "^3.0.0",
     "husky": "^1.2.0",
-    "lerna": "^2.11.0",
+    "lerna": "^3.10.7",
     "lint-staged": "^8.1.0",
     "mocha": "^5.2.0",
     "mocha-autotest": "^1.0.2",
