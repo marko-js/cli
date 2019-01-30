@@ -133,16 +133,10 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     writer.write(formatParams(node, printContext));
   }
 
-  var attrsWriter = new Writer(writer.col);
-  attrsWriter.col++; // Allow for space after tag name;
-
   var attrs = node.getAttributes();
-
-  var attrStringsArray = [];
-
   var hasBody = node.body && node.body.length;
-
   let bodyText = getBodyText(node, printContext);
+
   if (bodyText && printContext.preserveWhitespace !== true) {
     bodyText = bodyText.trim();
   }
@@ -154,126 +148,73 @@ module.exports = function printHtmlElement(node, printContext, writer) {
 
   // We will make one pass to generate all of the strings for each attribute. We will then
   // append them to the output while avoiding putting too many attributes on one line.
-  attrs.forEach(attr => {
+  var isSingleAttr = attrs.length <= 1;
+  var attrPrintContext = isSingleAttr
+    ? printContext
+    : printContext.beginNested();
+  var attrStringsArray = attrs.map(attr => {
     var attrStr = "";
-    var attrValueStr = formatJS(attr.value, printContext, true);
+    var attrValueStr = formatJS(attr.value, attrPrintContext, true);
 
-    if (hasUnenclosedNewlines(attrValueStr)) {
-      attrValueStr = `\n${redent(
-        attrValueStr,
-        printContext.depth + 1,
-        printContext.indentString
-      )}\n${printContext.currentIndentString}`;
+    if (attrValueStr) {
+      if (hasUnenclosedNewlines(attrValueStr)) {
+        attrValueStr = `\n${redent(
+          attrPrintContext.currentIndentString + attrValueStr,
+          attrPrintContext.depth + 1,
+          attrPrintContext.indentString
+        )}\n${attrPrintContext.currentIndentString}`;
+      }
+
+      if (hasUnenclosedWhitespace(attrValueStr)) {
+        attrValueStr = `(${attrValueStr})`;
+      }
     }
 
     if (attr.name) {
       attrStr += attr.name;
       if (attrValueStr) {
-        if (hasUnenclosedWhitespace(attrValueStr)) {
-          attrStr += "=(" + attrValueStr + ")";
-        } else {
-          attrStr += "=" + attrValueStr;
-        }
+        attrStr += `=${attrValueStr}`;
       } else if (attr.argument != null) {
-        attrStr += formatArgument(attr, printContext);
+        attrStr += formatArgument(attr, attrPrintContext);
       }
     } else if (attr.spread) {
-      if (hasUnenclosedWhitespace(attrValueStr)) {
-        attrStr += "...(" + attrValueStr + ")";
-      } else {
-        attrStr += "..." + attrValueStr;
-      }
+      attrStr += `...${attrValueStr}`;
     } else {
-      attrStr += "${" + attrValueStr + "}";
+      attrStr += `\${${attrValueStr}}`;
     }
 
-    attrStringsArray.push(attrStr);
+    return attrStr;
   });
 
+  // Let's see if all of the attributes will fit on the same line
+  var oneLineAttrsStr = attrStringsArray.join(" ");
+  var attrsFitOneLine =
+    isSingleAttr ||
+    (writer.col + oneLineAttrsStr.length < maxLen &&
+      !/[\r\n]/.test(oneLineAttrsStr));
+
   if (attrStringsArray.length) {
-    // We have attributes
-    // Let's see if all of the attributes will fit on the same line
-    if (printContext.isHtmlSyntax) {
-      var oneLineAttrs = attrStringsArray.join(" ");
-      var fitsOneLine =
-        attrStringsArray.length <= 1 ||
-        writer.col + oneLineAttrs.length < maxLen;
+    if (attrsFitOneLine) {
+      writer.write(` ${oneLineAttrsStr}`);
+    } else {
+      if (printContext.isConciseSyntax) {
+        writer.write(" [");
+      }
+
       writer.write(
-        fitsOneLine
-          ? " " + oneLineAttrs
-          : "\n" +
-              attrStringsArray
-                .map(attrString =>
-                  redent(
-                    attrString,
-                    printContext.depth + 1,
-                    printContext.indentString
-                  )
-                )
-                .join("\n")
+        attrStringsArray
+          .map(attrStr => `\n${attrPrintContext.currentIndentString + attrStr}`)
+          .join("")
       );
 
-      writer.write(hasBody ? ">" : "/>");
-    } else {
-      var useCommas = node.tagName === "var";
-
-      var attrsString;
-
-      if (useCommas) {
-        attrsString = " " + attrStringsArray.join(", ") + ";";
-      } else {
-        attrsString = " " + attrStringsArray.join(" ");
-      }
-
-      if (
-        writer.col + attrsString.length < maxLen ||
-        attrStringsArray.length === 1
-      ) {
-        writer.write(attrsString);
-      } else {
-        if (useCommas) {
-          writer.write(" ");
-          var lastIndex = attrStringsArray.length - 1;
-
-          attrStringsArray.forEach((attrString, i) => {
-            if (i !== 0) {
-              attrString = redent(
-                attrString,
-                printContext.depth + 1,
-                printContext.indentString
-              );
-            }
-
-            writer.write(attrString + (i === lastIndex ? ";" : ","));
-            writer.write(printContext.eol);
-          });
-        } else {
-          writer.write(" [" + printContext.eol);
-          attrStringsArray.forEach(attrString => {
-            writer.write(
-              redent(
-                attrString,
-                printContext.depth + 1,
-                printContext.indentString
-              )
-            );
-            writer.write(printContext.eol);
-          });
-
-          writer.write(printContext.currentIndentString);
-          writer.write("]");
-        }
+      if (printContext.isConciseSyntax) {
+        writer.write(`\n${printContext.currentIndentString}]`);
       }
     }
-  } else {
-    if (printContext.isHtmlSyntax) {
-      if (hasBody) {
-        writer.write(">");
-      } else {
-        writer.write("/>");
-        return;
-      }
-    }
+  }
+
+  if (printContext.isHtmlSyntax) {
+    writer.write(hasBody ? ">" : "/>");
   }
 
   if (!hasBody) {
@@ -282,7 +223,11 @@ module.exports = function printHtmlElement(node, printContext, writer) {
 
   var endTag = printContext.isHtmlSyntax ? endTagString : "";
 
-  if (bodyText && !hasLineBreaks(bodyText)) {
+  if (
+    (printContext.isConciseSyntax || attrsFitOneLine) &&
+    bodyText &&
+    !hasLineBreaks(bodyText)
+  ) {
     let endCol = writer.col + bodyText.length + endTag.length;
 
     if (endCol < maxLen) {
