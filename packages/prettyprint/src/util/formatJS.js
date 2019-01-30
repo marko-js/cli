@@ -39,9 +39,5 @@ module.exports = function(code, printContext, expression) {
     }
   }
 
-  if (depth) {
-    code = redent(code, depth, indentString);
-  }
-
-  return code.trim();
+  return redent(code, depth, indentString).trim();
 };

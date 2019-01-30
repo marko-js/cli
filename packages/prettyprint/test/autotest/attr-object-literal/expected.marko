@@ -1,23 +1,28 @@
-<div data-foo={
-    a: 1,
-    b: 2
-} data-bar={
-    a: 1,
-    b: 2
-}>
+<div
+    data-foo={
+        a: 1,
+        b: 2
+    }
+    data-bar={
+        a: 1,
+        b: 2
+    }>
     <div data-indented={
         a: 1,
         b: 2
     }/>
 </div>
 ~~~~~~~
-div data-foo={
-    a: 1,
-    b: 2
-} data-bar={
-    a: 1,
-    b: 2
-}
+div [
+    data-foo={
+        a: 1,
+        b: 2
+    }
+    data-bar={
+        a: 1,
+        b: 2
+    }
+]
     div data-indented={
         a: 1,
         b: 2
