@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.2](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.0.1...@marko/prettyprint@2.0.2) (2019-01-30)
+
+
+### Bug Fixes
+
+* **prettyprint:** improve printing of nested attributes ([#118](https://github.com/marko-js/cli/issues/118)) ([a4d6c05](https://github.com/marko-js/cli/commit/a4d6c05))
+
+
+
+
+
 ## [2.0.1](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.0.0...@marko/prettyprint@2.0.1) (2019-01-23)
 
 
