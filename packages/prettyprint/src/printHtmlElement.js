@@ -137,7 +137,11 @@ module.exports = function printHtmlElement(node, printContext, writer) {
   var hasBody = node.body && node.body.length;
   let bodyText = getBodyText(node, printContext);
 
-  if (bodyText && printContext.preserveWhitespace !== true) {
+  if (
+    bodyText &&
+    printContext.preserveWhitespace !== true &&
+    printContext.isConciseSyntax
+  ) {
     bodyText = bodyText.trim();
   }
 
@@ -251,7 +255,9 @@ module.exports = function printHtmlElement(node, printContext, writer) {
     printers.printNodes(node.body.items, nestedPrintContext, nestedWriter);
     let trimmedOutput = nestedWriter.getOutput();
     if (preserveBodyWhitespace !== true) {
-      trimmedOutput = nestedWriter.getOutput().trim();
+      trimmedOutput = nestedWriter
+        .getOutput()
+        .replace(/^[\n\r]\s*|[\n\r]\s*$/, "");
     }
 
     if (hasLineBreaks(trimmedOutput)) {
