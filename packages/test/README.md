@@ -105,11 +105,12 @@ test("variant-info", function(context) {
   );
 });
 
-// Async test:
-test("my async test", function(context, done) {
-  setTimeout(function() {
-    done();
-  }, 100);
+// Async test: (will be required if using any tags that are async)
+test("my async test", async function(contex) {
+  var output = await context.renderAsync({ variant: "danger" });
+  expect(output.$("button").attr("class")).to.equal(
+    "app-button app-button-info"
+  );
 });
 
 // Use test.only to only run a single test:
