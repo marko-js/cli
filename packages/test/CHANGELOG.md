@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/marko-js/cli/compare/@marko/test@5.0.0...@marko/test@5.1.0) (2019-02-07)
+
+
+### Features
+
+* **test:** add renderAsync method to server context ([#119](https://github.com/marko-js/cli/issues/119)) ([f67224c](https://github.com/marko-js/cli/commit/f67224c))
+
+
+
+
+
 <a name="5.0.0"></a>
 # [5.0.0](https://github.com/marko-js/cli/compare/@marko/test@4.1.1...@marko/test@5.0.0) (2019-01-17)
 
