@@ -1,50 +1,30 @@
-const fs = require("fs");
-const path = require("path");
+const PORT = global.PORT || process.env.PORT || 3000;
+
 const http = require("http");
 const writeInitComponentsCode = require("marko/components")
   .writeInitComponentsCode;
-// eslint-disable-next-line no-undef
-const template = require(__TEMPLATE_ENTRY__);
 const wrapper = require("./wrapper.marko");
-const PORT = 0;
-let assets;
+const template = require(global.TEMPLATE_PATH);
+const assets = global.BUILD_ASSETS.main;
 
-http
-  .createServer((req, res) => {
-    if (!assets) {
-      assets = JSON.parse(
-        fs.readFileSync(
-          path.join(__dirname, "./build/public/assets.json"),
-          "utf-8"
-        )
-      ).main;
+const renderAssets =
+  assets &&
+  (out => {
+    writeInitComponentsCode(out, out, false);
+    if (!out.global.assetsRendered) {
+      if (assets.js) {
+        out.w(`<script async src=${JSON.stringify(assets.js)}></script>`);
+      }
+      if (assets.css) {
+        out.w(`<link rel="stylesheet" href=${JSON.stringify(assets.css)}>`);
+      }
+      out.global.assetsRendered = true;
     }
-    res.setHeader("content-type", "text/html");
-    wrapper.render(
-      {
-        template,
-        $global: {
-          renderAssets:
-            assets &&
-            (out => {
-              writeInitComponentsCode(out, out, false);
-              if (!out.global.assetsRendered) {
-                if (assets.js) {
-                  out.w(
-                    `<script async src=${JSON.stringify(assets.js)}></script>`
-                  );
-                }
-                if (assets.css) {
-                  out.w(
-                    `<link rel="stylesheet" href=${JSON.stringify(assets.css)}>`
-                  );
-                }
-                out.global.assetsRendered = true;
-              }
-            })
-        }
-      },
-      res
-    );
-  })
-  .listen(PORT);
+  });
+
+const server = http.createServer((req, res) => {
+  res.setHeader("content-type", "text/html");
+  wrapper.render({ template, renderAssets }, res);
+});
+
+server.listen(PORT);
