@@ -13,6 +13,7 @@
     "@marko/create": "^4.0.0",
     "@marko/migrate": "^5.0.2",
     "@marko/prettyprint": "^2.0.2",
+    "@marko/serve": "^1.0.0",
     "@marko/test": "^5.1.0",
     "app-root-dir": "^1.0.2",
     "argly": "^1.2.0",

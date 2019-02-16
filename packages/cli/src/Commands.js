@@ -10,7 +10,14 @@ class Commands {
   }
 
   addBuiltinCommands() {
-    var commandNames = ["compile", "create", "migrate", "prettyprint", "test"];
+    var commandNames = [
+      "compile",
+      "create",
+      "migrate",
+      "prettyprint",
+      "serve",
+      "test"
+    ];
 
     commandNames.forEach(commandName => {
       function run() {

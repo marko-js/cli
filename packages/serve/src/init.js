@@ -1,0 +1,1 @@
+window.$initComponents && window.$initComponents();

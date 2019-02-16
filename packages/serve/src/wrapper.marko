@@ -1,0 +1,9 @@
+$ const _flush = out.flush;
+$ out.flush = function () {
+    out.global.renderAssets(this);
+    _flush.apply(this, arguments);
+    this.flush = _flush;
+}
+
+<${input.template}/>
+<${out.global.renderAssets}/>
