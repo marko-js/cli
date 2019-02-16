@@ -25,7 +25,7 @@
     "lasso-istanbul-instrument-transform": "^2.0.1",
     "lasso-marko": "^2.4.6",
     "lasso-require": "^3.5.0",
-    "marko": "^4",
+    "marko": "^4.15.0",
     "mocha": "^5.2.0",
     "mz": "^2.7.0",
     "node-fetch": "2.3.0",
