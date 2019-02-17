@@ -4,12 +4,13 @@ const AssetsPlugin = require("assets-webpack-plugin");
 const ExtractCSSPlugin = require("mini-css-extract-plugin");
 const IgnoreEmitPlugin = require("ignore-emit-webpack-plugin");
 const InjectPlugin = require("webpack-inject-plugin").default;
+const MinifyCSSPlugin = require("csso-webpack-plugin").default;
+const MinifyImgPlugin = require("imagemin-webpack-plugin").default;
+const CompressionPlugin = require("compression-webpack-plugin");
 
 const HASH = "[hash:10]";
-const SERVER_FILE = path.join(__dirname, "./server.js");
-const INIT_FILE = path.join(__dirname, "./init.js");
-const DIST_PATH = path.join(__dirname, "build");
-const PUBLIC_PATH = path.join(DIST_PATH, "public");
+const SERVER_FILE = path.join(__dirname, "./files/server.js");
+const INIT_FILE = path.join(__dirname, "./files/init-client.js");
 
 /**
  * Shared config (server and browser).
@@ -61,17 +62,24 @@ const createConfig = opts =>
 module.exports = ({
   file,
   production = true,
+  output = "build",
   serverPlugins = [],
   clientPlugins = []
 }) => {
   const MODE = production ? "production" : "development";
+  const BUILD_PATH = path.resolve(process.cwd(), output);
+  const PUBLIC_PATH = path.join(BUILD_PATH, "assets");
 
   let resolveAssets;
   const assetsPromise = new Promise(resolve => (resolveAssets = resolve));
 
   if (production) {
     serverPlugins = serverPlugins.concat([]);
-    clientPlugins = clientPlugins.concat([]);
+    clientPlugins = clientPlugins.concat([
+      new MinifyCSSPlugin(),
+      new MinifyImgPlugin(),
+      new CompressionPlugin()
+    ]);
   }
 
   const configs = [
@@ -83,7 +91,7 @@ module.exports = ({
       externals: [/^[^./!]/],
       output: {
         pathinfo: true,
-        path: DIST_PATH,
+        path: BUILD_PATH,
         filename: "index.js",
         chunkFilename: `[name].${HASH}.js`,
         libraryTarget: "commonjs2"
@@ -91,13 +99,9 @@ module.exports = ({
       plugins: [
         new webpack.DefinePlugin({
           "process.browser": undefined,
-          "global.PORT": "'0'",
-          "global.TEMPLATE_PATH": JSON.stringify(file)
-        }),
-        new webpack.BannerPlugin({
-          banner:
-            'require("source-map-support").install({ hookRequire: true })',
-          raw: true
+          "global.PORT": production ? 3000 : "'0'",
+          "global.TEMPLATE_PATH": JSON.stringify(file),
+          "global.ASSETS_PATH": JSON.stringify(PUBLIC_PATH)
         }),
         new ExtractCSSPlugin({
           filename: "index.css",
@@ -126,7 +130,6 @@ module.exports = ({
       },
       plugins: [
         new webpack.DefinePlugin({
-          "process.env.NODE_ENV": production ? "production" : undefined,
           "process.browser": true
         }),
         new AssetsPlugin({

@@ -11,6 +11,7 @@ class Commands {
 
   addBuiltinCommands() {
     var commandNames = [
+      "build",
       "compile",
       "create",
       "migrate",

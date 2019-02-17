@@ -3,7 +3,7 @@ const SpawnServerPlugin = require("spawn-server-webpack-plugin");
 const FriendlyErrorPlugin = require("friendly-errors-webpack-plugin");
 const ErrorOverlayPlugin = require("error-overlay-webpack-plugin");
 const InjectPlugin = require("webpack-inject-plugin").default;
-const build = require("./build");
+const build = require("@marko/build");
 
 module.exports = ({ file, port = 3000, verbose, nodeArgs }) => {
   const devServerRefresh = new InjectPlugin(
