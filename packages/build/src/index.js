@@ -7,10 +7,12 @@ const InjectPlugin = require("webpack-inject-plugin").default;
 const MinifyCSSPlugin = require("csso-webpack-plugin").default;
 const MinifyImgPlugin = require("imagemin-webpack-plugin").default;
 const CompressionPlugin = require("compression-webpack-plugin");
+const resolveFrom = require("resolve-from");
 
 const HASH = "[hash:10]";
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
 const INIT_FILE = path.join(__dirname, "./files/init-client.js");
+const CWD = process.cwd();
 
 /**
  * Shared config (server and browser).
@@ -22,7 +24,11 @@ const createConfig = opts =>
     devtool: "cheap-module-eval-source-map",
     resolve: {
       alias: {
-        marko: path.dirname(require.resolve("marko/package"))
+        marko: path.dirname(require.resolve("marko/package")),
+        "serve-handler": path.dirname(require.resolve("serve-handler/package")),
+        "source-map-support": path.dirname(
+          require.resolve("source-map-support/package")
+        )
       }
     },
     module: {
@@ -67,7 +73,7 @@ module.exports = ({
   clientPlugins = []
 }) => {
   const MODE = production ? "production" : "development";
-  const BUILD_PATH = path.resolve(process.cwd(), output);
+  const BUILD_PATH = path.resolve(CWD, production ? output : "");
   const PUBLIC_PATH = path.join(BUILD_PATH, "assets");
 
   let resolveAssets;
@@ -88,7 +94,18 @@ module.exports = ({
       target: "async-node",
       mode: MODE,
       entry: SERVER_FILE,
-      externals: [/^[^./!]/],
+      externals: (context, request, callback) => {
+        const absolute = resolveFrom.silent(context, request);
+        if (
+          absolute &&
+          !/webpack-inject-plugin/.test(absolute) &&
+          /node_modules\/.+\.js(on)?$/.test(absolute)
+        ) {
+          callback(null, "./" + path.relative(BUILD_PATH, absolute));
+        } else {
+          callback();
+        }
+      },
       output: {
         pathinfo: true,
         path: BUILD_PATH,

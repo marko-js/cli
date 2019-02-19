@@ -20,7 +20,8 @@
     "csso-webpack-plugin": "^1.0.0-beta.12",
     "imagemin-webpack-plugin":"^2.4.2",
     "compression-webpack-plugin":"^2.0.0",
-    "serve-handler": "^5.0.8"
+    "serve-handler": "^5.0.8",
+    "resolve-from": "^4.0.0"
   },
   "files": [
     "dist"
