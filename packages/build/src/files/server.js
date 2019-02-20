@@ -14,17 +14,21 @@ const serveOptions = {
   public: global.ASSETS_PATH
 };
 
+const scriptTag =
+  assets.js && `<script async src=${JSON.stringify(assets.js)}></script>`;
+const cssLinkTag =
+  assets.css && `<link rel="stylesheet" href=${JSON.stringify(assets.css)}>`;
+
 const renderAssets =
   assets &&
-  (out => {
-    writeInitComponentsCode(out, out, false);
+  ((out, fromFlush) => {
+    if (fromFlush === true) {
+      writeInitComponentsCode(out, out, false);
+    }
     if (!out.global.assetsRendered) {
-      if (assets.js) {
-        out.w(`<script async src=${JSON.stringify(assets.js)}></script>`);
-      }
-      if (assets.css) {
-        out.w(`<link rel="stylesheet" href=${JSON.stringify(assets.css)}>`);
-      }
+      const writer = fromFlush === true ? out.writer._wrapped : out;
+      if (scriptTag) writer.write(scriptTag);
+      if (cssLinkTag) writer.write(cssLinkTag);
       out.global.assetsRendered = true;
     }
   });

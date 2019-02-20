@@ -1,9 +1,13 @@
 $ const _flush = out.flush;
+$ const _end = out.end;
 $ out.flush = function () {
-    input.renderAssets(this);
+    input.renderAssets(this, true);
     _flush.apply(this, arguments);
-    this.flush = _flush;
+}
+$ out.end = function () {
+    input.renderAssets(this);
+    _end.apply(this, arguments);
 }
 
 <${input.template}/>
-<${input.renderAssets}/>
+<init-components/>
