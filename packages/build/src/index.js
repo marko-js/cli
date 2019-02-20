@@ -76,8 +76,7 @@ module.exports = ({
   const BUILD_PATH = path.resolve(CWD, production ? output : "");
   const PUBLIC_PATH = path.join(BUILD_PATH, "assets");
 
-  let resolveAssets;
-  const assetsPromise = new Promise(resolve => (resolveAssets = resolve));
+  let assetsPromise = createResolvablePromise();
 
   if (production) {
     serverPlugins = serverPlugins.concat([]);
@@ -94,6 +93,7 @@ module.exports = ({
       target: "async-node",
       mode: MODE,
       entry: SERVER_FILE,
+      cache: false,
       externals: (context, request, callback) => {
         const absolute = resolveFrom.silent(context, request);
         if (
@@ -154,7 +154,8 @@ module.exports = ({
           useCompilerPath: true,
           keepInMemory: true,
           processOutput: assets => {
-            resolveAssets(assets);
+            assetsPromise.resolve(assets);
+            assetsPromise = createResolvablePromise();
             return JSON.stringify(assets);
           }
         }),
@@ -168,4 +169,11 @@ module.exports = ({
   ];
 
   return webpack(configs);
+};
+
+const createResolvablePromise = () => {
+  let _resolve;
+  const promise = new Promise(resolve => (_resolve = resolve));
+  promise.resolve = _resolve;
+  return promise;
 };
