@@ -10,7 +10,6 @@ const CompressionPlugin = require("compression-webpack-plugin");
 
 const HASH = "[hash:10]";
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
-const INIT_FILE = path.join(__dirname, "./files/init-client.js");
 const CWD = process.cwd();
 
 /**
@@ -124,7 +123,7 @@ module.exports = ({
       name: "Browser",
       target: "web",
       mode: MODE,
-      entry: [file, INIT_FILE],
+      entry: `${file}?hydrate`,
       output: {
         pathinfo: true,
         publicPath: "/assets/",
