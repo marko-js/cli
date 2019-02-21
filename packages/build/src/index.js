@@ -34,7 +34,7 @@ const createConfig = opts =>
       rules: [
         {
           test: /\.marko$/,
-          loader: "marko-loader"
+          loader: require.resolve("marko-loader")
         },
         {
           test: /\.css$/,
@@ -42,7 +42,7 @@ const createConfig = opts =>
           use: [
             ExtractCSSPlugin.loader,
             {
-              loader: "css-loader",
+              loader: require.resolve("css-loader"),
               options: {
                 modules: false,
                 sourceMap: true,
@@ -53,7 +53,7 @@ const createConfig = opts =>
         },
         {
           test: file => !/\.(js(on)?|css|marko)$/.test(file),
-          loader: "file-loader",
+          loader: require.resolve("file-loader"),
           options: {
             publicPath: "/",
             name: `${HASH}.[ext]`,
