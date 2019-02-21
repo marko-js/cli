@@ -26,7 +26,7 @@ const renderAssets =
       writeInitComponentsCode(out, out, false);
     }
     if (!out.global.assetsRendered) {
-      const writer = fromFlush === true ? out.writer._wrapped : out;
+      const writer = out.stream;
       if (scriptTag) writer.write(scriptTag);
       if (cssLinkTag) writer.write(cssLinkTag);
       out.global.assetsRendered = true;
