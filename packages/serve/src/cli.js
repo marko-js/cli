@@ -5,6 +5,7 @@ const address = require("address");
 const serve = require("./");
 const parseNodeArgs = require("parse-node-args");
 const openBrowser = require("open-browsers");
+const getPort = require("get-port");
 
 exports.parse = function parse(argv) {
   const { cliArgs, nodeArgs } = parseNodeArgs(argv);
@@ -70,17 +71,28 @@ exports.parse = function parse(argv) {
 };
 
 exports.run = async options => {
-  const server = await serve(options);
-  const port = server.address().port;
+  const defaultPort = options.port || 3000;
+  const port = await getPort({ port: defaultPort });
   const local = `http://localhost:${port}`;
   const network = `http://${address.ip()}:${port}`;
   const file = path.relative(process.cwd(), options.file);
+
+  await serve({ ...options, port });
 
   if (!options.noBrowser) {
     openBrowser(local);
   }
 
   console.log(`You can now view ${chalk.bold(file)} in your browser`);
+
+  if (port !== defaultPort) {
+    console.log(
+      chalk.red(
+        `(Running on port ${chalk.bold(port)} because ${defaultPort} is in use)`
+      )
+    );
+  }
+
   console.log("");
   console.log(`  ${chalk.bold("Local Address:  ")} ${local}`);
   console.log(`  ${chalk.bold("On Your Network:")} ${network}`);
