@@ -1,11 +1,15 @@
+import assetRenderer from "../components/webpack-assets-renderer";
+import { writeInitComponentsCode } from "marko/components";
+
 $ const _flush = out.flush;
 $ const _end = out.end;
 $ out.flush = function () {
-    input.renderAssets(this, true);
+    writeInitComponentsCode(out, out, false);
+    assetRenderer({ prepend:true }, out);
     _flush.apply(this, arguments);
 }
 $ out.end = function () {
-    input.renderAssets(this);
+    assetRenderer({ prepend:true }, out);
     _end.apply(this, arguments);
 }
 

@@ -7,7 +7,8 @@ const InjectPlugin = require("webpack-inject-plugin").default;
 const MinifyCSSPlugin = require("csso-webpack-plugin").default;
 const MinifyImgPlugin = require("imagemin-webpack-plugin").default;
 const CompressionPlugin = require("compression-webpack-plugin");
-const resolveFrom = require("resolve-from");
+
+const { useAppModuleOrFallback, createResolvablePromise } = require("./util");
 
 const HASH = "[hash:10]";
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
@@ -36,10 +37,10 @@ const createConfig = (appDir, opts) =>
           test: /\.marko$/,
           loader: require.resolve("marko-loader"),
           options: {
-            compiler: path.join(
-              useAppModuleOrFallback(appDir, "marko"),
-              "compiler"
-            )
+            compiler: (() => {
+              process.env.APP_DIR = appDir;
+              return require.resolve("./marko-compiler");
+            })()
           }
         },
         {
@@ -167,18 +168,4 @@ module.exports = ({
   ];
 
   return webpack(configs);
-};
-
-const createResolvablePromise = () => {
-  let _resolve;
-  const promise = new Promise(resolve => (_resolve = resolve));
-  promise.resolve = _resolve;
-  return promise;
-};
-
-const useAppModuleOrFallback = (dir, moduleName) => {
-  const packageName = `${moduleName}/package`;
-  const packagePath =
-    resolveFrom.silent(dir, packageName) || require.resolve(packageName);
-  return path.dirname(packagePath);
 };

@@ -1,0 +1,11 @@
+{
+  "<head>": {
+    "transformer": "./inject-assets-transformer"
+  },
+  "<body>": {
+    "transformer": "./inject-assets-transformer"
+  },
+  "<webpack-assets>": {
+    "renderer": "./webpack-assets-renderer"
+  }
+}
