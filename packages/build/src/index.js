@@ -7,7 +7,6 @@ const InjectPlugin = require("webpack-inject-plugin").default;
 const MinifyCSSPlugin = require("csso-webpack-plugin").default;
 const MinifyImgPlugin = require("imagemin-webpack-plugin").default;
 const CompressionPlugin = require("compression-webpack-plugin");
-const resolveFrom = require("resolve-from");
 
 const HASH = "[hash:10]";
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
@@ -94,18 +93,6 @@ module.exports = ({
       mode: MODE,
       entry: SERVER_FILE,
       cache: false,
-      externals: (context, request, callback) => {
-        const absolute = resolveFrom.silent(context, request);
-        if (
-          absolute &&
-          !/webpack-inject-plugin/.test(absolute) &&
-          /node_modules\/.+\.js(on)?$/.test(absolute)
-        ) {
-          callback(null, "./" + path.relative(BUILD_PATH, absolute));
-        } else {
-          callback();
-        }
-      },
       output: {
         pathinfo: true,
         path: BUILD_PATH,
@@ -116,6 +103,7 @@ module.exports = ({
       plugins: [
         new webpack.DefinePlugin({
           "process.browser": undefined,
+          "process.env.BUNDLE": true,
           "global.PORT": production ? 3000 : "'0'",
           "global.TEMPLATE_PATH": JSON.stringify(file),
           "global.ASSETS_PATH": JSON.stringify(PUBLIC_PATH)
