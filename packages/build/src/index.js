@@ -20,7 +20,6 @@ const createConfig = (appDir, opts) =>
   Object.assign(opts, {
     bail: true,
     context: __dirname,
-    devtool: "cheap-module-eval-source-map",
     resolve: {
       alias: {
         marko: useAppModuleOrFallback(appDir, "marko"),
@@ -79,6 +78,7 @@ module.exports = ({
   clientPlugins = []
 }) => {
   const MODE = production ? "production" : "development";
+  const DEVTOOL = production ? "source-map" : "cheap-module-eval-source-map";
   const BUILD_PATH = path.resolve(CWD, production ? output : "");
   const PUBLIC_PATH = path.join(BUILD_PATH, "assets");
   const APP_DIR = path.dirname(file);
@@ -100,6 +100,7 @@ module.exports = ({
       target: "async-node",
       mode: MODE,
       entry: SERVER_FILE,
+      devtool: DEVTOOL,
       cache: false,
       output: {
         pathinfo: true,
@@ -133,6 +134,7 @@ module.exports = ({
       target: "web",
       mode: MODE,
       entry: `${file}?hydrate`,
+      devtool: DEVTOOL,
       output: {
         pathinfo: true,
         publicPath: "/assets/",
