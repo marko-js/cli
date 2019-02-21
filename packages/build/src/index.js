@@ -7,6 +7,7 @@ const InjectPlugin = require("webpack-inject-plugin").default;
 const MinifyCSSPlugin = require("csso-webpack-plugin").default;
 const MinifyImgPlugin = require("imagemin-webpack-plugin").default;
 const CompressionPlugin = require("compression-webpack-plugin");
+const resolveFrom = require("resolve-from");
 
 const HASH = "[hash:10]";
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
@@ -15,17 +16,18 @@ const CWD = process.cwd();
 /**
  * Shared config (server and browser).
  */
-const createConfig = opts =>
+const createConfig = (appDir, opts) =>
   Object.assign(opts, {
     bail: true,
     context: __dirname,
     devtool: "cheap-module-eval-source-map",
     resolve: {
       alias: {
-        marko: path.dirname(require.resolve("marko/package")),
-        "serve-handler": path.dirname(require.resolve("serve-handler/package")),
-        "source-map-support": path.dirname(
-          require.resolve("source-map-support/package")
+        marko: useAppModuleOrFallback(appDir, "marko"),
+        "serve-handler": useAppModuleOrFallback(appDir, "serve-handler"),
+        "source-map-support": useAppModuleOrFallback(
+          appDir,
+          "source-map-support"
         )
       }
     },
@@ -33,7 +35,13 @@ const createConfig = opts =>
       rules: [
         {
           test: /\.marko$/,
-          loader: require.resolve("marko-loader")
+          loader: require.resolve("marko-loader"),
+          options: {
+            compiler: path.join(
+              useAppModuleOrFallback(appDir, "marko"),
+              "compiler"
+            )
+          }
         },
         {
           test: /\.css$/,
@@ -73,6 +81,7 @@ module.exports = ({
   const MODE = production ? "production" : "development";
   const BUILD_PATH = path.resolve(CWD, production ? output : "");
   const PUBLIC_PATH = path.join(BUILD_PATH, "assets");
+  const APP_DIR = path.dirname(file);
 
   let assetsPromise = createResolvablePromise();
 
@@ -86,7 +95,7 @@ module.exports = ({
   }
 
   const configs = [
-    createConfig({
+    createConfig(APP_DIR, {
       name: "Server",
       target: "async-node",
       mode: MODE,
@@ -119,7 +128,7 @@ module.exports = ({
         ...serverPlugins
       ]
     }),
-    createConfig({
+    createConfig(APP_DIR, {
       name: "Browser",
       target: "web",
       mode: MODE,
@@ -163,4 +172,11 @@ const createResolvablePromise = () => {
   const promise = new Promise(resolve => (_resolve = resolve));
   promise.resolve = _resolve;
   return promise;
+};
+
+const useAppModuleOrFallback = (dir, moduleName) => {
+  const packageName = `${moduleName}/package`;
+  const packagePath =
+    resolveFrom.silent(dir, packageName) || require.resolve(packageName);
+  return path.dirname(packagePath);
 };
