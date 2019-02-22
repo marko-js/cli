@@ -22,7 +22,7 @@ module.exports = ({
   clientPlugins = []
 }) => {
   const MODE = production ? "production" : "development";
-  const DEVTOOL = production ? "source-map" : "cheap-module-eval-source-map";
+  const DEVTOOL = production ? "source-map" : "cheap-module-source-map";
   const BUILD_PATH = path.resolve(CWD, production ? output : "");
   const ASSETS_PATH = path.join(BUILD_PATH, "assets");
   const PUBLIC_PATH = "/assets/";
@@ -131,14 +131,17 @@ module.exports = ({
   const browserConfig = {
     name: "Browser",
     target: "web",
-    entry: `${file}?hydrate`,
+    entry: [`${file}?hydrate`],
     output: {
       pathinfo: true,
       publicPath: PUBLIC_PATH,
       path: ASSETS_PATH,
       filename: `index.${HASH}.js`,
       chunkFilename: `[name].${HASH}.js`,
-      libraryTarget: "var"
+      libraryTarget: "var",
+      devtoolModuleFilenameTemplate: production
+        ? "webpack://[namespace]/[resource-path]?[loaders]"
+        : info => info.absoluteResourcePath + "?" + info.hash
     },
     plugins: [
       new webpack.DefinePlugin({

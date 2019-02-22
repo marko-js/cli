@@ -34,12 +34,13 @@ module.exports = ({ file, port = 3000, verbose, nodeArgs }) => {
     stats: verbose ? "verbose" : "errors-only",
     clientLogLevel: verbose ? "info" : "error",
     watchOptions: { ignored: [/node_modules/] },
-    proxy: {
-      "!/assets/**": {
+    proxy: [
+      {
+        context: url => !/^\/(api|__open-stack-frame-in-editor)/.test(url),
         target: true,
         router: () => `http://localhost:${spawnedServer.address.port}`
       }
-    },
+    ],
     before(app) {
       app.use((req, res, next) => {
         if (spawnedServer.listening) next();
