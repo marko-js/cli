@@ -77,7 +77,7 @@ module.exports = ({
   const sharedConfig = isServer => ({
     mode: MODE,
     bail: true,
-    context: BUILD_PATH,
+    context: __dirname,
     devtool: DEVTOOL,
     resolve: { alias: sharedAliases(isServer) },
     module: { rules: sharedRules(isServer) }
