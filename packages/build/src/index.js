@@ -27,6 +27,10 @@ module.exports = ({
   const ASSETS_PATH = path.join(BUILD_PATH, "assets");
   const PUBLIC_PATH = "/assets/";
   const APP_DIR = path.dirname(file);
+  const markoCompiler = (() => {
+    process.env.APP_DIR = APP_DIR;
+    return require.resolve("./marko-compiler");
+  })();
 
   const sharedAliases = () => ({
     marko: useAppModuleOrFallback(APP_DIR, "marko"),
@@ -39,10 +43,7 @@ module.exports = ({
       test: /\.marko$/,
       loader: require.resolve("marko-loader"),
       options: {
-        compiler: (() => {
-          process.env.APP_DIR = APP_DIR;
-          return require.resolve("./marko-compiler");
-        })()
+        compiler: markoCompiler
       }
     },
     {
@@ -166,5 +167,13 @@ module.exports = ({
     ...sharedConfig(false)
   };
 
-  return webpack([serverConfig, browserConfig]);
+  const compiler = webpack([serverConfig, browserConfig]);
+
+  compiler.hooks.watchRun.tap("clearMarkoTaglibCache", () => {
+    // this probably should be done by the loader
+    // because it won't currently work if the loader is threaded
+    require(markoCompiler).clearCaches();
+  });
+
+  return compiler;
 };
