@@ -72,7 +72,8 @@ exports.parse = function parse(argv) {
 
 exports.run = async options => {
   const defaultPort = options.port || 3000;
-  const port = await getPort({ port: defaultPort });
+  const ports = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => n + defaultPort);
+  const port = await getPort({ port: ports });
   const local = `http://localhost:${port}`;
   const network = `http://${address.ip()}:${port}`;
   const file = path.relative(process.cwd(), options.file);
