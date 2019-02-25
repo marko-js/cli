@@ -13,16 +13,16 @@ module.exports = function(code, printContext, expression) {
   const isExpression = expression || /^class *?\{/.test(code);
   const usedSpace = depth * tabWidth;
   const config = {
+    parser: "babel",
     semi: !printContext.noSemi,
     printWidth: Math.max(0, printContext.maxLen - usedSpace),
     singleQuote: printContext.singleQuote,
     useTabs: indentString[0] === "\t",
-    tabWidth,
-    parser: "babylon"
+    tabWidth
   };
 
   if (isExpression) {
-    code = "(" + code + ");";
+    code = "_ = " + code;
   }
 
   code = format(code, config)
@@ -30,12 +30,10 @@ module.exports = function(code, printContext, expression) {
     .replace(/__%ESCAPE%__/g, "\\");
 
   if (isExpression) {
+    code = code.slice(4);
+
     if (code[code.length - 1] === ";") {
       code = code.slice(0, -1);
-    }
-
-    if (code[0] === "(" && code[code.length - 1] === ")") {
-      code = code.slice(1, -1);
     }
   }
 
