@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.3](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.0.2...@marko/prettyprint@2.0.3) (2019-02-25)
+
+
+### Bug Fixes
+
+* **prettyprint:** printing expressions with uneven parens ([#121](https://github.com/marko-js/cli/issues/121)) ([64f919d](https://github.com/marko-js/cli/commit/64f919d))
+
+
+
+
+
 ## [2.0.2](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.0.1...@marko/prettyprint@2.0.2) (2019-01-30)
 
 
