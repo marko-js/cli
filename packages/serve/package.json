@@ -14,7 +14,7 @@
     "webpack-dev-server": "^3.1.14",
     "parse-node-args": "^1.1.2",
     "open-browsers": "^1.1.1",
-    "webpack-inject-plugin": "^1.0.2",
+    "webpack-inject-plugin": "^1.1.0",
     "error-overlay-webpack-plugin": "^0.1.6"
   },
   "files": [

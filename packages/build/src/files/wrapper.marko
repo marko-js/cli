@@ -1,6 +1,7 @@
 import assetRenderer from "../components/webpack-assets-renderer";
 import { writeInitComponentsCode } from "marko/components";
 
+$ out.global.assetsKey = input.key;
 $ const _flush = out.flush;
 $ const _end = out.end;
 $ out.flush = function () {
@@ -13,5 +14,5 @@ $ out.end = function () {
     _end.apply(this, arguments);
 }
 
-<${input.template}/>
+<${input.template} ...input.params/>
 <init-components/>

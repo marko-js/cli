@@ -1,14 +1,19 @@
-const assets = (global.BUILD_ASSETS && global.BUILD_ASSETS.main) || {};
-const scriptTag =
-  assets.js && `<script async src=${JSON.stringify(assets.js)}></script>`;
-const cssLinkTag =
-  assets.css && `<link rel="stylesheet" href=${JSON.stringify(assets.css)}>`;
+const assetsLookup = global.BUILD_ASSETS || {};
 
 module.exports = function(input, out) {
   if (!out.global.assetsRendered) {
     const target = input.prepend ? out.stream : out;
-    if (scriptTag) target.write(scriptTag);
-    if (cssLinkTag) target.write(cssLinkTag);
+    const assets = assetsLookup[out.global.assetsKey];
+    if (assets) {
+      if (assets.js)
+        target.write(
+          `<script async src=${JSON.stringify(assets.js)}></script>`
+        );
+      if (assets.css)
+        target.write(
+          `<link rel="stylesheet" href=${JSON.stringify(assets.css)}>`
+        );
+    }
     out.global.assetsRendered = true;
   }
 };

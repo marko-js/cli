@@ -1,21 +1,21 @@
 const DevServer = require("webpack-dev-server");
 const SpawnServerPlugin = require("spawn-server-webpack-plugin");
 const FriendlyErrorPlugin = require("friendly-errors-webpack-plugin");
-const ErrorOverlayPlugin = require("error-overlay-webpack-plugin");
-const InjectPlugin = require("webpack-inject-plugin").default;
 const build = require("@marko/build");
 
-module.exports = ({ file, port = 3000, verbose, nodeArgs }) => {
-  const devServerRefresh = new InjectPlugin(
-    () => `require('webpack-dev-server/client?http://localhost:${port}/')`
-  );
+module.exports = ({ dir, file, port = 3000, verbose, nodeArgs }) => {
+  const additionalClientEntries = [
+    `webpack-dev-server/client?http://localhost:${port}/`
+  ];
   const spawnedServer = new SpawnServerPlugin({ args: nodeArgs });
-  const clientPlugins = [devServerRefresh, new ErrorOverlayPlugin()];
+  const clientPlugins = [];
   const serverPlugins = [spawnedServer];
 
   const compiler = build({
+    dir,
     file,
     production: false,
+    additionalClientEntries,
     clientPlugins,
     serverPlugins
   });

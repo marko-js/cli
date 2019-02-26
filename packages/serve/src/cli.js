@@ -46,11 +46,18 @@ exports.parse = function parse(argv) {
         process.exit(1);
       }
 
-      const resolvedFile = path.resolve(process.cwd(), result.file);
-      if (fs.existsSync(resolvedFile)) {
-        result.file = resolvedFile;
+      const resolved = path.resolve(process.cwd(), result.file);
+      if (fs.existsSync(resolved)) {
+        const stat = fs.statSync(resolved);
+        if (stat.isDirectory()) {
+          result.dir = resolved;
+          delete result.file;
+        } else {
+          result.file = resolved;
+        }
       } else {
-        console.warn("Unable to find file: " + result.file);
+        console.warn("Unable to find file or directory: " + result.file);
+        process.exit(1);
       }
     })
     .onError(function(err) {
@@ -76,7 +83,7 @@ exports.run = async options => {
   const port = await getPort({ port: ports });
   const local = `http://localhost:${port}`;
   const network = `http://${address.ip()}:${port}`;
-  const file = path.relative(process.cwd(), options.file);
+  const location = path.relative(process.cwd(), options.file || options.dir);
 
   await serve({ ...options, port });
 
@@ -84,7 +91,7 @@ exports.run = async options => {
     openBrowser(local);
   }
 
-  console.log(`You can now view ${chalk.bold(file)} in your browser`);
+  console.log(`You can now view ${chalk.bold(location)} in your browser`);
 
   if (port !== defaultPort) {
     console.log(

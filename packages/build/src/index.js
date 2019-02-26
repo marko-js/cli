@@ -8,25 +8,32 @@ const MinifyCSSPlugin = require("csso-webpack-plugin").default;
 const MinifyImgPlugin = require("imagemin-webpack-plugin").default;
 const CompressionPlugin = require("compression-webpack-plugin");
 
-const { useAppModuleOrFallback, createResolvablePromise } = require("./util");
+const {
+  useAppModuleOrFallback,
+  createResolvablePromise,
+  getRouterCode,
+  getDirectoryLookup
+} = require("./util");
 
 const HASH = "[hash:10]";
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
 const CWD = process.cwd();
 
 module.exports = ({
+  dir,
   file,
   production = true,
   output = "build",
   serverPlugins = [],
-  clientPlugins = []
+  clientPlugins = [],
+  additionalClientEntries = []
 }) => {
   const MODE = production ? "production" : "development";
   const DEVTOOL = production ? "source-map" : "cheap-module-source-map";
   const BUILD_PATH = path.resolve(CWD, production ? output : "");
   const ASSETS_PATH = path.join(BUILD_PATH, "assets");
   const PUBLIC_PATH = "/assets/";
-  const APP_DIR = path.dirname(file);
+  const APP_DIR = dir || path.dirname(file);
   const markoCompiler = (() => {
     process.env.APP_DIR = APP_DIR;
     return require.resolve("./marko-compiler");
@@ -112,7 +119,6 @@ module.exports = ({
         "process.browser": undefined,
         "process.env.BUNDLE": true,
         "global.PORT": production ? 3000 : "'0'",
-        "global.TEMPLATE_PATH": JSON.stringify(file),
         "global.ASSETS_PATH": JSON.stringify(ASSETS_PATH)
       }),
       new ExtractCSSPlugin({
@@ -124,6 +130,13 @@ module.exports = ({
         async () =>
           `global.BUILD_ASSETS = ${JSON.stringify(await assetsPromise)};`
       ),
+      new InjectPlugin(() =>
+        dir
+          ? getRouterCode(dir)
+          : `const template = require(${JSON.stringify(
+              file
+            )}); global.GET_ROUTE = () => ({ key:'main', template });`
+      ),
       ...serverPlugins
     ],
     ...sharedConfig(true)
@@ -132,7 +145,18 @@ module.exports = ({
   const browserConfig = {
     name: "Browser",
     target: "web",
-    entry: [`${file}?hydrate`],
+    entry: async () => {
+      if (dir) {
+        const obj = await getDirectoryLookup(dir);
+        Object.keys(obj).forEach(
+          key =>
+            (obj[key] = additionalClientEntries.concat(obj[key] + "?hydrate"))
+        );
+        return obj;
+      } else {
+        return additionalClientEntries.concat(`${file}?hydrate`);
+      }
+    },
     output: {
       pathinfo: true,
       publicPath: PUBLIC_PATH,
