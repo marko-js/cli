@@ -148,6 +148,7 @@ module.exports = ({
     entry: async () => {
       if (dir) {
         const obj = await getDirectoryLookup(dir);
+        obj["$$index"] = path.join(__dirname, "files/dir-index.marko");
         Object.keys(obj).forEach(
           key =>
             (obj[key] = additionalClientEntries.concat(obj[key] + "?hydrate"))
@@ -161,8 +162,8 @@ module.exports = ({
       pathinfo: true,
       publicPath: PUBLIC_PATH,
       path: ASSETS_PATH,
-      filename: `index.${HASH}.js`,
-      chunkFilename: `[name].${HASH}.js`,
+      filename: `index.[chunkhash:10].js`,
+      chunkFilename: `[name].[chunkhash:10].js`,
       libraryTarget: "var",
       devtoolModuleFilenameTemplate: production
         ? "webpack://[namespace]/[resource-path]?[loaders]"

@@ -1,0 +1,19 @@
+<h1>Directory Index</h1>
+
+<if(input.dirs.length)>
+  <h2>Directories</h2>
+  <ul>
+    <for|dir| of=input.dirs>
+      <li><a href=`${dir}/`>${dir}/</a></li>
+    </for>
+  </ul>
+</if>
+
+<if(input.files.length)>
+  <h2>Files</h2>
+  <ul>
+    <for|file| of=input.files>
+      <li><a href=file>${file}.marko</a></li>
+    </for>
+  </ul>
+</if>

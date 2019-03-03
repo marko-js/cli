@@ -37,15 +37,13 @@ const getRouterCode = async (cwd, ignore) => {
     const varName = "page__" + key.replace(/\//g, "__");
     const pathParts = key.split("/");
     const absolute = directoryLookup[key];
-    let current = tree;
-    for (let part of pathParts) {
-      if (part !== "index") {
-        let children = (current.children = current.children || {});
-        current = children[part] = children[part] || {};
-      }
+    let dir = tree;
+    for (let part of pathParts.slice(0, -1)) {
+      let dirs = (dir.dirs = dir.dirs || {});
+      dir = dirs[part] = dirs[part] || {};
     }
-    current.key = key;
-    current.varName = varName;
+    let files = (dir.files = dir.files || {});
+    files[pathParts[pathParts.length - 1]] = { key, varName };
     varNames.push(varName);
     imports.push(`const ${varName} = require(${JSON.stringify(absolute)});`);
   }
@@ -54,6 +52,9 @@ const getRouterCode = async (cwd, ignore) => {
 };
 
 const buildRouter = (imports, varNames, tree) => `
+const $$index = require(${JSON.stringify(
+  require.resolve("./files/dir-index.marko")
+)});
 ${imports.join("\n")}
 
 const paramDefs = new Map();
@@ -86,34 +87,58 @@ function getParams(template, parts) {
 global.GET_ROUTE = getRoute;
 `;
 
-const buildRoute = (tree, level = 0) => {
+const buildRoute = (dir, level = 0) => {
   const ifs = [];
   const indent = "  ".repeat(level + 1);
-  let partDeclaration = "";
-  if (tree.children) {
-    partDeclaration = `${indent}const part_${level} = pathParts[${level}];\n`;
-    for (let key in tree.children) {
-      const childTree = tree.children[key];
+  let partDeclaration = `${indent}const part_${level} = pathParts[${level}];\n`;
+  let needsPart = false;
+
+  if (dir.dirs) {
+    for (let key in dir.dirs) {
+      const childDir = dir.dirs[key];
       ifs.push(
         `if (part_${level} === ${JSON.stringify(key)}) {\n${buildRoute(
-          childTree,
+          childDir,
           level + 1
         )}\n${indent}}`
       );
+      needsPart = true;
     }
   }
-  if (tree.key) {
-    const query = `(params = getParams(${tree.varName}, pathParts${
-      level === 0 ? "" : `.slice(${level})`
-    }))`;
-    ifs.push(
-      `if (${query}) {\n${indent}  return { key:${JSON.stringify(
-        tree.key
-      )}, params, template:${tree.varName} };\n${indent}}`
-    );
+
+  if (dir.files) {
+    for (let key in dir.files) {
+      const file = dir.files[key];
+      const partMatch =
+        key === "index" ? "true" : `part_${level} === ${JSON.stringify(key)}`;
+      const paramMatch = `(params = getParams(${
+        file.varName
+      }, pathParts.slice(${level + (key === "index" ? 0 : 1)})))`;
+      const query =
+        key === "index" ? paramMatch : `${partMatch} && ${paramMatch}`;
+      ifs.push(
+        `if (${query}) {\n${indent}  return { key:${JSON.stringify(
+          file.key
+        )}, params, template:${file.varName} };\n${indent}}`
+      );
+      if (key !== "index") {
+        needsPart = true;
+      }
+    }
   }
 
-  return partDeclaration + indent + ifs.join(" else ");
+  if (!dir.files || !dir.files["index"]) {
+    const dirs = Object.keys(dir.dirs || {});
+    const files = Object.keys(dir.files || {});
+    ifs.push(
+      `if (part_${level} === undefined) {\n${indent}  return { key:'$$index', template:$$index, params:{ dirs:${JSON.stringify(
+        dirs
+      )}, files:${JSON.stringify(files)} } };\n${indent}}`
+    );
+    needsPart = true;
+  }
+
+  return (needsPart ? partDeclaration : "") + indent + ifs.join(" else ");
 };
 
 module.exports = {
