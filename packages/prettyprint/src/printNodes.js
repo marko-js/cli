@@ -154,7 +154,9 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
         writer.write(printContext.currentIndentString);
       }
 
-      writer.write(HTMLTrim(childOutput, child, prevChild));
+      writer.write(
+        HTMLTrim(childOutput, child, prevChild, printContext.isHtmlSyntax)
+      );
 
       if (avoidLineBreaks) {
         if (
@@ -235,7 +237,7 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
   }
 };
 
-function HTMLTrim(content, child, prevChild) {
+function HTMLTrim(content, child, prevChild, isHtmlSyntax) {
   var startWhitespace = /^\s*/.exec(content)[0];
   var endWhitespace = /\s*$/.exec(content)[0];
   content = content.slice(
@@ -252,6 +254,24 @@ function HTMLTrim(content, child, prevChild) {
       child.nextSibling.type === "Text"
     ) {
       content += " ";
+    }
+  }
+  if (isHtmlSyntax && child.type === "HtmlElement") {
+    //check if next node is Text with just whitespace as content
+    var nextNode = child.nextSibling;
+    if (
+      nextNode &&
+      nextNode.type === "Text" &&
+      nextNode.argument &&
+      nextNode.argument.value &&
+      nextNode.argument.value.trim() === ""
+    ) {
+      if (
+        !nextNode.argument.value.match(/^\n+/) &&
+        !nextNode.argument.value.match(/\n+$/)
+      ) {
+        content += " ";
+      }
     }
   }
   return content;
