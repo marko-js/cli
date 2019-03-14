@@ -186,7 +186,8 @@ module.exports = function printNodes(nodes, printContext, inputWriter) {
   });
 
   if (printContext.isHtmlSyntax && printContext.preserveWhitespace !== true) {
-    writer.rtrim();
+    var completeRTrim = avoidLineBreaks && allSimple;
+    writer.rtrim(completeRTrim);
 
     writer.write(printContext.eol);
 

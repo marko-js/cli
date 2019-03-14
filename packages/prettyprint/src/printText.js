@@ -66,6 +66,7 @@ module.exports = function printText(node, printContext, writer) {
             "--"
         );
       } else {
+        if (lines[0].match(/^\s+/) != null) trimmed = " " + trimmed;
         writer.write("-- " + trimmed);
       }
     }
