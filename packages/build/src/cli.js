@@ -70,5 +70,8 @@ exports.parse = function parse(argv) {
 };
 
 exports.run = async options => {
-  build(options).run(() => {});
+  build(options).run((err, stats) => {
+    if (err) console.error(err);
+    console.log(stats.toString());
+  });
 };

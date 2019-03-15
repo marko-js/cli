@@ -29,14 +29,13 @@ module.exports = ({ dir, file, port = 3000, verbose, nodeArgs }) => {
     quiet: !verbose,
     inline: true,
     overlay: true,
-    publicPath: "/assets/",
-    contentBase: false,
     stats: verbose ? "verbose" : "errors-only",
     clientLogLevel: verbose ? "info" : "error",
     watchOptions: { ignored: [/node_modules/] },
     proxy: [
       {
-        context: url => !/^\/(api|__open-stack-frame-in-editor)/.test(url),
+        logLevel: "error",
+        context: url => !/^\/(__open-stack-frame-in-editor)/.test(url),
         target: true,
         router: () => `http://localhost:${spawnedServer.address.port}`
       }

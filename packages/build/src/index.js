@@ -1,19 +1,14 @@
 const path = require("path");
 const webpack = require("webpack");
-const AssetsPlugin = require("assets-webpack-plugin");
 const ExtractCSSPlugin = require("mini-css-extract-plugin");
 const IgnoreEmitPlugin = require("ignore-emit-webpack-plugin");
 const InjectPlugin = require("webpack-inject-plugin").default;
 const MinifyCSSPlugin = require("csso-webpack-plugin").default;
 const MinifyImgPlugin = require("imagemin-webpack-plugin").default;
 const CompressionPlugin = require("compression-webpack-plugin");
+const MarkoPlugin = require("@marko/webpack/plugin").default;
 
-const {
-  useAppModuleOrFallback,
-  createResolvablePromise,
-  getRouterCode,
-  getDirectoryLookup
-} = require("./util");
+const { useAppModuleOrFallback, getRouterCode } = require("./util");
 
 const HASH = "[hash:10]";
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
@@ -25,8 +20,7 @@ module.exports = ({
   production = true,
   output = "build",
   serverPlugins = [],
-  clientPlugins = [],
-  additionalClientEntries = []
+  clientPlugins = []
 }) => {
   const MODE = production ? "production" : "development";
   const DEVTOOL = production ? "source-map" : "cheap-module-source-map";
@@ -34,6 +28,7 @@ module.exports = ({
   const ASSETS_PATH = path.join(BUILD_PATH, "assets");
   const PUBLIC_PATH = "/assets/";
   const APP_DIR = dir || path.dirname(file);
+  const markoPlugin = new MarkoPlugin();
   const markoCompiler = (() => {
     process.env.APP_DIR = APP_DIR;
     return require.resolve("./marko-compiler");
@@ -48,7 +43,7 @@ module.exports = ({
   const sharedRules = isServer => [
     {
       test: /\.marko$/,
-      loader: require.resolve("marko-loader"),
+      loader: require.resolve("@marko/webpack/loader"),
       options: {
         compiler: markoCompiler
       }
@@ -100,8 +95,6 @@ module.exports = ({
     ]);
   }
 
-  let assetsPromise = createResolvablePromise();
-
   const serverConfig = {
     name: "Server",
     target: "async-node",
@@ -110,6 +103,7 @@ module.exports = ({
     output: {
       pathinfo: true,
       path: BUILD_PATH,
+      publicPath: PUBLIC_PATH,
       filename: "index.js",
       chunkFilename: `[name].${HASH}.js`,
       libraryTarget: "commonjs2"
@@ -126,10 +120,6 @@ module.exports = ({
         allChunks: true
       }),
       new IgnoreEmitPlugin("index.css"),
-      new InjectPlugin(
-        async () =>
-          `global.BUILD_ASSETS = ${JSON.stringify(await assetsPromise)};`
-      ),
       new InjectPlugin(() =>
         dir
           ? getRouterCode(dir)
@@ -137,6 +127,7 @@ module.exports = ({
               file
             )}); global.GET_ROUTE = () => ({ key:'main', template });`
       ),
+      markoPlugin.server,
       ...serverPlugins
     ],
     ...sharedConfig(true)
@@ -145,25 +136,12 @@ module.exports = ({
   const browserConfig = {
     name: "Browser",
     target: "web",
-    entry: async () => {
-      if (dir) {
-        const obj = await getDirectoryLookup(dir);
-        obj["$$index"] = path.join(__dirname, "files/dir-index.marko");
-        Object.keys(obj).forEach(
-          key =>
-            (obj[key] = additionalClientEntries.concat(obj[key] + "?hydrate"))
-        );
-        return obj;
-      } else {
-        return additionalClientEntries.concat(`${file}?hydrate`);
-      }
-    },
+    entry: markoPlugin.emptyEntry,
     output: {
       pathinfo: true,
       publicPath: PUBLIC_PATH,
       path: ASSETS_PATH,
-      filename: `index.[chunkhash:10].js`,
-      chunkFilename: `[name].[chunkhash:10].js`,
+      filename: `[name].[chunkhash:10].js`,
       libraryTarget: "var",
       devtoolModuleFilenameTemplate: production
         ? "webpack://[namespace]/[resource-path]?[loaders]"
@@ -173,32 +151,15 @@ module.exports = ({
       new webpack.DefinePlugin({
         "process.browser": true
       }),
-      new AssetsPlugin({
-        includeAllFileTypes: false,
-        useCompilerPath: true,
-        keepInMemory: true,
-        processOutput: assets => {
-          assetsPromise.resolve(assets);
-          assetsPromise = createResolvablePromise();
-          return JSON.stringify(assets);
-        }
-      }),
       new ExtractCSSPlugin({
-        filename: `index.${HASH}.css`,
+        filename: `[name].[chunkhash:10].css`,
         allChunks: true
       }),
+      markoPlugin.browser,
       ...clientPlugins
     ],
     ...sharedConfig(false)
   };
 
-  const compiler = webpack([serverConfig, browserConfig]);
-
-  compiler.hooks.watchRun.tap("clearMarkoTaglibCache", () => {
-    // this probably should be done by the loader
-    // because it won't currently work if the loader is threaded
-    require(markoCompiler).clearCaches();
-  });
-
-  return compiler;
+  return webpack([browserConfig, serverConfig]);
 };

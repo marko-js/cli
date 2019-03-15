@@ -2,7 +2,6 @@ require("source-map-support").install({ hookRequire: true });
 
 const http = require("http");
 const serveHandler = require("serve-handler");
-const wrapper = require("./wrapper.marko");
 const getRoute = global.GET_ROUTE;
 const PORT = process.env.PORT || global.PORT;
 const assetsMatch = /^\/assets\//;
@@ -19,7 +18,7 @@ const server = http.createServer((req, res) => {
   res.setHeader("content-type", "text/html");
   const route = getRoute(req.url);
   if (route) {
-    wrapper.render(route, res);
+    route.template.render(route.params, res);
   } else {
     res.end("Not Found");
   }

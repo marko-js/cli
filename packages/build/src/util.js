@@ -9,13 +9,6 @@ const useAppModuleOrFallback = (dir, moduleName) => {
   return path.dirname(packagePath);
 };
 
-const createResolvablePromise = () => {
-  let _resolve;
-  const promise = new Promise(resolve => (_resolve = resolve));
-  promise.resolve = _resolve;
-  return promise;
-};
-
 const getDirectoryLookup = async (cwd, ignore = []) => {
   const lookup = {};
   const filenames = await fastGlob(["**/*.marko"], { cwd, ignore });
@@ -117,9 +110,9 @@ const buildRoute = (dir, level = 0) => {
       const query =
         key === "index" ? paramMatch : `${partMatch} && ${paramMatch}`;
       ifs.push(
-        `if (${query}) {\n${indent}  return { key:${JSON.stringify(
-          file.key
-        )}, params, template:${file.varName} };\n${indent}}`
+        `if (${query}) {\n${indent}  return { params, template:${
+          file.varName
+        } };\n${indent}}`
       );
       if (key !== "index") {
         needsPart = true;
@@ -131,7 +124,7 @@ const buildRoute = (dir, level = 0) => {
     const dirs = Object.keys(dir.dirs || {});
     const files = Object.keys(dir.files || {});
     ifs.push(
-      `if (part_${level} === undefined) {\n${indent}  return { key:'$$index', template:$$index, params:{ dirs:${JSON.stringify(
+      `if (part_${level} === undefined) {\n${indent}  return { template:$$index, params:{ dirs:${JSON.stringify(
         dirs
       )}, files:${JSON.stringify(files)} } };\n${indent}}`
     );
@@ -143,7 +136,6 @@ const buildRoute = (dir, level = 0) => {
 
 module.exports = {
   useAppModuleOrFallback,
-  createResolvablePromise,
   getDirectoryLookup,
   getRouterCode
 };
