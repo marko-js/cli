@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.1](https://github.com/marko-js/cli/compare/@marko/test@5.1.0...@marko/test@5.1.1) (2019-03-20)
+
+
+### Bug Fixes
+
+* **test:** remove deprecated inline control flow from test runner ([39c7a1d](https://github.com/marko-js/cli/commit/39c7a1d))
+
+
+
+
+
 # [5.1.0](https://github.com/marko-js/cli/compare/@marko/test@5.0.0...@marko/test@5.1.0) (2019-02-07)
 
 
