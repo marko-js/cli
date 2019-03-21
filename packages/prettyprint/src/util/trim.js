@@ -1,7 +1,11 @@
 "use strict";
 
-exports.rtrim = function rtrim(s) {
-  return s && s.replace(/\s+$/, "");
+exports.rtrim = function rtrim(s, completeRTrim) {
+  if (completeRTrim) {
+    return s && s.replace(/\s+$/, "");
+  }
+  while (s && s.match(/\n[\s]+\n$/) != null) s = s.replace(/\n[\s]+\n$/, "");
+  return s && s.replace(/\n+$/, "");
 };
 
 exports.ltrim = function ltrim(s) {

@@ -18,8 +18,8 @@ class Writer {
     this.buffer += str;
   }
 
-  rtrim() {
-    var trimmed = trim.rtrim(this.buffer);
+  rtrim(completeRTrim = false) {
+    var trimmed = trim.rtrim(this.buffer, completeRTrim);
     this.buffer = "";
     this.write(trimmed);
   }
