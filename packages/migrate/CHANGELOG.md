@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.4](https://github.com/marko-js/cli/compare/@marko/migrate@5.0.3...@marko/migrate@5.0.4) (2019-03-21)
+
+**Note:** Version bump only for package @marko/migrate
+
+
+
+
+
 ## [5.0.3](https://github.com/marko-js/cli/compare/@marko/migrate@5.0.2...@marko/migrate@5.0.3) (2019-02-25)
 
 **Note:** Version bump only for package @marko/migrate

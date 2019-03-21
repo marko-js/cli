@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.4](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.0.3...@marko/prettyprint@2.0.4) (2019-03-21)
+
+
+### Bug Fixes
+
+* **prettyprint:** improve whitespace preservation ([#125](https://github.com/marko-js/cli/issues/125)) ([8c1b256](https://github.com/marko-js/cli/commit/8c1b256))
+
+
+
+
+
 ## [2.0.3](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.0.2...@marko/prettyprint@2.0.3) (2019-02-25)
 
 
