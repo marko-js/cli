@@ -83,7 +83,9 @@ exports.run = async options => {
   const port = await getPort({ port: ports });
   const local = `http://localhost:${port}`;
   const network = `http://${address.ip()}:${port}`;
-  const location = path.relative(process.cwd(), options.file || options.dir);
+  const location =
+    path.relative(process.cwd(), options.file || options.dir) ||
+    "the current directory";
 
   await serve({ ...options, port });
 
