@@ -6,6 +6,7 @@ const InjectPlugin = require("webpack-inject-plugin").default;
 const MinifyCSSPlugin = require("csso-webpack-plugin").default;
 const MinifyImgPlugin = require("imagemin-webpack-plugin").default;
 const CompressionPlugin = require("compression-webpack-plugin");
+const BrotliPlugin = require("brotli-webpack-plugin");
 const MarkoPlugin = require("@marko/webpack/plugin").default;
 
 const { useAppModuleOrFallback, getRouterCode } = require("./util");
@@ -36,7 +37,10 @@ module.exports = ({
 
   const sharedAliases = () => ({
     marko: useAppModuleOrFallback(APP_DIR, "marko"),
-    "serve-handler": useAppModuleOrFallback(APP_DIR, "serve-handler"),
+    "connect-gzip-static": useAppModuleOrFallback(
+      APP_DIR,
+      "connect-gzip-static"
+    ),
     "source-map-support": useAppModuleOrFallback(APP_DIR, "source-map-support")
   });
 
@@ -91,7 +95,8 @@ module.exports = ({
     clientPlugins = clientPlugins.concat([
       new MinifyCSSPlugin(),
       new MinifyImgPlugin(),
-      new CompressionPlugin()
+      new CompressionPlugin(),
+      new BrotliPlugin()
     ]);
   }
 
