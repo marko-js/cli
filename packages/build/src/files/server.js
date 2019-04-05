@@ -8,19 +8,28 @@ const getRoute = global.GET_ROUTE;
 const PORT = process.env.PORT || global.PORT;
 const assetsMatch = /^\/assets\//;
 
+const middleware =
+  global.MARKO_MIDDLEWARE ||
+  ((req, res) => {
+    res.setHeader("content-type", "text/html");
+    const route = getRoute(req.url);
+    if (route) {
+      route.template.render(route.params, res);
+    } else {
+      res.end("Not Found");
+    }
+  });
+
 const server = http.createServer((req, res) => {
   if (assetsMatch.test(req.url)) {
     req.url = req.url.slice(7);
-    return gzipStatic(req, res, () => {
+    gzipStatic(req, res, () => {
       res.end("Not Found");
     });
-  }
-  res.setHeader("content-type", "text/html");
-  const route = getRoute(req.url);
-  if (route) {
-    route.template.render(route.params, res);
   } else {
-    res.end("Not Found");
+    middleware(req, res, () => {
+      res.end("Not Found");
+    });
   }
 });
 

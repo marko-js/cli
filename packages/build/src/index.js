@@ -125,13 +125,17 @@ module.exports = ({
         allChunks: true
       }),
       new IgnoreEmitPlugin("index.css"),
-      new InjectPlugin(() =>
-        dir
-          ? getRouterCode(dir)
-          : `const template = require(${JSON.stringify(
-              file
-            )}); global.GET_ROUTE = () => ({ key:'main', template });`
-      ),
+      new InjectPlugin(() => {
+        if (dir) {
+          return getRouterCode(dir);
+        } else if (file.endsWith(".js")) {
+          return `global.MARKO_MIDDLEWARE = require(${JSON.stringify(file)});`;
+        } else {
+          return `const template = require(${JSON.stringify(
+            file
+          )}); global.GET_ROUTE = () => ({ key:'main', template });`;
+        }
+      }),
       markoPlugin.server,
       ...serverPlugins
     ],
