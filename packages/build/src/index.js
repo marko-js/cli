@@ -1,5 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
+const browserslist = require("browserslist");
 const ExtractCSSPlugin = require("mini-css-extract-plugin");
 const IgnoreEmitPlugin = require("ignore-emit-webpack-plugin");
 const InjectPlugin = require("webpack-inject-plugin").default;
@@ -35,9 +36,16 @@ module.exports = ({
     return require.resolve("./marko-compiler");
   })();
 
-  const legacyBrowsers = ["defaults"];
+  const legacyBrowsers =
+    browserslist.loadConfig({
+      path: dir || file,
+      env: "legacy"
+    }) || browserslist.defaults;
 
-  const modernBrowsers = [
+  const modernBrowsers = browserslist.loadConfig({
+    path: dir || file,
+    env: "modern"
+  }) || [
     "last 3 Chrome versions",
     "last 2 Firefox versions",
     "last 1 Edge versions",
