@@ -76,7 +76,8 @@ module.exports = ({
               : modernBrowsers
           }
         ]
-      ]
+      ],
+      plugins: [require.resolve("babel-plugin-macros")]
     }
   });
 
