@@ -4,7 +4,10 @@
   "version": "1.0.0",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
     "argly": "^1.2.0",
+    "babel-loader": "^8.0.5",
     "brotli-webpack-plugin": "^1.1.0",
     "chalk": "^2.4.2",
     "connect-gzip-static": "^2.1.1",

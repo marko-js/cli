@@ -35,6 +35,16 @@ module.exports = ({
     return require.resolve("./marko-compiler");
   })();
 
+  const legacyBrowsers = ["defaults"];
+
+  const modernBrowsers = [
+    "last 3 Chrome versions",
+    "last 2 Firefox versions",
+    "last 1 Edge versions",
+    "last 1 Safari versions",
+    "unreleased versions"
+  ];
+
   const sharedAliases = () => ({
     marko: useAppModuleOrFallback(APP_DIR, "marko"),
     "connect-gzip-static": useAppModuleOrFallback(
@@ -44,13 +54,41 @@ module.exports = ({
     "source-map-support": useAppModuleOrFallback(APP_DIR, "source-map-support")
   });
 
+  const babelLoader = isServer => ({
+    loader: require.resolve("babel-loader"),
+    options: {
+      presets: [
+        [
+          require.resolve("@babel/preset-env"),
+          {
+            targets: isServer
+              ? { node: "current" }
+              : production
+              ? legacyBrowsers
+              : modernBrowsers
+          }
+        ]
+      ]
+    }
+  });
+
   const sharedRules = isServer => [
     {
+      test: /\.js$/,
+      exclude: /node_modules/,
+      use: [babelLoader(isServer)]
+    },
+    {
       test: /\.marko$/,
-      loader: require.resolve("@marko/webpack/loader"),
-      options: {
-        compiler: markoCompiler
-      }
+      use: [
+        babelLoader(isServer),
+        {
+          loader: require.resolve("@marko/webpack/loader"),
+          options: {
+            compiler: markoCompiler
+          }
+        }
+      ]
     },
     {
       test: /\.css$/,
