@@ -30,7 +30,11 @@ module.exports = ({
   const ASSETS_PATH = path.join(BUILD_PATH, "assets");
   const PUBLIC_PATH = "/assets/";
   const APP_DIR = dir || path.dirname(file);
-  const markoPlugin = new MarkoPlugin();
+  const markoPlugin = new MarkoPlugin({
+    getClientCompilerName:
+      production &&
+      ($global => ($global.isModern ? "Browser-modern" : "Browser-legacy"))
+  });
   const markoCompiler = (() => {
     process.env.APP_DIR = APP_DIR;
     return require.resolve("./marko-compiler");
@@ -59,38 +63,31 @@ module.exports = ({
       APP_DIR,
       "connect-gzip-static"
     ),
-    "source-map-support": useAppModuleOrFallback(APP_DIR, "source-map-support")
+    "source-map-support": useAppModuleOrFallback(APP_DIR, "source-map-support"),
+    [require.resolve("browserslist/node")]: require.resolve(
+      "browserslist/browser"
+    ),
+    [require.resolve("useragent/lib/update")]: require.resolve("./files/noop")
   });
 
-  const babelLoader = isServer => ({
+  const babelLoader = targets => ({
     loader: require.resolve("babel-loader"),
     options: {
-      presets: [
-        [
-          require.resolve("@babel/preset-env"),
-          {
-            targets: isServer
-              ? { node: "current" }
-              : production
-              ? legacyBrowsers
-              : modernBrowsers
-          }
-        ]
-      ],
+      presets: [[require.resolve("@babel/preset-env"), { targets }]],
       plugins: [require.resolve("babel-plugin-macros")]
     }
   });
 
-  const sharedRules = isServer => [
+  const sharedRules = ({ isServer, targets }) => [
     {
       test: /\.js$/,
       exclude: /node_modules/,
-      use: [babelLoader(isServer)]
+      use: [babelLoader(targets)]
     },
     {
       test: /\.marko$/,
       use: [
-        babelLoader(isServer),
+        babelLoader(targets),
         {
           loader: require.resolve("@marko/webpack/loader"),
           options: {
@@ -128,13 +125,13 @@ module.exports = ({
     }
   ];
 
-  const sharedConfig = isServer => ({
+  const sharedConfig = options => ({
     mode: MODE,
     bail: true,
     context: __dirname,
     devtool: DEVTOOL,
-    resolve: { alias: sharedAliases(isServer) },
-    module: { rules: sharedRules(isServer) }
+    resolve: { alias: sharedAliases(options) },
+    module: { rules: sharedRules(options) }
   });
 
   if (production) {
@@ -165,7 +162,8 @@ module.exports = ({
         "process.browser": undefined,
         "process.env.BUNDLE": true,
         "global.PORT": production ? 3000 : "'0'",
-        "global.ASSETS_PATH": JSON.stringify(ASSETS_PATH)
+        "global.ASSETS_PATH": JSON.stringify(ASSETS_PATH),
+        "global.MODERN_BROWSERS": JSON.stringify(modernBrowsers)
       }),
       new ExtractCSSPlugin({
         filename: "index.css",
@@ -186,18 +184,18 @@ module.exports = ({
       markoPlugin.server,
       ...serverPlugins
     ],
-    ...sharedConfig(true)
+    ...sharedConfig({ isServer: true, targets: { node: true } })
   };
 
-  const browserConfig = {
-    name: "Browser",
+  const getBrowserConfig = ({ targetsName, targets }) => ({
+    name: `Browser-${targetsName}`,
     target: "web",
     entry: markoPlugin.emptyEntry,
     output: {
       pathinfo: true,
       publicPath: PUBLIC_PATH,
       path: ASSETS_PATH,
-      filename: `[name].[chunkhash:10].js`,
+      filename: `[name].${targetsName}.[chunkhash:10].js`,
       libraryTarget: "var",
       devtoolModuleFilenameTemplate: production
         ? "webpack://[namespace]/[resource-path]?[loaders]"
@@ -214,8 +212,20 @@ module.exports = ({
       markoPlugin.browser,
       ...clientPlugins
     ],
-    ...sharedConfig(false)
-  };
+    ...sharedConfig({ isServer: false, targets })
+  });
 
-  return webpack([browserConfig, serverConfig]);
+  const legacyBrowserConfig =
+    production &&
+    getBrowserConfig({ targetsName: "legacy", targets: legacyBrowsers });
+  const modernBrowserConfig = getBrowserConfig({
+    targetsName: "modern",
+    targets: modernBrowsers
+  });
+
+  return webpack(
+    production
+      ? [legacyBrowserConfig, modernBrowserConfig, serverConfig]
+      : [modernBrowserConfig, serverConfig]
+  );
 };
