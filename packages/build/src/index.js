@@ -109,7 +109,19 @@ module.exports = ({
             importLoaders: 1
           }
         }
-      ]
+      ].concat(
+        isServer
+          ? []
+          : {
+              loader: require.resolve("postcss-loader"),
+              options: {
+                config: {
+                  path: __dirname,
+                  ctx: { browsers: targets }
+                }
+              }
+            }
+      )
     },
     {
       test: file => !/\.(js(on)?|css|marko)$/.test(file),
@@ -206,7 +218,7 @@ module.exports = ({
         "process.browser": true
       }),
       new ExtractCSSPlugin({
-        filename: `[name].[chunkhash:10].css`,
+        filename: `[name].${targetsName}.[chunkhash:10].css`,
         allChunks: true
       }),
       markoPlugin.browser,
