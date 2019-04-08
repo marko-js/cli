@@ -41,7 +41,12 @@ const getRouterCode = async (cwd, ignore) => {
     imports.push(`const ${varName} = require(${JSON.stringify(absolute)});`);
   }
 
-  return buildRouter(imports, varNames, tree);
+  // When new .marko files are added, we want to recompute the router code
+  const watchContext = `require.context(${JSON.stringify(
+    cwd
+  )}, true, /\\.marko$/);`;
+
+  return watchContext + `\n` + buildRouter(imports, varNames, tree);
 };
 
 const buildRouter = (imports, varNames, tree) => `
