@@ -27,7 +27,7 @@ module.exports = ({ dir, file, port = 3000, verbose, nodeArgs }) => {
 
   const server = new DevServer(compiler, {
     quiet: !verbose,
-    inline: true,
+    inline: false,
     overlay: true,
     stats: verbose ? "verbose" : "errors-only",
     clientLogLevel: verbose ? "info" : "error",
