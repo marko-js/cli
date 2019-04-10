@@ -10,6 +10,7 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const BrotliPlugin = require("brotli-webpack-plugin");
 const MarkoPlugin = require("@marko/webpack/plugin").default;
 
+const { getUserAgentRegExp } = require("browserslist-useragent-regexp");
 const { useAppModuleOrFallback, getRouterCode } = require("./util");
 
 const HASH = "[hash:10]";
@@ -63,11 +64,7 @@ module.exports = ({
       APP_DIR,
       "connect-gzip-static"
     ),
-    "source-map-support": useAppModuleOrFallback(APP_DIR, "source-map-support"),
-    [require.resolve("browserslist/node")]: require.resolve(
-      "browserslist/browser"
-    ),
-    [require.resolve("useragent/lib/update")]: require.resolve("./files/noop")
+    "source-map-support": useAppModuleOrFallback(APP_DIR, "source-map-support")
   });
 
   const babelLoader = targets => ({
@@ -174,8 +171,7 @@ module.exports = ({
         "process.browser": undefined,
         "process.env.BUNDLE": true,
         "global.PORT": production ? 3000 : "'0'",
-        "global.ASSETS_PATH": JSON.stringify(ASSETS_PATH),
-        "global.MODERN_BROWSERS": JSON.stringify(modernBrowsers)
+        "global.ASSETS_PATH": JSON.stringify(ASSETS_PATH)
       }),
       new ExtractCSSPlugin({
         filename: "index.css",
@@ -192,6 +188,12 @@ module.exports = ({
             file
           )}); global.GET_ROUTE = () => ({ key:'main', template });`;
         }
+      }),
+      new InjectPlugin(() => {
+        return `global.MODERN_BROWSERS_REGEXP = ${getUserAgentRegExp({
+          browsers: modernBrowsers,
+          allowHigherVersions: true
+        })}`;
       }),
       markoPlugin.server,
       ...serverPlugins

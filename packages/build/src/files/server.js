@@ -4,11 +4,10 @@ const http = require("http");
 const gzipStatic =
   process.env.NODE_ENV === "production" &&
   require("connect-gzip-static")(global.ASSETS_PATH);
-const { matchesUA } = require("browserslist-useragent");
 const getRoute = global.GET_ROUTE;
+const modernBrowsers = global.MODERN_BROWSERS_REGEXP;
 const PORT = process.env.PORT || global.PORT;
 const assetsMatch = /^\/assets\//;
-const userAgentConfig = { browsers: global.MODERN_BROWSERS };
 
 const middleware =
   global.MARKO_MIDDLEWARE ||
@@ -32,11 +31,7 @@ const server = http.createServer((req, res) => {
       res.end("Not Found");
     });
   } else {
-    const isModern = matchesUA(
-      req.headers["user-agent"] || "",
-      userAgentConfig
-    );
-    req.isModern = isModern;
+    req.isModern = modernBrowsers.test(req.headers["user-agent"] || "");
     middleware(req, res, () => {
       res.end("Not Found");
     });
