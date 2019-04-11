@@ -65,6 +65,13 @@ function getRoute(url) {
   const normalized = url.replace(/^\\/|(\\/|(\\/index)?(\\.marko|\\.html)?)$/g, '');
   const pathParts = normalized === '' ? [] : normalized.split('/');
 
+  if ('/' + normalized !== url) {
+    return {
+      redirect:true,
+      path: '/' + normalized
+    }
+  }
+
   ${buildRoute(tree).trim()}
 }
 

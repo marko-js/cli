@@ -15,11 +15,22 @@ const middleware =
     res.setHeader("content-type", "text/html");
     const route = getRoute(req.url);
     if (route) {
-      route.template.render(
-        { $global: { isModern: req.isModern }, ...route.params },
-        res
-      );
+      if (route.redirect) {
+        res.statusCode = 301;
+        res.setHeader("location", route.path);
+        res.end(
+          `Redirecting to <a href=${JSON.stringify(route.path)}>${
+            route.path
+          }</a>`
+        );
+      } else {
+        route.template.render(
+          { $global: { isModern: req.isModern }, ...route.params },
+          res
+        );
+      }
     } else {
+      res.statusCode = 404;
       res.end("Not Found");
     }
   });
