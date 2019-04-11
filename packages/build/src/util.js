@@ -27,7 +27,8 @@ const getRouterCode = async (cwd, ignore) => {
   const imports = [];
   const directoryLookup = await getDirectoryLookup(cwd, ignore);
   for (let key in directoryLookup) {
-    const varName = "page__" + key.replace(/\//g, "__");
+    const varName =
+      "page__" + key.replace(/\//g, "__").replace(/[^a-z0-9$_]/g, "$");
     const pathParts = key.split("/");
     const absolute = directoryLookup[key];
     let dir = tree;
@@ -55,12 +56,6 @@ const $$index = require(${JSON.stringify(
 )});
 ${imports.join("\n")}
 
-const paramDefs = new Map();
-
-[${varNames.join(", ")}].forEach(template => {
-  paramDefs.set(template, []);
-});
-
 function getRoute(url) {
   const normalized = url.replace(/^\\/|(\\/|(\\/index)?(\\.marko|\\.html)?)$/g, '');
   const pathParts = normalized === '' ? [] : normalized.split('/');
@@ -72,25 +67,15 @@ function getRoute(url) {
     }
   }
 
-  ${buildRoute(tree).trim()}
-}
+  const params = {};
 
-function getParams(template, parts) {
-  const def = paramDefs.get(template);
-  if(def.length === parts.length) {
-    const params = {};
-    for(let i = 0; i < def.length; i++) {
-      const paramDef = def[i];
-      const value = parts[i];
-      if (def.pattern && !def.pattern.test(value)) return;
-      params[def.name] = value;
-    }
-    return params;
-  }
+  ${buildRoute(tree).trim()}
 }
 
 global.GET_ROUTE = getRoute;
 `;
+
+const paramPattern = /^:([^/]+)$/;
 
 const buildRoute = (dir, level = 0) => {
   const ifs = [];
@@ -101,33 +86,49 @@ const buildRoute = (dir, level = 0) => {
   if (dir.dirs) {
     for (let key in dir.dirs) {
       const childDir = dir.dirs[key];
-      ifs.push(
-        `if (part_${level} === ${JSON.stringify(key)}) {\n${buildRoute(
-          childDir,
-          level + 1
-        )}\n${indent}}`
-      );
-      needsPart = true;
+      const paramMatch = paramPattern.exec(key);
+      if (!paramMatch) {
+        ifs.unshift(
+          `if (part_${level} === ${JSON.stringify(key)}) {\n${buildRoute(
+            childDir,
+            level + 1
+          )}\n${indent}}`
+        );
+        needsPart = true;
+      } else {
+        const paramName = paramMatch[1];
+        ifs.push(
+          `if (true) {\n${indent}  params[${JSON.stringify(
+            paramName
+          )}] = part_${level};\n${buildRoute(childDir, level + 1)}\n${indent}}`
+        );
+      }
     }
   }
 
   if (dir.files) {
     for (let key in dir.files) {
       const file = dir.files[key];
-      const partMatch =
-        key === "index" ? "true" : `part_${level} === ${JSON.stringify(key)}`;
-      const paramMatch = `(params = getParams(${
-        file.varName
-      }, pathParts.slice(${level + (key === "index" ? 0 : 1)})))`;
-      const query =
-        key === "index" ? paramMatch : `${partMatch} && ${paramMatch}`;
-      ifs.push(
-        `if (${query}) {\n${indent}  return { params, template:${
-          file.varName
-        } };\n${indent}}`
-      );
-      if (key !== "index") {
+      const partMatch = `part_${level} === ${JSON.stringify(
+        key === "index" ? undefined : key
+      )}`;
+      const paramMatch = paramPattern.exec(key);
+      if (!paramMatch) {
+        ifs.unshift(
+          `if (${partMatch}) {\n${indent}  return { params, template:${
+            file.varName
+          } };\n${indent}}`
+        );
         needsPart = true;
+      } else {
+        const paramName = paramMatch[1];
+        ifs.push(
+          `if (true) {\n${indent}  params[${JSON.stringify(
+            paramName
+          )}] = part_${level};\n${indent}  return { params, template:${
+            file.varName
+          } };\n${indent}}`
+        );
       }
     }
   }

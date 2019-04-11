@@ -25,7 +25,7 @@ const middleware =
         );
       } else {
         route.template.render(
-          { $global: { isModern: req.isModern }, ...route.params },
+          { $global: { isModern: req.isModern }, params: route.params },
           res
         );
       }
