@@ -13,7 +13,8 @@ const middleware =
   global.MARKO_MIDDLEWARE ||
   ((req, res) => {
     res.setHeader("content-type", "text/html");
-    const route = getRoute(req.url);
+    const [pathname, query] = req.url.split("?");
+    const route = getRoute(pathname);
     if (route) {
       if (route.redirect) {
         res.statusCode = 301;
@@ -25,7 +26,12 @@ const middleware =
         );
       } else {
         route.template.render(
-          { $global: { isModern: req.isModern }, params: route.params },
+          {
+            $global: { isModern: req.isModern },
+            params: route.params,
+            query,
+            pathname
+          },
           res
         );
       }
