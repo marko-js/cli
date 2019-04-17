@@ -2,6 +2,7 @@
 
 import fs from "mz/fs";
 import path from "path";
+import chalk from "chalk";
 import lassoPackageRoot from "lasso-package-root";
 import markoPrettyprint from "@marko/prettyprint";
 import resolveFrom from "resolve-from";
@@ -65,59 +66,117 @@ export default async function(options = {}) {
   }
 
   const files = await getFiles(filePatterns, globOptions);
+  const errors = {};
+  let foundCount = 0;
+  let updateCount = 0;
 
   for (const file of files) {
     const basename = path.basename(file);
     if (basename.endsWith(".marko")) {
-      console.log(`\nMigrating: ${path.relative(dir, file)}\n`);
+      foundCount++;
+      const relativePath = path.relative(dir, file);
+      try {
+        const prettyPrintOptions = {
+          syntax: options.syntax,
+          maxLen: options.maxLen,
+          noSemi: options.noSemi,
+          singleQuote: options.singleQuote,
+          filename: file
+        };
+        const migrateHelper = new MigrateHelper(prompt);
+        const add = migrateOptions =>
+          addMigration(migrateHelper, migrateOptions);
+        const source = await fs.readFile(file, "utf-8");
+        const fileNameUpdates = [];
+        const dependentUpdates = [];
+        const ast = markoCompiler.parse(source, file, {
+          onContext(ctx) {
+            prettyPrintOptions.context = ctx;
+            ctx.addMigration = add;
+            addDefaultMigrations(ctx, {
+              onWriteFile,
+              onRenameFile(from, to) {
+                fileNameUpdates.push(onRenameFile.bind(null, from, to));
+              },
+              onUpdateDependents(from, to) {
+                dependentUpdates.push(onUpdateDependents.bind(null, from, to));
+              }
+            });
+          },
+          migrate: true,
+          raw: true
+        });
 
-      const prettyPrintOptions = {
-        syntax: options.syntax,
-        maxLen: options.maxLen,
-        noSemi: options.noSemi,
-        singleQuote: options.singleQuote,
-        filename: file
-      };
-      const migrateHelper = new MigrateHelper(prompt);
-      const add = migrateOptions => addMigration(migrateHelper, migrateOptions);
-      const source = await fs.readFile(file, "utf-8");
-      const fileNameUpdates = [];
-      const dependentUpdates = [];
-      const ast = markoCompiler.parse(source, file, {
-        onContext(ctx) {
-          prettyPrintOptions.context = ctx;
-          ctx.addMigration = add;
-          addDefaultMigrations(ctx, {
-            onWriteFile,
-            onRenameFile(from, to) {
-              fileNameUpdates.push(onRenameFile.bind(null, from, to));
-            },
-            onUpdateDependents(from, to) {
-              dependentUpdates.push(onUpdateDependents.bind(null, from, to));
-            }
-          });
-        },
-        migrate: true,
-        raw: true
-      });
+        await runAutoMigrations(migrateHelper);
 
-      await runAutoMigrations(migrateHelper);
-      await onWriteFile(
-        file,
-        markoPrettyprint.prettyPrintAST(ast, prettyPrintOptions)
-      );
+        let prettyOriginalSource;
+        const migratedSource = markoPrettyprint.prettyPrintAST(
+          ast,
+          prettyPrintOptions
+        );
 
-      // Run renames and dependent updates after any file migrations.
-      for (const fileNameUpdate of fileNameUpdates) {
-        await fileNameUpdate();
+        try {
+          prettyOriginalSource = markoPrettyprint.prettyPrintSource(
+            source,
+            prettyPrintOptions
+          );
+        } catch (e) {
+          // prettyprinting is only used to check if the template changed
+          // if the original source fails to print for some reason, but the
+          // migration was successful, that's fine.
+        }
+
+        if (
+          migratedSource !== prettyOriginalSource ||
+          fileNameUpdates.length ||
+          dependentUpdates.length
+        ) {
+          await onWriteFile(file, migratedSource);
+
+          // Run renames and dependent updates after any file migrations.
+          for (const fileNameUpdate of fileNameUpdates) {
+            await fileNameUpdate();
+          }
+
+          for (const dependentUpdate of dependentUpdates) {
+            await dependentUpdate();
+          }
+
+          updateCount++;
+
+          console.log(relativePath);
+        } else {
+          console.log(chalk.dim(relativePath));
+        }
+      } catch (e) {
+        errors[relativePath] = e;
+        console.log(chalk.red(relativePath));
       }
-
-      for (const dependentUpdate of dependentUpdates) {
-        await dependentUpdate();
-      }
-
-      console.log();
     }
+  }
+
+  if (foundCount) {
+    const errorEntries = Object.entries(errors);
+    if (errorEntries.length) {
+      for (let [path, error] of errorEntries) {
+        console.error("\n" + chalk.red(path) + "\n" + error);
+      }
+      console.log(
+        chalk.bold.red(
+          `\nMigrated ${updateCount} of ${foundCount} component(s) with ${
+            errorEntries.length
+          } error(s)`
+        )
+      );
+    } else {
+      console.log(
+        chalk.bold.green(
+          `\nMigrated ${updateCount} of ${foundCount} component(s)!`
+        )
+      );
+    }
+  } else {
+    console.log(chalk.bold.yellow(`No components found!`));
   }
 }
 
