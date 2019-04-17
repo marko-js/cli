@@ -1,4 +1,5 @@
 const fs = require("fs");
+const chalk = require("chalk");
 const nodePath = require("path");
 const Minimatch = require("minimatch").Minimatch;
 const markoPrettyprint = require("./");
@@ -90,7 +91,9 @@ exports.run = function run(options) {
   );
 
   const found = {};
+  const errors = {};
   let foundCount = 0;
+  let updateCount = 0;
 
   if (options.files && options.files.length) {
     walk(options.files, {
@@ -106,9 +109,27 @@ exports.run = function run(options) {
   }
 
   if (foundCount) {
-    console.log(`Prettyprinted ${foundCount} templates(s)!`);
+    const errorEntries = Object.entries(errors);
+    if (errorEntries.length) {
+      for (let [path, error] of errorEntries) {
+        console.error("\n" + chalk.red(path) + "\n" + error);
+      }
+      console.log(
+        chalk.bold.red(
+          `\nPrettyprinted ${updateCount} of ${foundCount} template(s) with ${
+            errorEntries.length
+          } error(s)`
+        )
+      );
+    } else {
+      console.log(
+        chalk.bold.green(
+          `\nPrettyprinted ${updateCount} of ${foundCount} template(s)!`
+        )
+      );
+    }
   } else {
-    console.log(`No templates found!`);
+    console.log(chalk.bold.yellow(`No templates found!`));
   }
 
   function prettyprint(path) {
@@ -118,18 +139,28 @@ exports.run = function run(options) {
 
     found[path] = true;
 
+    const relative = relativePath(path);
     const src = fs.readFileSync(path, { encoding: "utf8" });
-    const outputSrc = markoPrettyprint(src, {
-      syntax: options.syntax,
-      maxLen: options.maxLen,
-      noSemi: options.noSemi,
-      singleQuote: options.singleQuote,
-      filename: path
-    });
+    try {
+      const outputSrc = markoPrettyprint(src, {
+        syntax: options.syntax,
+        maxLen: options.maxLen,
+        noSemi: options.noSemi,
+        singleQuote: options.singleQuote,
+        filename: path
+      });
 
-    fs.writeFileSync(path, outputSrc, { encoding: "utf8" });
-
-    console.log(`Prettyprinted: ${relativePath(path)}`);
+      if (src !== outputSrc) {
+        updateCount++;
+        fs.writeFileSync(path, outputSrc, { encoding: "utf8" });
+        console.log(relative);
+      } else {
+        console.log(chalk.dim(relative));
+      }
+    } catch (e) {
+      errors[relative] = e;
+      console.log(chalk.red(relative));
+    }
   }
 
   function isIgnored(path, dir, stat) {
@@ -148,7 +179,9 @@ exports.run = function run(options) {
       if (!match && stat && stat.isDirectory()) {
         try {
           stat = fs.statSync(path);
-        } catch (e) {}
+        } catch (e) {
+          // if the file doesn't exist it won't match
+        }
 
         if (stat && stat.isDirectory()) {
           match = rule.match(path + "/");
