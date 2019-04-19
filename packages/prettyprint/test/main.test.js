@@ -26,25 +26,34 @@ describe("scope(prettyprint)", function() {
   };
 
   const checkRendered = syntax => ({ test, snapshot, resolve, context }) => {
-    const testMain = getMain(resolve);
-    if (testMain.renderData) {
-      test(() => {
-        // when updating expectations,
-        // ensure the expected render output is
-        // what the original template renders.
-        const templatePath = resolve("template.marko");
-        const originalSrc = fs.readFileSync(templatePath, { encoding: "utf8" });
-        const options = context[`options-${syntax}`];
-        const prettySrc = context[`pretty-${syntax}`];
-        const targetSrc = process.env.UPDATE_EXPECTATIONS
-          ? originalSrc
-          : prettySrc;
-        const renderedHTML = marko
+    test(() => {
+      // when updating expectations,
+      // ensure the expected render output is
+      // what the original template renders.
+      const templatePath = resolve("template.marko");
+      const testMain = getMain(resolve);
+      const originalSrc = fs.readFileSync(templatePath, { encoding: "utf8" });
+      const options = context[`options-${syntax}`];
+      const prettySrc = context[`pretty-${syntax}`];
+      const targetSrc = process.env.UPDATE_EXPECTATIONS
+        ? originalSrc
+        : prettySrc;
+      let renderedHTML;
+      try {
+        renderedHTML = marko
           .load(options.filename, targetSrc)
           .renderToString(testMain.renderData);
+      } catch (error) {
+        if (fs.existsSync(resolve(`rendered-${syntax}-expected.html`))) {
+          throw error;
+        } else {
+          console.error(error);
+        }
+      }
+      if (typeof renderedHTML !== "undefined") {
         snapshot(renderedHTML, { name: `rendered-${syntax}`, ext: ".html" });
-      });
-    }
+      }
+    });
   };
 
   const checkIdempotency = syntax => ({ test, context }) => {

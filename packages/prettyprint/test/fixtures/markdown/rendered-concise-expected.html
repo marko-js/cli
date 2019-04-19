@@ -1,0 +1,15 @@
+<app-markdown>```xml
+&lt;!DOCTYPE html>
+html lang="en"
+    head
+        &lt;title>Marko Templating Engine&lt;/title>
+    body
+        &lt;h1>
+            Hello ${data.name}!
+        &lt;/h1>
+        ul if(notEmpty(data.colors))
+            li for(color in data.colors)
+                ${color}
+        div else
+            - No colors!
+```</app-markdown>

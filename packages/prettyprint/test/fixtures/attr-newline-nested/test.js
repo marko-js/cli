@@ -1,0 +1,3 @@
+exports.renderData = {
+  contentBackgroundColor: "red"
+};
