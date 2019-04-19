@@ -2,6 +2,7 @@
 
 var SYNTAX_CONCISE = require("./constants").SYNTAX_CONCISE;
 var SYNTAX_HTML = require("./constants").SYNTAX_HTML;
+var SYNTAX_DETECT = require("./constants").SYNTAX_DETECT;
 var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;
 
 class PrintContext {
@@ -33,6 +34,14 @@ class PrintContext {
 
   get isHtmlSyntax() {
     return this.syntax === SYNTAX_HTML;
+  }
+
+  get isDetectSyntax() {
+    return this.syntax === SYNTAX_DETECT;
+  }
+
+  get newline() {
+    return this.eol + this.currentIndentString;
   }
 
   beginNested() {

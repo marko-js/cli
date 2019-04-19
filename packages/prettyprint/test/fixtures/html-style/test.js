@@ -1,1 +1,1 @@
-exports["fails_idempotency (concise)"] = "extra whitespace";
+exports["fails_idempotency:concise"] = "extra whitespace";

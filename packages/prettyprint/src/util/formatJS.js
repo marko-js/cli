@@ -7,7 +7,12 @@ module.exports = function(code, printContext, expression) {
     return "";
   }
 
-  code = toCode(code, printContext);
+  if (code.type === "TemplateLiteral" && code.nonstandard) {
+    // This isn't valid JS, so we won't go through prettier
+    code = toCode(code, printContext);
+    return JSON.stringify(code.trim().slice(1, -1));
+  }
+
   const { indentString, depth } = printContext;
   const tabWidth = indentString.length;
   const isExpression = expression || /^class *?\{/.test(code);
@@ -20,6 +25,8 @@ module.exports = function(code, printContext, expression) {
     useTabs: indentString[0] === "\t",
     tabWidth
   };
+
+  code = toCode(code, printContext);
 
   if (isExpression) {
     code = "_ = " + code;

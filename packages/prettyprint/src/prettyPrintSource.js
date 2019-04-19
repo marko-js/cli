@@ -21,6 +21,7 @@ module.exports = function prettyPrintSource(src, options) {
 
   var dirname = path.dirname(filename);
   options.dirname = dirname;
+  options.src = src;
 
   var markoCompiler =
     options.markoCompiler || requireMarkoFile(dirname, "compiler");

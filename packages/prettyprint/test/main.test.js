@@ -56,17 +56,17 @@ describe("scope(prettyprint)", function() {
         options
       );
 
-      assert.equal(prettySrc, prettyAgain);
+      assert.equal(prettyAgain, prettySrc);
     });
   };
 
   autotest("fixtures", {
-    "pretty (html)": checkPretty("html"),
-    "pretty (concise)": checkPretty("concise"),
-    "rendered (html)": checkRendered("html"),
-    "rendered (concise)": checkRendered("concise"),
-    "idempotency (html)": checkIdempotency("html"),
-    "idempotency (concise)": checkIdempotency("concise")
+    "pretty:html": checkPretty("html"),
+    "pretty:concise": checkPretty("concise"),
+    "rendered:html": checkRendered("html"),
+    "rendered:concise": checkRendered("concise"),
+    "idempotency:html": checkIdempotency("html"),
+    "idempotency:concise": checkIdempotency("concise")
   });
 });
 

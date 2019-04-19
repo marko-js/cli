@@ -24,6 +24,10 @@ class Writer {
     this.write(trimmed);
   }
 
+  endsWith(str) {
+    return this.buffer.endsWith(str);
+  }
+
   getOutput() {
     return this.buffer;
   }

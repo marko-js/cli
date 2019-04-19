@@ -2,4 +2,6 @@ exports.renderData = {
   text: "TEXT"
 };
 
-exports.fails = "whitespace is messed up";
+exports["fails_pretty:concise"] = true;
+exports["fails_idempotency:concise"] = true;
+exports["fails_rendered:concise"] = true;
