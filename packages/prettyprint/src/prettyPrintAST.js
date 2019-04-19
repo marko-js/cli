@@ -307,7 +307,11 @@ function printHTMLNodes(nodes, printContext, writer) {
       writer.write(printContext.newline);
     }
 
-    if (node.type === "DocumentType" || node.type === "Declaration") {
+    if (
+      node.type === "DocumentType" ||
+      node.type === "Declaration" ||
+      node.type === "Scriptlet"
+    ) {
       breakAfter = true;
     }
 
