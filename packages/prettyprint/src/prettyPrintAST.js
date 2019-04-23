@@ -318,7 +318,7 @@ function printHTMLNodes(nodes, printContext, writer) {
     if (node.type === "Text") {
       output.split(" ").forEach((word, i) => {
         if (writer.col + word.length < printContext.maxLen) {
-          if (i > 0) {
+          if (i > 0 && !writer.endsWith(" ")) {
             writer.write(" ");
           }
           writer.write(word);
@@ -339,7 +339,10 @@ function printHTMLNodes(nodes, printContext, writer) {
 }
 
 function printHTMLText(node, printContext, writer, { first, last }) {
-  if (node.argument.type === "Literal") {
+  if (
+    node.argument.type === "Literal" &&
+    (!node.preserveWhitespace || node.argument.value === " ")
+  ) {
     let value = node.argument.value || "";
 
     if (
