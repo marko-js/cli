@@ -131,16 +131,14 @@ function printTopLevelNodes(nodes, options, printContext, writer) {
   }
 
   if (printContext.isHtmlSyntax) {
-    const hasTopLevelNonWhitespaceText = nodes.some(
-      node => node.type === "Text" && !isWhitespaceText(node)
-    );
-    if (hasTopLevelNonWhitespaceText) {
-      writer.write("---" + printContext.eol);
+    let dashes = getDashes(nodes);
+    if (dashes) {
+      writer.write(dashes + printContext.eol);
       printHTMLNodes(nodes, printContext, writer);
       if (!isBeginningOfLine(writer, printContext)) {
         writer.write(printContext.eol);
       }
-      writer.write("---");
+      writer.write(dashes);
     } else {
       printHTMLNodes(nodes, printContext, writer);
     }
@@ -617,4 +615,26 @@ function getOutput(printer, nodeOrNodes, printContext, writer, ...others) {
   const childWriter = new Writer(writer.col);
   printer(nodeOrNodes, printContext, childWriter, ...others);
   return childWriter.getOutput();
+}
+
+function getDashes(nodes) {
+  let longestDashSequence = 1.5;
+  let hasTopLevelNonWhitespaceText;
+  nodes.forEach(node => {
+    if (node.type === "Text" && !isWhitespaceText(node)) {
+      hasTopLevelNonWhitespaceText = true;
+      if (node.argument.type === "Literal") {
+        let match;
+        const pattern = /-+/g;
+        while ((match = pattern.exec(node.argument.value))) {
+          if (match[0].length > longestDashSequence) {
+            longestDashSequence = match[0].length;
+          }
+        }
+      }
+    }
+  });
+  return hasTopLevelNonWhitespaceText
+    ? "-".repeat(longestDashSequence * 2)
+    : "";
 }
