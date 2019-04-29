@@ -395,8 +395,12 @@ function printHTMLTag(node, printContext, writer, singleLinePls) {
 
   writer.write("<" + tagNameString);
 
-  if (node.rawShorthandId) {
+  if (typeof node.rawShorthandId === "string") {
     writer.write("#" + node.rawShorthandId);
+  } else if (node.rawShorthandId) {
+    writer.write(
+      "#${" + formatJS(node.rawShorthandId, printContext, true) + "}"
+    );
   }
 
   if (node.rawShorthandClassNames) {

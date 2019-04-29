@@ -1,0 +1,3 @@
+exports.renderData = {
+  name: "bar"
+};
