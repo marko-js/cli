@@ -313,7 +313,7 @@ function printHTMLNodes(nodes, printContext, writer) {
       breakAfter = true;
     }
 
-    if (node.type === "Text") {
+    if (node.type === "Text" && output[0] !== "$") {
       output.split(" ").forEach((word, i) => {
         if (writer.col + word.length < printContext.maxLen) {
           if (i > 0 && !writer.endsWith(" ")) {
