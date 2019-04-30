@@ -343,11 +343,14 @@ function printHTMLText(node, printContext, writer, { first, last }) {
   ) {
     let value = node.argument.value || "";
 
-    if (
-      (!node.parentNode.tagDef ||
-        node.parentNode.tagDef.body !== "static-text") &&
-      node.parentNode.tagName !== "script"
-    ) {
+    const tagDefBody = node.parentNode.tagDef && node.parentNode.tagDef.body;
+    const attrBody = (attr => attr && attr.value)(
+      node.parentNode.getAttributeValue &&
+        node.parentNode.getAttributeValue("marko-body")
+    );
+    const activeBody = attrBody || tagDefBody;
+
+    if (activeBody !== "static-text" && node.parentNode.tagName !== "script") {
       value = value.replace(/\\|\$!?{/g, m => "\\" + m);
     }
 
