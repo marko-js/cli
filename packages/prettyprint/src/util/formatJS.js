@@ -9,8 +9,7 @@ module.exports = function(code, printContext, expression) {
 
   if (code.type === "TemplateLiteral" && code.nonstandard) {
     // This isn't valid JS, so we won't go through prettier
-    code = toCode(code, printContext);
-    return JSON.stringify(code.trim().slice(1, -1));
+    return toCode(code, printContext).trim();
   }
 
   const { indentString, depth } = printContext;
