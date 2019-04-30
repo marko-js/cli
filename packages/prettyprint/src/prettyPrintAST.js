@@ -344,8 +344,9 @@ function printHTMLText(node, printContext, writer, { first, last }) {
     let value = node.argument.value || "";
 
     if (
-      !node.parentNode.tagDef ||
-      node.parentNode.tagDef.body !== "static-text"
+      (!node.parentNode.tagDef ||
+        node.parentNode.tagDef.body !== "static-text") &&
+      node.parentNode.tagName !== "script"
     ) {
       value = value.replace(/\\|\$!?{/g, m => "\\" + m);
     }
