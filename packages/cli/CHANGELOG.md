@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0](https://github.com/marko-js/cli/compare/marko-cli@6.0.7...marko-cli@7.0.0) (2019-05-16)
+
+
+### Features
+
+* **test:** upgrade wdio ([#130](https://github.com/marko-js/cli/issues/130)) ([ffbdefd](https://github.com/marko-js/cli/commit/ffbdefd))
+
+
+
+
+
 ## [6.0.7](https://github.com/marko-js/cli/compare/marko-cli@6.0.6...marko-cli@6.0.7) (2019-04-17)
 
 **Note:** Version bump only for package marko-cli

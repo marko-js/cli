@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0](https://github.com/marko-js/cli/compare/@marko/test@5.1.1...@marko/test@6.0.0) (2019-05-16)
+
+
+### Features
+
+* **test:** upgrade wdio ([#130](https://github.com/marko-js/cli/issues/130)) ([ffbdefd](https://github.com/marko-js/cli/commit/ffbdefd))
+
+
+
+
+
 ## [5.1.1](https://github.com/marko-js/cli/compare/@marko/test@5.1.0...@marko/test@5.1.1) (2019-03-20)
 
 
