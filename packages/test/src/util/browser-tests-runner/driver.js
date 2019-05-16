@@ -29,7 +29,13 @@ exports.start = async (href, options) => {
     mochaOptions,
     wdioOptions: { launcher, ...wdioOptions }
   } = options;
-  const { capabilities } = wdioOptions;
+  const {
+    capabilities,
+    viewport = DEFAULT_VIEWPORT,
+    suiteTimeout = DEFAULT_TIMEOUTS.suite,
+    idleTimeout = DEFAULT_TIMEOUTS.idle
+  } = wdioOptions;
+
   wdioOptions.baseUrl = `${href}?${encodeURIComponent(
     JSON.stringify({ mochaOptions, packageName })
   )}`;
@@ -42,25 +48,41 @@ exports.start = async (href, options) => {
 
   return {
     async runTests() {
-      let driver;
       const results = {};
       const coverages = [];
-      ensureCalled(() => driver && driver.end());
 
       for (const capability of capabilities) {
-        const { testName } = (driver = connect(
-          wdioOptions,
-          capability
-        ));
+        let closed = false;
+        const testName = getTestName(capability);
+        console.log(`\n${format(testName, "starting...")}\n`);
         results[testName] = false;
 
-        console.log(`\n${format(testName, "starting...")}\n`);
+        const browser = await webdriver.remote({
+          ...wdioOptions,
+          capabilities: {
+            ...capability,
+            name: TEST_NAME,
+            build: BUILD_NUMBER
+          }
+        });
+
+        ensureCalled(() => closed || browser.deleteSession());
+
+        await browser.setTimeout({
+          script: idleTimeout,
+          implicit: idleTimeout,
+          pageLoad: idleTimeout
+        });
+
+        await browser.setWindowSize(viewport.width, viewport.height);
+        await browser.url("");
 
         try {
-          const test = await driver;
-          const {
-            value: { success, coverage }
-          } = await test();
+          const { success, coverage } = await waitForResults(browser, {
+            suiteTimeout,
+            idleTimeout
+          });
+
           results[testName] = success;
 
           if (coverage) {
@@ -69,16 +91,18 @@ exports.start = async (href, options) => {
         } catch (error) {
           console.error(error);
         } finally {
-          if (await isAlive(driver)) {
+          if (await isAlive(browser)) {
             if (debug) {
               // Wait for the driver to die by pinging it every 3 seconds.
               do {
                 await delay(3000);
-              } while (await isAlive(driver));
+              } while (await isAlive(browser));
             } else {
-              await driver.end();
+              await browser.deleteSession();
             }
           }
+
+          closed = true;
         }
       }
 
@@ -107,85 +131,60 @@ exports.start = async (href, options) => {
   };
 };
 
-/**
- * Creates a new driver based on the provided capability and
- * resolves to a function which will run tests for that driver.
- */
-function connect({ viewport = DEFAULT_VIEWPORT, ...options }, capability) {
-  const {
-    suiteTimeout = DEFAULT_TIMEOUTS.suite,
-    idleTimeout = DEFAULT_TIMEOUTS.idle
-  } = options;
+async function isAlive(browser) {
+  try {
+    await browser.getUrl();
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+async function waitForResults(browser, { suiteTimeout, idleTimeout }) {
+  const endTime = Date.now() + suiteTimeout;
+  const execInterval = Math.min(idleTimeout, DEFAULT_TIMEOUTS.idle) * 0.8;
+  let result;
+
+  do {
+    // Some services force a max timeout for async scripts.
+    // Below we restart the async script that waits for the tests to be done every 60 seconds.
+    // The tests are 'complete' once the global '__test_result__' is set on the window.
+    if (endTime < Date.now()) {
+      throw new Error(
+        'marko-cli: Test suite timed out, use "wdioOptions.suiteTimeout" to increase the delay (default 10 mins).'
+      );
+    }
+
+    result = await browser.executeAsync(function(interval, done) {
+      if (window.__test_result__) done(window.__test_result__);
+      else {
+        var timeout = setTimeout(function() {
+          delete window.__test_result__;
+          done();
+        }, interval);
+        Object.defineProperty(window, "__test_result__", {
+          configurable: true,
+          set: function(result) {
+            clearTimeout(timeout);
+            done(result);
+          }
+        });
+      }
+    }, execInterval);
+  } while (!result);
+
+  return result;
+}
+
+function getTestName(capability) {
   const browser = capability.browser || capability.browserName;
   const version =
     capability.browser_version || capability.platformVersion || "latest";
   const platform =
     (capability.os && `${capability.os} ${capability.os_version}`) ||
     capability.platformName;
-  const driver = webdriver
-    .remote({
-      ...options,
-      capabilities: undefined,
-      desiredCapabilities: {
-        ...capability,
-        name: TEST_NAME,
-        build: BUILD_NUMBER
-      }
-    })
-    .init()
-    .timeouts("script", idleTimeout)
-    .timeouts("implicit", idleTimeout)
-    .timeouts("page load", idleTimeout)
-    .setViewportSize(viewport)
-    .url("")
-    .then(() => () => {
-      const endTime = Date.now() + suiteTimeout;
-      const execInterval = Math.min(idleTimeout, DEFAULT_TIMEOUTS.idle) * 0.8;
-      // Some services force a max timeout for async scripts.
-      // Below we restart the async script the waits for the tests to be done every 60 seconds.
-      // The tests are 'complete' once the global '__test_result__' is set on the window.
-      return (function getResults() {
-        if (endTime < Date.now()) {
-          throw new Error(
-            'marko-cli: Test suite timed out, use "wdioOptions.suiteTimeout" to increase the delay (default 10 mins).'
-          );
-        }
 
-        return driver
-          .executeAsync(function(interval, done) {
-            if (window.__test_result__) done(window.__test_result__);
-            else {
-              var timeout = setTimeout(function() {
-                delete window.__test_result__;
-                done();
-              }, interval);
-              Object.defineProperty(window, "__test_result__", {
-                configurable: true,
-                set: function(result) {
-                  clearTimeout(timeout);
-                  done(result);
-                }
-              });
-            }
-          }, execInterval)
-          .then(result => {
-            return result.value ? result : getResults();
-          });
-      })();
-    });
-
-  driver.testName = `${browser}@${version}${platform ? ` on ${platform}` : ""}`;
-
-  return driver;
-}
-
-async function isAlive(driver) {
-  try {
-    await driver.url();
-    return true;
-  } catch (_) {
-    return false;
-  }
+  return `${browser}@${version}${platform ? ` on ${platform}` : ""}`;
 }
 
 function format(name, str) {

@@ -157,7 +157,8 @@ if (env.BROWSERSTACK_USER) {
           ]
         }
       }
-    ]
+    ],
+    chromeDriverArgs: ["--silent"]
   };
   defaults = {
     path: "/",
@@ -169,7 +170,7 @@ module.exports = {
   name,
   ports,
   required,
-  defaults,
+  defaults: { ...defaults, logLevel: "error" },
   startDelay,
   isValidPort(port) {
     return !ports || ports.indexOf(port) !== -1;
