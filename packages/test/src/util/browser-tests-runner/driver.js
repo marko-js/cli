@@ -74,7 +74,25 @@ exports.start = async (href, options) => {
           pageLoad: idleTimeout
         });
 
-        await browser.setWindowSize(viewport.width, viewport.height);
+        const curViewportSize = await browser.execute(function() {
+          var el = document.documentElement;
+          return {
+            width: window.innerWidth || el.clientWidth,
+            height: window.innerHeight || el.clientHeight
+          };
+        });
+
+        if (
+          viewport.width !== curViewportSize.width ||
+          viewport.height !== curViewportSize.height
+        ) {
+          const curWindowSize = await browser.getWindowSize();
+          await browser.setWindowSize(
+            viewport.width + curWindowSize.width - curViewportSize.width,
+            viewport.height + curWindowSize.height - curViewportSize.height
+          );
+        }
+
         await browser.url("");
 
         try {
