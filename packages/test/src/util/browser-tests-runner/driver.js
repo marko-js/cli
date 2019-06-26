@@ -74,23 +74,43 @@ exports.start = async (href, options) => {
           pageLoad: idleTimeout
         });
 
-        const curViewportSize = await browser.execute(function() {
-          var el = document.documentElement;
-          return {
-            width: window.innerWidth || el.clientWidth,
-            height: window.innerHeight || el.clientHeight
-          };
-        });
+        let resizeAttempts = 2;
+        // Some browser chromes change size when the window changes size.
+        // Typically this is from going full screen to a smaller window.
+        // Resizing twice avoids this issue.
+        while (resizeAttempts--) {
+          const curViewportSize = await browser.execute(function() {
+            var el = document.documentElement;
+            return {
+              width: window.innerWidth || el.clientWidth,
+              height: window.innerHeight || el.clientHeight
+            };
+          });
 
-        if (
-          viewport.width !== curViewportSize.width ||
-          viewport.height !== curViewportSize.height
-        ) {
-          const curWindowSize = await browser.getWindowSize();
-          await browser.setWindowSize(
-            viewport.width + curWindowSize.width - curViewportSize.width,
-            viewport.height + curWindowSize.height - curViewportSize.height
-          );
+          if (
+            viewport.width !== curViewportSize.width ||
+            viewport.height !== curViewportSize.height
+          ) {
+            const curWindowSize = await (
+              browser.getWindowSize || browser.getWindowRect
+            ).call(browser);
+            const newWidth =
+              viewport.width + curWindowSize.width - curViewportSize.width;
+            const newHeight =
+              viewport.height + curWindowSize.height - curViewportSize.height;
+            if (browser.setWindowSize) {
+              await browser.setWindowSize(newWidth, newHeight);
+            } else {
+              await browser.setWindowRect(
+                curWindowSize.x,
+                curViewportSize.y,
+                newWidth,
+                newHeight
+              );
+            }
+          } else {
+            break;
+          }
         }
 
         await browser.url("");
