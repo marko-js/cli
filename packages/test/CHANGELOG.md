@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.2](https://github.com/marko-js/cli/compare/@marko/test@6.0.1...@marko/test@6.0.2) (2019-06-26)
+
+
+### Bug Fixes
+
+* **test:** try to resize browsers multiple times ([ea1533a](https://github.com/marko-js/cli/commit/ea1533a))
+
+
+
+
+
 ## [6.0.1](https://github.com/marko-js/cli/compare/@marko/test@6.0.0...@marko/test@6.0.1) (2019-05-17)
 
 
