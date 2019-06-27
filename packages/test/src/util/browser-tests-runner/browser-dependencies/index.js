@@ -56,13 +56,15 @@ setTimeout(() => {
   const fails = [];
 
   runner.on("fail", (test, err) => {
-    err.stack = err.stack.replace(STACK_REGEXP, (_, pkg, filePath) => {
-      if (pkg === options.packageName) {
-        return path.join(".", filePath);
-      } else {
-        return path.join("./node_modules", pkg, filePath);
-      }
-    });
+    err.stack =
+      err.stack &&
+      err.stack.replace(STACK_REGEXP, (_, pkg, filePath) => {
+        if (pkg === options.packageName) {
+          return path.join(".", filePath);
+        } else {
+          return path.join("./node_modules", pkg, filePath);
+        }
+      });
 
     fails.push({
       name: test.title,
