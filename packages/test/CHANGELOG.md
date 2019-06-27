@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.6](https://github.com/marko-js/cli/compare/@marko/test@6.0.5...@marko/test@6.0.6) (2019-06-27)
+
+
+### Bug Fixes
+
+* **test:** err.stack not always available in IE11 ([4a6d07e](https://github.com/marko-js/cli/commit/4a6d07e))
+
+
+
+
+
 ## [6.0.5](https://github.com/marko-js/cli/compare/@marko/test@6.0.4...@marko/test@6.0.5) (2019-06-27)
 
 
