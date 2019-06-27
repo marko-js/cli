@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.5](https://github.com/marko-js/cli/compare/@marko/test@6.0.4...@marko/test@6.0.5) (2019-06-27)
+
+
+### Bug Fixes
+
+* **test:** downgrade strip-ansi for improved browser support ([5a3f483](https://github.com/marko-js/cli/commit/5a3f483))
+
+
+
+
+
 ## [6.0.4](https://github.com/marko-js/cli/compare/@marko/test@6.0.3...@marko/test@6.0.4) (2019-06-27)
 
 
