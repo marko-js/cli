@@ -3,7 +3,7 @@ const stripAnsi = require("strip-ansi");
 const { inspect } = require("util");
 const path = require("path");
 const INSPECT_OPTIONS = { colors: true };
-const STACK_REGEXP = /\((?:https?:\/\/localhost:\d+\/)?(?:[^/]+\/){2}([^$]+)\$[^/]+([^)]+)\)/g;
+const STACK_REGEXP = /https?:\/\/localhost:\d+\/static\/[^/]+\/(.+?)\$[^/]+(.+?)(?=:\d+:\d+)/g;
 
 // Capture client logs and forward to server.
 ["log", "info", "warn", "trace", "error"].forEach(method => {
@@ -17,12 +17,14 @@ const STACK_REGEXP = /\((?:https?:\/\/localhost:\d+\/)?(?:[^/]+\/){2}([^$]+)\$[^
 // Forward uncaught excpections.
 window.addEventListener("error", ({ error }) => console.error(error));
 window.addEventListener("beforeunload", () => {
-  // If the browser navigates before the tests have finished mark the test as failing.
-  console.log(
-    "\nBrowser unexpectedly navigated during tests." +
-      "\n@marko/test does not support navigation.\n"
-  );
-  window.__test_result__ = { success: false };
+  if (!window.__test_result__) {
+    // If the browser navigates before the tests have finished mark the test as failing.
+    console.log(
+      "\nBrowser unexpectedly navigated during tests." +
+        "\n@marko/test does not support navigation.\n"
+    );
+    window.__test_result__ = { success: false };
+  }
 });
 
 require("chai").config.includeStack = true;
