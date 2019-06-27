@@ -3,7 +3,7 @@ const stripAnsi = require("strip-ansi");
 const { inspect } = require("util");
 const path = require("path");
 const INSPECT_OPTIONS = { colors: true };
-const STACK_REGEXP = /https?:\/\/localhost:\d+\/static\/[^/]+\/(.+?)\$[^/]+(.+?)(?=:\d+:\d+)/g;
+const STACK_REGEXP = /(?:https?:\/\/localhost:\d+\/)?static\/[^/]+\/(.+?)\$[^/]+(.+?)(?=:\d+:\d+)/g;
 
 // Capture client logs and forward to server.
 ["log", "info", "warn", "trace", "error"].forEach(method => {
