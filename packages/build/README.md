@@ -31,13 +31,12 @@ npm install marko-cli
 ## Example
 
 ```terminal
+marko build .
 marko build ./my-page.marko
-marko build ./components/my-component.marko
 ```
 
 ## Options
 
-- `--file -f *`: The marko file to build.
 - `--output -o`: Where to write the build.
 
 # API
