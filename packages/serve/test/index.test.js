@@ -81,7 +81,7 @@ function createTest(createServer) {
         const page = await browser.newPage();
         const screenshot = screenshotUtility.bind(null, page, resolve);
         await page.goto(
-          `http://localhost:${options.port}/${(main && main.path) || ""}`
+          `http://localhost:${options.port}${(main && main.path) || "/"}`
         );
 
         await screenshot();
