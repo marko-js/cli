@@ -46,7 +46,9 @@ module.exports = ({ dir, file, port = 3000, verbose, nodeArgs }) => {
         else spawnedServer.once("listening", next);
       });
     }
-  }).listen(port);
+  });
+
+  server.listen(port);
 
   return new Promise(resolve =>
     spawnedServer.once("listening", () => resolve(server))

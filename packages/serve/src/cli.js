@@ -88,7 +88,7 @@ exports.run = async options => {
     path.relative(process.cwd(), options.file || options.dir) ||
     "the current directory";
 
-  await serve({ ...options, port });
+  const server = await serve({ ...options, port });
 
   if (!options.noBrowser) {
     openBrowser(local);
@@ -121,4 +121,6 @@ exports.run = async options => {
     )
   );
   console.log("");
+
+  return server;
 };

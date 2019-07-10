@@ -12,4 +12,7 @@ dist
 actual.*
 *.actual.*
 *-actual.*
+diff.*
+*.diff.*
+*-diff.*
 .vscode

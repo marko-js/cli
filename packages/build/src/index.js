@@ -31,11 +31,16 @@ module.exports = ({
   const ASSETS_PATH = path.join(BUILD_PATH, "assets");
   const PUBLIC_PATH = "/assets/";
   const APP_DIR = dir || path.dirname(file);
+
+  // getClientCompilerName gets stringified and added to the output bundle
+  // if it is instrumented, the cov_${id} variable will cause a ReferenceError
+  /* istanbul ignore next */
   const markoPlugin = new MarkoPlugin({
     getClientCompilerName:
       production &&
       ($global => ($global.isModern ? "Browser-modern" : "Browser-legacy"))
   });
+
   const markoCompiler = (() => {
     process.env.APP_DIR = APP_DIR;
     return require.resolve("./marko-compiler");

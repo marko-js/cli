@@ -4,6 +4,11 @@
     "include": [
         "packages/*/src/**/*.js"
     ],
+    "exclude": [
+      "**/dist/**",
+      "**/node_modules/**",
+      "**/test/**"
+    ],
     "reporter": [
       "lcov",
       "text-summary"

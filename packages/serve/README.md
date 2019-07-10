@@ -45,31 +45,4 @@ marko serve ./components/my-component.marko
 
 # API
 
-## Installation
-
-```terminal
-npm install @marko/serve
-```
-
-## Example
-
-```javascript
-import serve from "@marko/serve";
-
-serve({
-  file: "./component.marko"
-}).then(server => {
-  console.log(
-    `the server is running at http://localhost:${server.address().port}`
-  );
-});
-```
-
-## Options
-
-Options are the same as the CLI options.
-
-- `file`: The marko file to serve
-- `port`: The port to serve on
-- `verbose`: Log the raw build output
-- `nodeArgs`: [node arguments](https://nodejs.org/api/cli.html)` for the server process
+Do not use the `@marko/serve` package directly. A programatic API is coming soon.
