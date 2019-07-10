@@ -27,8 +27,10 @@ module.exports = function printText(node, printContext, writer) {
 
   var lines = text.split(/\r\n|\n/);
 
-  lines = trimLinesStart(lines);
-  lines = trimLinesEnd(lines);
+  if (lines.length > 1) {
+    lines = trimLinesStart(lines);
+    lines = trimLinesEnd(lines);
+  }
 
   if (lines.length === 0) {
     return;
@@ -49,11 +51,22 @@ module.exports = function printText(node, printContext, writer) {
           "---"
       );
     } else {
-      let trimmed = lines[0].trim();
+      let trimmed = lines[0].trimLeft();
 
       if (trimmed.startsWith("<")) {
         writer.write(trimmed);
+      } else if (trimmed === "") {
+        writer.write(
+          "--" +
+            printContext.eol +
+            currentIndentString +
+            lines[0] +
+            printContext.eol +
+            currentIndentString +
+            "--"
+        );
       } else {
+        if (lines[0].match(/^\s+/) != null) trimmed = " " + trimmed;
         writer.write("-- " + trimmed);
       }
     }

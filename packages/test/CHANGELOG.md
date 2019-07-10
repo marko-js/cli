@@ -3,6 +3,94 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.6](https://github.com/marko-js/cli/compare/@marko/test@6.0.5...@marko/test@6.0.6) (2019-06-27)
+
+
+### Bug Fixes
+
+* **test:** err.stack not always available in IE11 ([4a6d07e](https://github.com/marko-js/cli/commit/4a6d07e))
+
+
+
+
+
+## [6.0.5](https://github.com/marko-js/cli/compare/@marko/test@6.0.4...@marko/test@6.0.5) (2019-06-27)
+
+
+### Bug Fixes
+
+* **test:** downgrade strip-ansi for improved browser support ([5a3f483](https://github.com/marko-js/cli/commit/5a3f483))
+
+
+
+
+
+## [6.0.4](https://github.com/marko-js/cli/compare/@marko/test@6.0.3...@marko/test@6.0.4) (2019-06-27)
+
+
+### Bug Fixes
+
+* **test:** improve stack traces in browser tests ([a218ff2](https://github.com/marko-js/cli/commit/a218ff2))
+
+
+
+
+
+## [6.0.3](https://github.com/marko-js/cli/compare/@marko/test@6.0.2...@marko/test@6.0.3) (2019-06-27)
+
+
+### Bug Fixes
+
+* **test:** no longer error after tests in some cases ([1849f9a](https://github.com/marko-js/cli/commit/1849f9a))
+
+
+
+
+
+## [6.0.2](https://github.com/marko-js/cli/compare/@marko/test@6.0.1...@marko/test@6.0.2) (2019-06-26)
+
+
+### Bug Fixes
+
+* **test:** try to resize browsers multiple times ([ea1533a](https://github.com/marko-js/cli/commit/ea1533a))
+
+
+
+
+
+## [6.0.1](https://github.com/marko-js/cli/compare/@marko/test@6.0.0...@marko/test@6.0.1) (2019-05-17)
+
+
+### Bug Fixes
+
+* **test:** resize based on viewport instead of window ([a58fdea](https://github.com/marko-js/cli/commit/a58fdea))
+
+
+
+
+
+# [6.0.0](https://github.com/marko-js/cli/compare/@marko/test@5.1.1...@marko/test@6.0.0) (2019-05-16)
+
+
+### Features
+
+* **test:** upgrade wdio ([#130](https://github.com/marko-js/cli/issues/130)) ([ffbdefd](https://github.com/marko-js/cli/commit/ffbdefd))
+
+
+
+
+
+## [5.1.1](https://github.com/marko-js/cli/compare/@marko/test@5.1.0...@marko/test@5.1.1) (2019-03-20)
+
+
+### Bug Fixes
+
+* **test:** remove deprecated inline control flow from test runner ([39c7a1d](https://github.com/marko-js/cli/commit/39c7a1d))
+
+
+
+
+
 # [5.1.0](https://github.com/marko-js/cli/compare/@marko/test@5.0.0...@marko/test@5.1.0) (2019-02-07)
 
 
