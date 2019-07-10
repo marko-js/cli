@@ -265,6 +265,7 @@ function printHTMLNodes(nodes, printContext, writer) {
 
   results.forEach(({ node, output }, index) => {
     let breakAfter = false;
+    let breakBefore = false;
     let isNewLine = writer.endsWith(printContext.newline);
 
     const { node: prevNode, output: prevOutput } = results[index - 1] || {};
@@ -310,7 +311,12 @@ function printHTMLNodes(nodes, printContext, writer) {
       node.type === "Declaration" ||
       node.type === "Scriptlet"
     ) {
+      breakBefore = true;
       breakAfter = true;
+    }
+
+    if (breakBefore && prevOutput && !writer.endsWith(printContext.newline)) {
+      writer.write(printContext.newline);
     }
 
     if (node.type === "Text" && output[0] !== "$") {
