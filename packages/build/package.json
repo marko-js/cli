@@ -22,7 +22,7 @@
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.6.0",
     "source-map-support": "^0.5.10",
-    "@marko/webpack": "^1.0.1-1",
+    "@marko/webpack": "^1.2.0",
     "mini-css-extract-plugin": "^0.5.0",
     "parse-node-args": "^1.1.2",
     "ignore-emit-webpack-plugin": "^1.0.2",

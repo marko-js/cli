@@ -16,6 +16,7 @@
     "eslint": "^5.15.3",
     "eslint-config-prettier": "^4.3.0",
     "eslint-plugin-prettier": "^3.1.0",
+    "fs-extra": "^8.1.0",
     "husky": "^2.3.0",
     "lerna": "^3.14.1",
     "lint-staged": "^8.1.7",

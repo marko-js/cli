@@ -4,6 +4,7 @@ import autotest from "mocha-autotest";
 import puppeteer from "puppeteer";
 import pixelmatch from "pixelmatch";
 import cluster from "cluster";
+import { copy, remove } from "fs-extra";
 import { PNG } from "pngjs";
 import { run } from "../src/cli";
 import build from "../../build/src/index";
@@ -51,7 +52,7 @@ describe("scope(serve)", function() {
 function createTest(createServer) {
   return async ({ resolve, test, snapshot, mode }) => {
     test(async () => {
-      let browser, closeServer;
+      let browser, closeServer, backupPath, targetPath;
       try {
         const mainPath = resolve("test.js");
         const hasMainFile = fs.existsSync(mainPath);
@@ -69,11 +70,11 @@ function createTest(createServer) {
         }
 
         if (hasTargetDir) {
-          options.dir = targetDirPath;
+          options.dir = targetPath = targetDirPath;
         }
 
         if (hasTargetFile) {
-          options.file = targetFilePath;
+          options.file = targetPath = targetFilePath;
         }
 
         closeServer = await createServer(options, { resolve });
@@ -87,17 +88,23 @@ function createTest(createServer) {
         await screenshot();
 
         if (main && main.test) {
-          main.test({
+          await copy(targetPath, (backupPath = resolve("backup")));
+          await main.test({
+            page,
             screenshot,
             snapshot,
-            targetFilePath,
-            targetDirPath,
+            targetPath,
             isBuild: mode === "build"
           });
         }
       } finally {
         if (browser) await browser.close();
         if (closeServer) await closeServer();
+        if (backupPath) {
+          await remove(targetPath);
+          await copy(backupPath, targetPath);
+          await remove(backupPath);
+        }
       }
     });
   };
