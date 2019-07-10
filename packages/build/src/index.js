@@ -144,7 +144,10 @@ module.exports = ({
     bail: true,
     context: __dirname,
     devtool: DEVTOOL,
-    resolve: { alias: sharedAliases(options) },
+    resolve: {
+      alias: sharedAliases(options),
+      extensions: [".wasm", ".mjs", ".js", ".json", ".marko"]
+    },
     module: { rules: sharedRules(options) }
   });
 
