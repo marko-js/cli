@@ -1,0 +1,56 @@
+{
+  "name": "@marko/build",
+  "description": "Utility to serve Marko build a server from a template",
+  "version": "1.0.0",
+  "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
+  "dependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "argly": "^1.2.0",
+    "babel-loader": "^8.0.5",
+    "babel-plugin-macros": "^2.5.1",
+    "brotli-webpack-plugin": "^1.1.0",
+    "browserslist": "^4.5.4",
+    "browserslist-useragent-regexp": "^1.0.3-beta",
+    "chalk": "^2.4.2",
+    "connect-gzip-static": "^2.1.1",
+    "marko": "^4.15.2",
+    "webpack": "^4.29.3",
+    "file-loader": "^3.0.1",
+    "css-loader": "^2.1.0",
+    "postcss": "^7.0.14",
+    "postcss-loader": "^3.0.0",
+    "postcss-preset-env": "^6.6.0",
+    "source-map-support": "^0.5.10",
+    "@marko/webpack": "^1.2.0",
+    "mini-css-extract-plugin": "^0.5.0",
+    "parse-node-args": "^1.1.2",
+    "ignore-emit-webpack-plugin": "^1.0.2",
+    "webpack-inject-plugin": "^1.1.0",
+    "csso-webpack-plugin": "^1.0.0-beta.12",
+    "imagemin-webpack-plugin":"^2.4.2",
+    "compression-webpack-plugin":"^2.0.0",
+    "resolve-from": "^4.0.0",
+    "fast-glob": "^2.2.6"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/marko-js/cli/tree/master/packages/serve",
+  "keywords": [
+    "cli",
+    "marko",
+    "build",
+    "utility"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "maintainers": [
+    "Michael Rawlings <ml.rawlings@gmail.com>",
+    "Dylan Piercey <pierceydylan@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marko-js/cli"
+  }
+}

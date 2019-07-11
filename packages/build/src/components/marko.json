@@ -1,0 +1,5 @@
+{
+  "<*>": {
+    "transformer": "./src-attributes-transformer"
+  }
+}

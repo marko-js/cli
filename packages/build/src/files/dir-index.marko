@@ -1,0 +1,102 @@
+style {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color:#333;
+    padding:3em;
+  }
+  h1 {
+    font-weight: 200;
+    margin:0;
+    padding:0;
+  }
+  h1 nav {
+    font-weight: 500;
+    pointer-events: none;
+    display:inline;
+  }
+  h1 nav a,
+  h1 nav a:hover ~ a {
+    color:#333;
+    text-decoration:none;
+    pointer-events:auto;
+  }
+  h1 nav:hover a,
+  main a {
+    color:#03d;
+    text-decoration:none;
+  }
+  main a span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  main {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 1.5em;
+    margin-top: 3em;
+  }
+  main a {
+    display:flex;
+    align-items:center;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  main a:hover {
+    text-decoration:underline;
+  }
+  main a img {
+    height:24px;
+    margin-right:0.5em;
+  }
+  footer {
+    text-align:right;
+    margin-top:5em;
+    font-size:0.8em;
+    color:#999;
+  }
+  footer a {
+    color:#459;
+    text-decoration:none;
+  }
+  footer a:hover {
+    color:#03d;
+    text-decoration:underline;
+  }
+}
+
+<h1>
+  Index of 
+  <nav>
+    <for|part, i, all| of=input.pathname.replace(/^\/|\/$/, "").split("/")>
+      <if(i === 0 && part)>
+        <a href="/">/</a>
+      </if>
+      <${i < all.length-1 ? "a" : null} href=`/${all.slice(0, i+1).join("/")}`>
+        ${part}/
+      </>
+    </for>
+  </nav>
+</h1>
+
+$ const root = input.pathname.replace(/\/$/, "")
+
+<main>
+  <if(root)>
+    <a href="."><img src="./parent-dir.png"/><span>Parent Directory</span></a>
+  </if>
+  <for|dir| of=input.params.dirs>
+    <a href=`${root}/${dir}` title=`${dir}/`><img src="./dir.png"/><span>${dir}/</span></a>
+  </for>
+  <for|file| of=input.params.files>
+    <a href=`${root}/${file}` title=`${file}.marko`><img src="./file.png"/><span>${file}.marko</span></a>
+  </for>
+  <for from=0 to=4>
+    <span/>
+  </for>
+</main>
+
+<footer>
+  Icons by <a href="https://icons8.com">icons8</a>
+</footer>
