@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.0.5...@marko/prettyprint@2.1.0) (2019-07-11)
+
+
+### Features
+
+* **test:** upgrade wdio ([#130](https://github.com/marko-js/cli/issues/130)) ([ffbdefd](https://github.com/marko-js/cli/commit/ffbdefd))
+
+
+
+
+
 ## [2.0.5](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.0.4...@marko/prettyprint@2.0.5) (2019-04-17)
 
 
