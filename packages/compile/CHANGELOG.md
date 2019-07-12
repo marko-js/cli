@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.1](https://github.com/marko-js/cli/compare/@marko/compile@4.0.0...@marko/compile@4.0.1) (2019-07-12)
+
+**Note:** Version bump only for package @marko/compile
+
+
+
+
+
 <a name="4.0.0"></a>
 # [4.0.0](https://github.com/marko-js/cli/compare/@marko/compile@3.4.0...@marko/compile@4.0.0) (2019-01-17)
 

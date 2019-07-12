@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/marko-js/cli/compare/@marko/create@4.0.0...@marko/create@4.1.0) (2019-07-12)
+
+
+### Features
+
+* **test:** upgrade wdio ([#130](https://github.com/marko-js/cli/issues/130)) ([ffbdefd](https://github.com/marko-js/cli/commit/ffbdefd))
+
+
+
+
+
 <a name="4.0.0"></a>
 # [4.0.0](https://github.com/marko-js/cli/compare/@marko/create@3.3.0...@marko/create@4.0.0) (2019-01-17)
 

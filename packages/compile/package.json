@@ -1,7 +1,7 @@
 {
   "name": "@marko/compile",
   "description": "Compile Marko files",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/runtime": "^7.2.0",
