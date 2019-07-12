@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.9](https://github.com/marko-js/cli/compare/@marko/test@6.0.8...@marko/test@6.0.9) (2019-07-12)
+
+**Note:** Version bump only for package @marko/test
+
+
+
+
+
 ## [6.0.8](https://github.com/marko-js/cli/compare/@marko/test@6.0.7...@marko/test@6.0.8) (2019-07-12)
 
 **Note:** Version bump only for package @marko/test
