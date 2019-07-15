@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/marko-js/cli/compare/@marko/migrate@5.0.8...@marko/migrate@5.1.0) (2019-07-15)
+
+
+### Features
+
+* **migrate:** update legacy widget migrations ([9fe3695](https://github.com/marko-js/cli/commit/9fe3695))
+
+
+
+
+
 ## [5.0.8](https://github.com/marko-js/cli/compare/@marko/migrate@5.0.7...@marko/migrate@5.0.8) (2019-07-12)
 
 **Note:** Version bump only for package @marko/migrate
