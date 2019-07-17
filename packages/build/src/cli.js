@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { loadWebpackConfig } = require("./");
 const details = require("../package.json");
+const { buildStaticSite } = require("./util");
 const parseNodeArgs = require("parse-node-args");
 const rimraf = require("rimraf");
 const webpack = require("webpack");
@@ -25,6 +26,10 @@ exports.parse = function parse(argv) {
       "--json": {
         type: "boolean",
         description: "Print a JSON stats object for analysis tools"
+      },
+      "--static": {
+        type: "boolean",
+        description: "Build a static HTML site"
       },
       "--version -v": {
         type: "boolean",
@@ -93,7 +98,10 @@ exports.run = async options => {
     }
   });
 
-  compiler.run(err => {
+  compiler.run(async (err, stats) => {
     if (err) console.error(err);
+    if (options.static) {
+      await buildStaticSite(options, stats);
+    }
   });
 };

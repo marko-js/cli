@@ -1,6 +1,12 @@
+const fs = require("fs");
 const path = require("path");
+const mkdirp = require("mkdirp");
 const resolveFrom = require("resolve-from");
 const fastGlob = require("fast-glob");
+const parseUrl = require("url").parse;
+const through = require("through2");
+const toString = require("stream-to-string");
+const getHrefs = require("get-hrefs");
 
 const useAppModuleOrFallback = (dir, moduleName) => {
   const packageName = `${moduleName}/package`;
@@ -160,8 +166,70 @@ const buildRoute = (dir, level = 0) => {
   return (needsPart ? partDeclaration : "") + indent + ifs.join(" else ");
 };
 
+const buildStaticSite = async (options, stats) => {
+  const outputPath = path.resolve(process.cwd(), options.output || "build");
+  const { routes } = require(path.join(outputPath, "middleware.js"));
+
+  if (options.dir) {
+    const cache = new Set();
+    await Promise.all(
+      Object.values(await getDirectoryLookup(options.dir)).map(async file => {
+        const url =
+          "/" +
+          path
+            .relative(options.dir, file)
+            .replace(/\\/g, "/")
+            .replace(/.marko$/, "")
+            .replace(/(^|\/)index(?=\/|$)/g, "")
+            .replace(/\/$/, "");
+        if (!url.includes("/:")) {
+          await buildStaticPage(url, cache, routes, outputPath);
+        }
+      })
+    );
+  } else {
+    await buildStaticPage("/", new Set(), routes, outputPath);
+  }
+
+  // if (stats) {
+  //   const serverStats = stats.stats.find(stats =>
+  //     stats.compilation.name.includes("Server")
+  //   );
+  //   const serverFiles = serverStats.compilation.chunks
+  //     .map(chunk => chunk.files)
+  //     .reduce((all, next) => all.concat(next));
+  //   serverFiles.forEach(fileName => {
+  //     fs.unlinkSync(path.join(outputPath, fileName));
+  //   });
+  // }
+};
+
+const buildStaticPage = async (url, cache, routes, outputPath) => {
+  if (!cache.has(url)) {
+    cache.add(url);
+    const filePath = path.join(outputPath, getFileName(url));
+    const request = { url, headers: {} };
+    const response = Object.assign(through(), { setHeader() {} });
+    routes(request, response);
+    const html = await toString(response);
+    const links = getHrefs(html).filter(href => !parseUrl(href).host);
+
+    mkdirp.sync(path.dirname(filePath));
+    fs.writeFileSync(filePath, html);
+
+    await Promise.all(
+      links.map(link => buildStaticPage(link, cache, routes, outputPath))
+    );
+  }
+};
+
+const getFileName = url => {
+  return url + (url[url.length - 1] === "/" ? "index.html" : ".html");
+};
+
 module.exports = {
   useAppModuleOrFallback,
   getDirectoryLookup,
-  getRouterCode
+  getRouterCode,
+  buildStaticSite
 };

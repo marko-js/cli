@@ -2,10 +2,11 @@ import fs from "fs";
 import autotest from "mocha-autotest";
 import puppeteer from "puppeteer";
 import cluster from "cluster";
+import webpack from "webpack";
 import { copy, remove } from "fs-extra";
 import { run } from "../src/cli";
 import { loadWebpackConfig } from "../../build/src/index";
-import webpack from "webpack";
+import { buildStaticSite } from "../../build/src/util";
 
 describe("scope(serve)", function() {
   this.slow(20000);
@@ -42,7 +43,31 @@ describe("scope(serve)", function() {
           server.on("exit", resolve);
           server.kill();
         });
-    })
+    }),
+    // static: createTest(async (options, { resolve }) => {
+    //   const outputPath = resolve("dist");
+    //   await buildStaticSite({ ...options, output: outputPath });
+    //   const serveExecutable = require.resolve(".bin/http-server");
+
+    //   cluster.setupMaster({
+    //     exec: serveExecutable,
+    //     execArgv: [],
+    //     args: [outputPath, "--port", String(options.port)]
+    //   });
+
+    //   let server;
+
+    //   await new Promise(resolve => {
+    //     server = cluster.fork();
+    //     server.once("listening", resolve);
+    //   });
+
+    //   return () =>
+    //     new Promise(resolve => {
+    //       server.on("exit", resolve);
+    //       server.kill();
+    //     });
+    // })
   });
 });
 
@@ -93,7 +118,7 @@ function createTest(createServer) {
             screenshot,
             snapshot,
             targetPath,
-            isBuild: mode === "build"
+            isBuild: mode === "build" || mode === "static"
           });
         }
       } finally {
