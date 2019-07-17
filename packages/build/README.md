@@ -44,7 +44,8 @@ marko-build ./my-page.marko
 
 ## Options
 
-- `--output -o`: Where to write the build.
+- `--output -o`: Where to write the build
+- `--static`: Build static HTML files instead of a node server
 
 # Config overrides
 
