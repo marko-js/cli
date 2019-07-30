@@ -1,6 +1,6 @@
 const onExit = require("async-exit-hook");
 let handlers;
-onExit(run);
+onExit(done => run().then(() => done(), done));
 
 /**
  * Functions provided as arguments are guaranteed to be ran on the exit of the process.
@@ -22,4 +22,6 @@ function run() {
     handlers = undefined;
     return Promise.all(pending.map(fn => fn()));
   }
+
+  return Promise.resolve();
 }
