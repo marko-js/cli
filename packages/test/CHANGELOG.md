@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.10](https://github.com/marko-js/cli/compare/@marko/test@6.0.9...@marko/test@6.0.10) (2019-07-30)
+
+
+### Bug Fixes
+
+* **test:** issue with cleanup not happending, upgrade chromedriver ([5c47e7a](https://github.com/marko-js/cli/commit/5c47e7a))
+
+
+
+
+
 ## [6.0.9](https://github.com/marko-js/cli/compare/@marko/test@6.0.8...@marko/test@6.0.9) (2019-07-12)
 
 **Note:** Version bump only for package @marko/test
