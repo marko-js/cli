@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.11](https://github.com/marko-js/cli/compare/@marko/test@6.0.10...@marko/test@6.0.11) (2019-07-31)
+
+
+### Bug Fixes
+
+* **test:** update chrome options ([2b1af61](https://github.com/marko-js/cli/commit/2b1af61))
+
+
+
+
+
 ## [6.0.10](https://github.com/marko-js/cli/compare/@marko/test@6.0.9...@marko/test@6.0.10) (2019-07-30)
 
 
