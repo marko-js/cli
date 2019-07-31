@@ -20,7 +20,7 @@ exports.run = async (tests, options) => {
   };
 
   if (wdioDefaults.name === "chromedriver") {
-    const args = options.wdioOptions.capabilities[0].chromeOptions.args;
+    const args = options.wdioOptions.capabilities[0]["goog:chromeOptions"].args;
 
     if (options.debug) {
       args.push("auto-open-devtools-for-tabs");

@@ -149,7 +149,7 @@ if (env.BROWSERSTACK_USER) {
     capabilities: [
       {
         browserName: "chrome",
-        chromeOptions: {
+        "goog:chromeOptions": {
           args: [
             "no-sandbox",
             "disable-dev-shm-usage",

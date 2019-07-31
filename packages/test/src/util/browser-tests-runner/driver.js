@@ -61,8 +61,12 @@ exports.start = async (href, options) => {
           ...wdioOptions,
           capabilities: {
             ...capability,
-            name: TEST_NAME,
-            build: BUILD_NUMBER
+            ...(BUILD_NUMBER
+              ? {
+                  name: TEST_NAME,
+                  build: BUILD_NUMBER
+                }
+              : {})
           }
         });
 
