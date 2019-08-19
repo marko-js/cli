@@ -1,7 +1,7 @@
 {
   "name": "@marko/test",
   "description": "Utility to test Marko files in both a server and browser environment",
-  "version": "6.0.11",
+  "version": "6.0.12",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@lasso/marko-taglib": "^1.0.13",
