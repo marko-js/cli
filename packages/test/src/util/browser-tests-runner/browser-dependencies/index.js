@@ -15,7 +15,14 @@ const STACK_REGEXP = /(?:https?:\/\/localhost:\d+\/)?static\/[^/]+\/(.+?)\$[^/]+
 });
 
 // Forward uncaught excpections.
-window.addEventListener("error", ({ error }) => console.error(error));
+window.addEventListener("error", ev => {
+  if (!window.__test_result__) {
+    window.__test_result__ = { success: false };
+  }
+
+  console.error(ev.error);
+  ev.preventDefault();
+});
 window.addEventListener("beforeunload", () => {
   if (!window.__test_result__) {
     // If the browser navigates before the tests have finished mark the test as failing.
@@ -52,25 +59,19 @@ Object.keys(mochaOptions).forEach(key => {
 });
 
 setTimeout(() => {
+  if (window.__test_result__) {
+    return;
+  }
+
   const runner = mocha.run();
   const fails = [];
 
   runner.on("fail", (test, err) => {
-    err.stack =
-      err.stack &&
-      err.stack.replace(STACK_REGEXP, (_, pkg, filePath) => {
-        if (pkg === options.packageName) {
-          return path.join(".", filePath);
-        } else {
-          return path.join("./node_modules", pkg, filePath);
-        }
-      });
-
     fails.push({
       name: test.title,
       result: false,
       message: err.message,
-      stack: err.stack,
+      stack: prepareStackTrace(err),
       titles: flattenTitles(test)
     });
   });
@@ -151,6 +152,9 @@ function flattenTitles(test) {
 }
 
 function inspectObject(val) {
+  if (isError(val)) {
+    val = prepareStackTrace(val) || val;
+  }
   return isObject(val) ? inspect(val, INSPECT_OPTIONS) : val;
 }
 
@@ -160,4 +164,21 @@ function isPromise(obj) {
 
 function isObject(val) {
   return val !== null && typeof val === "object";
+}
+
+function isError(val) {
+  return isObject(val) && val instanceof Error;
+}
+
+function prepareStackTrace(err) {
+  return (
+    err.stack &&
+    err.stack.replace(STACK_REGEXP, (_, pkg, filePath) => {
+      if (pkg === options.packageName) {
+        return path.join(".", filePath);
+      } else {
+        return path.join("./node_modules", pkg, filePath);
+      }
+    })
+  );
 }

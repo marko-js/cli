@@ -208,7 +208,9 @@ async function waitForResults(browser, { suiteTimeout, idleTimeout }) {
           configurable: true,
           set: function(result) {
             clearTimeout(timeout);
-            done(result);
+            timeout = setTimeout(function() {
+              done(result);
+            }, 0);
           }
         });
       }
