@@ -61,7 +61,7 @@ exports.start = async (href, options) => {
           ...wdioOptions,
           capabilities: {
             ...capability,
-            ...(BUILD_NUMBER
+            ...(wdioDefaults.name !== "chromedriver"
               ? {
                   name: TEST_NAME,
                   build: BUILD_NUMBER
