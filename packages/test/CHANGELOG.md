@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.13](https://github.com/marko-js/cli/compare/@marko/test@6.0.12...@marko/test@6.0.13) (2019-08-26)
+
+
+### Bug Fixes
+
+* **test:** skip build meta data for chromedriver ([212272d](https://github.com/marko-js/cli/commit/212272d))
+
+
+
+
+
 ## [6.0.12](https://github.com/marko-js/cli/compare/@marko/test@6.0.11...@marko/test@6.0.12) (2019-08-19)
 
 
