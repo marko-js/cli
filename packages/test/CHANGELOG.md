@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.14](https://github.com/marko-js/cli/compare/@marko/test@6.0.13...@marko/test@6.0.14) (2019-09-04)
+
+
+### Bug Fixes
+
+* **test:** improve stack trace formatting for server & browser ([9c393b8](https://github.com/marko-js/cli/commit/9c393b8))
+
+
+
+
+
 ## [6.0.13](https://github.com/marko-js/cli/compare/@marko/test@6.0.12...@marko/test@6.0.13) (2019-08-26)
 
 
