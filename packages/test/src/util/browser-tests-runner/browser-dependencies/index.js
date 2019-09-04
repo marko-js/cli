@@ -71,7 +71,7 @@ setTimeout(() => {
       name: test.title,
       result: false,
       message: err.message,
-      stack: prepareStackTrace(err),
+      stack: err.stack,
       titles: flattenTitles(test)
     });
   });
@@ -152,10 +152,13 @@ function flattenTitles(test) {
 }
 
 function inspectObject(val) {
-  if (isError(val)) {
-    val = prepareStackTrace(val) || val;
+  const result = isObject(val) ? inspect(val, INSPECT_OPTIONS) : val;
+
+  if (typeof result === "string") {
+    return result.replace(STACK_REGEXP, replaceStaticFilePath);
   }
-  return isObject(val) ? inspect(val, INSPECT_OPTIONS) : val;
+
+  return result;
 }
 
 function isPromise(obj) {
@@ -166,19 +169,10 @@ function isObject(val) {
   return val !== null && typeof val === "object";
 }
 
-function isError(val) {
-  return isObject(val) && val instanceof Error;
-}
+function replaceStaticFilePath(_, pkg, filePath) {
+  if (pkg === options.packageName) {
+    return path.join(".", filePath);
+  }
 
-function prepareStackTrace(err) {
-  return (
-    err.stack &&
-    err.stack.replace(STACK_REGEXP, (_, pkg, filePath) => {
-      if (pkg === options.packageName) {
-        return path.join(".", filePath);
-      } else {
-        return path.join("./node_modules", pkg, filePath);
-      }
-    })
-  );
+  return path.join("./node_modules", pkg, filePath);
 }
