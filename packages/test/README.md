@@ -317,3 +317,9 @@ module.exports = function(markoCli) {
     };
 }
 ```
+
+### Chromedriver
+
+As mentioned above [chromedriver](https://www.npmjs.com/package/chromedriver) is used by default for running browser tests. This package is versioned in lockstep with chrome itself and so it is up to you to ensure that you have the appropriate version of `chromedriver` installed to match the version of chrome you have on your local machine.
+
+`chromedriver` is marked as a `peerDependency` of `@marko/test` (the `marko test` command) and so you will need to `npm i chromedriver@YOUR_CHROME_VERSION -D` in order for this to work.
