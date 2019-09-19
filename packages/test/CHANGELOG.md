@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0](https://github.com/marko-js/cli/compare/@marko/test@6.0.14...@marko/test@7.0.0) (2019-09-19)
+
+
+### Bug Fixes
+
+* **test:** move chromedriver to be a peerDependency ([8289bf2](https://github.com/marko-js/cli/commit/8289bf2))
+
+
+### BREAKING CHANGES
+
+* **test:** chromedriver for the test command is no longer installed by default
+
+
+
+
+
 ## [6.0.14](https://github.com/marko-js/cli/compare/@marko/test@6.0.13...@marko/test@6.0.14) (2019-09-04)
 
 
