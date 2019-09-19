@@ -6,7 +6,7 @@
   "dependencies": {
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
-    "@marko/webpack": "^1.2.0",
+    "@marko/webpack": "^2.0.0",
     "argly": "^1.2.0",
     "babel-loader": "^8.0.5",
     "babel-plugin-macros": "^2.5.1",
