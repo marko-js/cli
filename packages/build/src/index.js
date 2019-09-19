@@ -178,8 +178,7 @@ module.exports = ({
       new webpack.DefinePlugin({
         "process.browser": undefined,
         "process.env.BUNDLE": true,
-        "global.PORT": production ? 3000 : "'0'",
-        "global.ASSETS_PATH": JSON.stringify(ASSETS_PATH)
+        "global.PORT": production ? 3000 : "'0'"
       }),
       new ExtractCSSPlugin({
         filename: "index.css",

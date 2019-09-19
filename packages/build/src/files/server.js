@@ -1,9 +1,13 @@
 require("source-map-support").install({ hookRequire: true });
 
 const http = require("http");
+const path = require("path");
 const gzipStatic =
   process.env.NODE_ENV === "production" &&
-  require("connect-gzip-static")(global.ASSETS_PATH);
+  require("connect-gzip-static")(
+    // eslint-disable-next-line
+    path.join(__non_webpack_require__.main.filename, "..", "assets")
+  );
 const getRoute = global.GET_ROUTE;
 const modernBrowsers = global.MODERN_BROWSERS_REGEXP;
 const PORT = process.env.PORT || global.PORT;
