@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.1](https://github.com/marko-js/cli/compare/@marko/build@1.1.0...@marko/build@1.1.1) (2019-10-16)
+
+
+### Bug Fixes
+
+* **build:** ensure marko webpack taglib is loaded ([534c62a](https://github.com/marko-js/cli/commit/534c62a))
+
+
+
+
+
 # [1.1.0](https://github.com/marko-js/cli/compare/@marko/build@1.0.7...@marko/build@1.1.0) (2019-10-16)
 
 
