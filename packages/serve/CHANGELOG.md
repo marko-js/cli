@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/marko-js/cli/compare/@marko/serve@1.0.7...@marko/serve@1.1.0) (2019-10-16)
+
+
+### Features
+
+* **build:** support top level index folder ([886cdb2](https://github.com/marko-js/cli/commit/886cdb2))
+
+
+
+
+
 ## [1.0.7](https://github.com/marko-js/cli/compare/@marko/serve@1.0.6...@marko/serve@1.0.7) (2019-10-16)
 
 
