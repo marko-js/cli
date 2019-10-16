@@ -112,7 +112,7 @@ function createTest(createServer) {
 }
 
 async function screenshotUtility(page, mode, snapshot, resolve, name, element) {
-  const target = element || (await page.$("html"));
+  const target = element || (await page.$("body"));
   const nameWithMode = `${name || ""}${name && mode ? "-" : ""}${mode || ""}`;
   const screenshotPath = resolve(
     `${nameWithMode && `${nameWithMode}-`}actual.png`

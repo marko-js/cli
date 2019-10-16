@@ -1,4 +1,5 @@
 const path = require("path");
+const rimraf = require("rimraf");
 const webpack = require("webpack");
 const browserslist = require("browserslist");
 const ExtractCSSPlugin = require("mini-css-extract-plugin");
@@ -239,9 +240,17 @@ module.exports = ({
     targets: modernBrowsers
   });
 
-  return webpack(
+  const compiler = webpack(
     production
       ? [legacyBrowserConfig, modernBrowserConfig, serverConfig]
       : [modernBrowserConfig, serverConfig]
   );
+
+  if (production) {
+    compiler.hooks.run.tapAsync("@marko/build", (_, done) =>
+      rimraf(BUILD_PATH, done)
+    );
+  }
+
+  return compiler;
 };
