@@ -2,9 +2,8 @@ const path = require("path");
 const webpack = require("webpack");
 const browserslist = require("browserslist");
 const ExtractCSSPlugin = require("mini-css-extract-plugin");
-const IgnoreEmitPlugin = require("ignore-emit-webpack-plugin");
 const InjectPlugin = require("webpack-inject-plugin").default;
-const MinifyCSSPlugin = require("csso-webpack-plugin").default;
+const MinifyCSSPlugin = require("optimize-css-assets-webpack-plugin");
 const MinifyImgPlugin = require("imagemin-webpack-plugin").default;
 const CompressionPlugin = require("compression-webpack-plugin");
 const BrotliPlugin = require("brotli-webpack-plugin");
@@ -13,7 +12,7 @@ const MarkoPlugin = require("@marko/webpack/plugin").default;
 const { getUserAgentRegExp } = require("browserslist-useragent-regexp");
 const { useAppModuleOrFallback, getRouterCode } = require("./util");
 
-const HASH = "[hash:10]";
+const HASH = "[contenthash:10]";
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
 const CWD = process.cwd();
 
@@ -83,7 +82,7 @@ module.exports = ({
   const sharedRules = ({ isServer, targets }) => [
     {
       test: /\.js$/,
-      exclude: /node_modules/,
+      exclude: isServer ? /node_modules/ : undefined,
       use: [babelLoader(targets)]
     },
     {
@@ -100,21 +99,19 @@ module.exports = ({
     },
     {
       test: /\.css$/,
-      exclude: /node_modules/,
-      use: [
-        ExtractCSSPlugin.loader,
-        {
-          loader: require.resolve("css-loader"),
-          options: {
-            modules: false,
-            sourceMap: true,
-            importLoaders: 1
-          }
-        }
-      ].concat(
-        isServer
-          ? []
-          : {
+      use: isServer
+        ? [require.resolve("ignore-loader")]
+        : [
+            ExtractCSSPlugin.loader,
+            {
+              loader: require.resolve("css-loader"),
+              options: {
+                modules: false,
+                sourceMap: true,
+                importLoaders: 1
+              }
+            },
+            {
               loader: require.resolve("postcss-loader"),
               options: {
                 config: {
@@ -123,7 +120,7 @@ module.exports = ({
                 }
               }
             }
-      )
+          ]
     },
     {
       test: file => !/\.(js(on)?|css|marko)$/.test(file),
@@ -180,11 +177,6 @@ module.exports = ({
         "process.env.BUNDLE": true,
         "global.PORT": production ? 3000 : "'0'"
       }),
-      new ExtractCSSPlugin({
-        filename: "index.css",
-        allChunks: true
-      }),
-      new IgnoreEmitPlugin("index.css"),
       new InjectPlugin(() => {
         if (dir) {
           return getRouterCode(dir);
@@ -216,7 +208,7 @@ module.exports = ({
       pathinfo: true,
       publicPath: PUBLIC_PATH,
       path: ASSETS_PATH,
-      filename: `[name].${targetsName}.[chunkhash:10].js`,
+      filename: `[name].${targetsName}.${HASH}.js`,
       libraryTarget: "var",
       devtoolModuleFilenameTemplate: production
         ? "webpack://[namespace]/[resource-path]?[loaders]"
@@ -227,7 +219,7 @@ module.exports = ({
         "process.browser": true
       }),
       new ExtractCSSPlugin({
-        filename: `[name].${targetsName}.[chunkhash:10].css`,
+        filename: `[name].${targetsName}.${HASH}.css`,
         allChunks: true
       }),
       markoPlugin.browser,
