@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.7](https://github.com/marko-js/cli/compare/@marko/build@1.0.6...@marko/build@1.0.7) (2019-10-16)
+
+
+### Bug Fixes
+
+* **build:** improve css handling ([1c65b35](https://github.com/marko-js/cli/commit/1c65b35))
+
+
+
+
+
 ## [1.0.6](https://github.com/marko-js/cli/compare/@marko/build@1.0.5...@marko/build@1.0.6) (2019-09-19)
 
 
