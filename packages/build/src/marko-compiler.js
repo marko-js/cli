@@ -6,5 +6,11 @@ const compiler = require(path.join(
 ));
 
 compiler.registerTaglib(require.resolve("./components/marko.json"));
+compiler.registerTaglib(
+  path.join(
+    useAppModuleOrFallback(process.env.APP_DIR, "@marko/webpack"),
+    "marko.json"
+  )
+);
 
 module.exports = compiler;
