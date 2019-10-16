@@ -14,7 +14,9 @@ const getDirectoryLookup = async (cwd, ignore = []) => {
   const filenames = await fastGlob(["**/*.marko"], { cwd, ignore });
 
   for (let filename of filenames) {
-    const normalized = filename.replace(".marko", "").replace(/\\/g, "/");
+    const normalized = filename
+      .replace(/(^|\/)(?:index\/(?=index\.marko$))?([^/]+)?\.marko$/, "$1$2")
+      .replace(/\\/g, "/");
     lookup[normalized] = path.join(cwd, filename);
   }
 
@@ -115,9 +117,7 @@ const buildRoute = (dir, level = 0) => {
       const paramMatch = paramPattern.exec(key);
       if (!paramMatch) {
         ifs.unshift(
-          `if (${partMatch}) {\n${indent}  return { params, template:${
-            file.varName
-          } };\n${indent}}`
+          `if (${partMatch}) {\n${indent}  return { params, template:${file.varName} };\n${indent}}`
         );
         needsPart = true;
       } else {

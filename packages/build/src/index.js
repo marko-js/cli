@@ -12,7 +12,8 @@ const MarkoPlugin = require("@marko/webpack/plugin").default;
 const { getUserAgentRegExp } = require("browserslist-useragent-regexp");
 const { useAppModuleOrFallback, getRouterCode } = require("./util");
 
-const HASH = "[contenthash:10]";
+const CONTENT_HASH = "[contenthash:10]";
+const CHUNK_HASH = "[chunkhash:10]";
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
 const CWD = process.cwd();
 
@@ -127,7 +128,9 @@ module.exports = ({
       loader: require.resolve("file-loader"),
       options: {
         publicPath: PUBLIC_PATH,
-        name: production ? `${HASH}.[ext]` : `[name].${HASH}.[ext]`,
+        name: production
+          ? `${CONTENT_HASH}.[ext]`
+          : `[name].${CONTENT_HASH}.[ext]`,
         outputPath: path.relative(
           isServer ? BUILD_PATH : ASSETS_PATH,
           ASSETS_PATH
@@ -168,7 +171,7 @@ module.exports = ({
       path: BUILD_PATH,
       publicPath: PUBLIC_PATH,
       filename: "index.js",
-      chunkFilename: `[name].${HASH}.js`,
+      chunkFilename: `[name].${CHUNK_HASH}.js`,
       libraryTarget: "commonjs2"
     },
     plugins: [
@@ -208,7 +211,7 @@ module.exports = ({
       pathinfo: true,
       publicPath: PUBLIC_PATH,
       path: ASSETS_PATH,
-      filename: `[name].${targetsName}.${HASH}.js`,
+      filename: `[name].${targetsName}.${CHUNK_HASH}.js`,
       libraryTarget: "var",
       devtoolModuleFilenameTemplate: production
         ? "webpack://[namespace]/[resource-path]?[loaders]"
@@ -219,7 +222,7 @@ module.exports = ({
         "process.browser": true
       }),
       new ExtractCSSPlugin({
-        filename: `[name].${targetsName}.${HASH}.css`,
+        filename: `[name].${targetsName}.${CONTENT_HASH}.css`,
         allChunks: true
       }),
       markoPlugin.browser,
