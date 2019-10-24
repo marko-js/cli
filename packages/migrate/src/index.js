@@ -107,7 +107,9 @@ export default async function(options = {}) {
           raw: true
         });
 
-        await runAutoMigrations(migrateHelper);
+        if (!options.safe) {
+          await runAutoMigrations(migrateHelper);
+        }
 
         let prettyOriginalSource;
         const migratedSource = markoPrettyprint.prettyPrintAST(
@@ -163,9 +165,7 @@ export default async function(options = {}) {
       }
       console.log(
         chalk.bold.red(
-          `\nMigrated ${updateCount} of ${foundCount} component(s) with ${
-            errorEntries.length
-          } error(s)`
+          `\nMigrated ${updateCount} of ${foundCount} component(s) with ${errorEntries.length} error(s)`
         )
       );
     } else {

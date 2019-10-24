@@ -42,6 +42,7 @@ marko migrate ./components/my-component.marko
 - `--maxLen`: The max line length to use when printing the migrated source (defaults to `80`, set to `-1` to disable)
 - `--syntax`: The syntax to use when printing the migrated source. Can either be `"html"` or `"concise"` (defaults to `"html"`)
 - `--dry-run`: Runs the migration in memory only.
+- `--safe`: Run all safe migrations ignoring any prompts.
 
 # API
 

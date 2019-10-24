@@ -34,6 +34,10 @@ export function parse(argv) {
       "--single-quote": {
         type: "boolean",
         description: "If set, will prefer single quotes"
+      },
+      "--safe": {
+        type: "boolean",
+        description: "Run all safe migrations ignoring any prompts"
       }
     })
     .usage("Usage: $0 <pattern> [options]")
