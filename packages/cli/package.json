@@ -1,7 +1,7 @@
 {
   "name": "marko-cli",
   "description": "Marko CLI",
-  "version": "7.0.24",
+  "version": "7.0.25",
   "author": "Michael Rawlings <ml.rawlings@gmail.com>",
   "bin": {
     "marko": "dist/bin.js"
@@ -12,7 +12,7 @@
     "@marko/build": "^1.2.0",
     "@marko/compile": "^4.0.2",
     "@marko/create": "^4.1.1",
-    "@marko/migrate": "^5.1.0",
+    "@marko/migrate": "^5.2.0",
     "@marko/prettyprint": "^2.1.2",
     "@marko/serve": "^1.2.0",
     "@marko/test": "^7.0.0",

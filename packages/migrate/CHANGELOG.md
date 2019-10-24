@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/marko-js/cli/compare/@marko/migrate@5.1.0...@marko/migrate@5.2.0) (2019-10-24)
+
+
+### Features
+
+* **migrate:** add option to run all safe migrations ([96bb547](https://github.com/marko-js/cli/commit/96bb547))
+
+
+
+
+
 # [5.1.0](https://github.com/marko-js/cli/compare/@marko/migrate@5.0.8...@marko/migrate@5.1.0) (2019-07-15)
 
 
