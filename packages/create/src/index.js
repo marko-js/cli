@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require("fs");
+const fsExtra = require("fs-extra");
 const got = require("got");
 const ora = require("ora");
 const path = require("path");
@@ -9,10 +10,11 @@ const exec = require("child_process").exec;
 const initGitRepo = require("./init-git-repo");
 
 const DEFAULT_REPO = "demo";
-const MARKO_PREFIX = "marko-";
-const MARKO_STARTER_PREFIX = "marko-starter-";
-const MARKO_SAMPLES_ORG = "marko-js-samples";
+const MARKO_ORG = "marko-js";
+const MARKO_EXAMPLES_REPO = "examples";
 const GITHUB_URL = "https://github.com/";
+const EXAMPLES_REPO_DIR = "examples-master/";
+const EXAMPLES_PATH = "examples/";
 const REPO_PATH = (org, repo) => `${GITHUB_URL}${org}/${repo}`;
 const TREE_PATH = (org, repo, tag) => `${REPO_PATH(org, repo)}/tree/${tag}`;
 const ARCHIVE_PATH = (org, repo, tag) =>
@@ -20,7 +22,7 @@ const ARCHIVE_PATH = (org, repo, tag) =>
 const MASTER_TAG = "master";
 
 exports.run = function(options = {}) {
-  const { dir, name: projectName } = options;
+  const { dir, example, name: projectName } = options;
   console.log("");
   const spinner = ora("Starting...").start();
   return Promise.resolve()
@@ -31,12 +33,12 @@ exports.run = function(options = {}) {
 
       assertAllGood(dir, name, fullPath);
 
-      return getExistingRepo(org, repo, tag).then(existing => {
+      return getExistingRepo(org, repo, tag, example).then(existing => {
         let org = existing.org;
         let repo = existing.repo;
         let tag = existing.tag;
         spinner.text = "Downloading app...";
-        return getZipArchive(org, repo, tag, dir, name).then(() => {
+        return getZipArchive(org, repo, tag, dir, name, example).then(() => {
           rewritePackageJson(fullPath, name);
           spinner.text = "Installing npm modules... (this may take a minute)";
           return installPackages(fullPath).then(() => {
@@ -58,7 +60,7 @@ function getOrgRepoTagAndName(arg) {
   const argParts = splitOrUnshiftDefault(arg, ":", DEFAULT_REPO);
   const source = argParts[0];
   const name = argParts[1];
-  const sourceParts = splitOrUnshiftDefault(source, "/", MARKO_SAMPLES_ORG);
+  const sourceParts = splitOrUnshiftDefault(source, "/", MARKO_ORG);
   const org = sourceParts[0];
   const repoAndTag = sourceParts[1];
   const repoAndTagParts = repoAndTag.split("@");
@@ -91,15 +93,19 @@ function isValidAppName(name) {
   return !/\/|\\/.test(name);
 }
 
-function getExistingRepo(org, repo, tag) {
-  let possibleRepos =
-    org === MARKO_SAMPLES_ORG
-      ? [
-          { org, repo },
-          { org, repo: MARKO_PREFIX + repo },
-          { org, repo: MARKO_STARTER_PREFIX + repo }
-        ]
-      : [{ org, repo }];
+function getExistingRepo(org, repo, tag, example) {
+  let possibleRepos;
+
+  if (example) {
+    possibleRepos = [
+      {
+        org: MARKO_ORG,
+        repo: MARKO_EXAMPLES_REPO
+      }
+    ];
+  } else {
+    possibleRepos = [{ org, repo }];
+  }
 
   return Promise.all(
     possibleRepos.map(possible => {
@@ -152,14 +158,23 @@ function isUrlFound(url) {
     .catch(() => false);
 }
 
-function getZipArchive(org, repo, tag, dir, name) {
+function getZipArchive(org, repo, tag, dir, name, example) {
   let resource = ARCHIVE_PATH(org, repo, tag);
   let extractor = unzip.Extract({ path: dir });
 
   return new Promise((resolve, reject) => {
     let zipStream = got.stream(resource).pipe(extractor);
     zipStream.on("error", reject).on("close", () => {
-      fs.renameSync(path.join(dir, repo + "-" + tag), path.join(dir, name));
+      if (MARKO_ORG === org && MARKO_EXAMPLES_REPO === repo) {
+        fsExtra.copySync(
+          path.join(dir, EXAMPLES_REPO_DIR, EXAMPLES_PATH, example),
+          path.join(dir, example)
+        );
+        fs.renameSync(path.join(dir, example), path.join(dir, name));
+        fsExtra.removeSync(path.join(dir, EXAMPLES_REPO_DIR));
+      } else {
+        fs.renameSync(path.join(dir, repo + "-" + tag), path.join(dir, name));
+      }
       resolve();
     });
   });

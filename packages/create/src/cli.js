@@ -18,6 +18,10 @@ exports.parse = function parse(argv) {
       "--name -n *": {
         type: "string",
         description: "Name of the new app (with optional source)"
+      },
+      "--example -e": {
+        type: "string",
+        description: "Name of the example to use"
       }
     })
     .usage(
@@ -34,8 +38,8 @@ exports.parse = function parse(argv) {
       `marko create my-new-app ${chalk.green.bold("--dir ~/Desktop")}`
     )
     .example(
-      "…from the min template (marko-js-samples/marko-starter-min)",
-      `marko create ${chalk.green.bold("min:")}my-new-app`
+      "…from a marko example (marko-js/examples/color-picker)",
+      `marko create my-new-app ${chalk.green.bold("--example color-picker")}`
     )
     .example(
       "…from a github repo",
