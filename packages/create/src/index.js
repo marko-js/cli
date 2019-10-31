@@ -166,10 +166,12 @@ function getZipArchive(org, repo, tag, dir, name, example) {
     let zipStream = got.stream(resource).pipe(extractor);
     zipStream.on("error", reject).on("close", () => {
       if (MARKO_ORG === org && MARKO_EXAMPLES_REPO === repo) {
-        fsExtra.copySync(
-          path.join(dir, EXAMPLES_REPO_DIR, EXAMPLES_PATH, example),
-          path.join(dir, example)
-        );
+        const examplesDir = path.join(dir, EXAMPLES_REPO_DIR, EXAMPLES_PATH, example);
+        if (!fs.existsSync(examplesDir)) {
+          fsExtra.removeSync(path.join(dir, EXAMPLES_REPO_DIR));
+          throw new Error(`No example found with name: '${example}'.`);
+        }
+        fsExtra.copySync(examplesDir, path.join(dir, example));
         fs.renameSync(path.join(dir, example), path.join(dir, name));
         fsExtra.removeSync(path.join(dir, EXAMPLES_REPO_DIR));
       } else {
