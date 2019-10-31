@@ -38,6 +38,13 @@ marko create myapp
 ## Options
 
 - `--dir`: Provide a different directory to setup the project in (default to `pwd`).
+- `--example`: Create a marko project using one of the [examples](https://github.com/marko-js/examples).
+
+## Example
+
+```terminal
+marko create myapp --example color-picker
+```
 
 # API
 
