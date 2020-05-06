@@ -72,14 +72,14 @@ export function parse(argv) {
   return options;
 }
 
-export async function run(options, markoCli) {
+export async function run(options) {
   await markoMigrate({
     syntax: "html",
     maxLen: 80,
     noSemi: false,
     singleQuote: false,
     ignore: ["/node_modules", ".*"],
-    dir: markoCli.cwd,
+    dir: process.cwd(),
     ...options,
     prompt,
     onWriteFile(file, source) {

@@ -9,7 +9,8 @@
     "chalk": "^2.4.1",
     "got": "^9.4.0",
     "ora": "^3.0.0",
-    "unzip": "^0.1.11"
+    "unzip": "^0.1.11",
+    "update-notifier": "^4.1.0"
   },
   "files": [
     "dist"
@@ -24,6 +25,9 @@
   ],
   "license": "MIT",
   "main": "dist/index.js",
+  "bin": {
+    "marko-create": "./dist/bin.js"
+  },
   "maintainers": [
     "Patrick Steele-Idem <pnidem@gmail.com>",
     "Michael Rawlings <ml.rawlings@gmail.com>",

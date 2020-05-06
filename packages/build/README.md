@@ -22,17 +22,24 @@ Utility to build a node server from a marko file
 
 # CLI
 
-## Installation
+## Getting Started
 
 ```terminal
-npm install marko-cli
+npm install @marko/build
+marko-build .
+```
+
+or
+
+```terminal
+npx @marko/build .
 ```
 
 ## Example
 
 ```terminal
-marko build .
-marko build ./my-page.marko
+marko-build .
+marko-build ./my-page.marko
 ```
 
 ## Options

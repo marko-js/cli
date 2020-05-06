@@ -20,53 +20,60 @@
 
 Utility to test Marko files in both a server and browser environment.
 
-## Installation
+## Getting Started
 
 ```terminal
-npm install marko-cli
+npm install @marko/test
+marko-test ./test.js
+```
+
+or
+
+```terminal
+npx @marko/test ./test.js
 ```
 
 ## Usage:
 
-`marko test` supports glob patterns
+`marko-test` supports glob patterns
 for locating and running test files. See [Component Testing](#component-testing) below for more
 details on how to write unit tests for UI components.
 
 Run all of the tests in a project/directory:
 
 ```terminal
-marko test
+marko-test
 ```
 
 Run all of the unit tests for a single UI component:
 
 ```terminal
-marko test ./src/components/app-foo/**/test*.js
+marko-test ./src/components/app-foo/**/test*.js
 ```
 
 Run all of the unit tests for all UI components:
 
 ```terminal
-marko test ./src/components/**/test*.js
+marko-test ./src/components/**/test*.js
 ```
 
 Run only server tests:
 
 ```terminal
-marko test ./src/components/**/test*server.js --server
+marko-test ./src/components/**/test*server.js --server
 ```
 
 Keep server open after the tests finish and disable headless mode for browser tests:
 
 ```terminal
-marko test --debug
+marko-test --debug
 ```
 
 All node options are forwarded to the mocha process for server testing, allowing the following:
 
 ```terminal
 # Will start a debugging session on the spawned mocha process.
-marko test --server --inspect-brk
+marko-test --server --inspect-brk
 ```
 
 ## Component testing
@@ -177,36 +184,7 @@ _.gitignore_
 Use [`nyc`](https://github.com/istanbuljs/nyc) to generate coverage reports. Just prefix any test commands with `nyc`:
 
 ```
-nyc marko test
-```
-
-# Plugins
-
-Marko CLI supports plugins as JavaScript functions:
-
-```javascript
-module.exports = function(markoCli) {
-  // Run any initialization code:
-  require("app-module-path").addPath(__dirname);
-
-  // Register new commands...
-  //
-  // Add support for: `marko my-command arg0 arg1 ... argn`
-  markoCli.addCommand("my-command", {
-    run(options) {
-      return new Promise((resolve, reject) => {
-        // Run the command
-      });
-    },
-
-    parse(args) {
-      var options = {};
-      return options;
-    }
-  });
-
-  markoCli.plugin(require("marko-cli-my-plugin"));
-};
+nyc marko-test
 ```
 
 ## `marko-cli.js`
@@ -280,7 +258,7 @@ module.exports = function(markoCli) {
 
 ### Browser Testing with Webdriver.io
 
-Under the hood `marko test` uses [Webdriver.io](http://webdriver.io) to speak to various browsers.
+Under the hood `@marko/test` uses [Webdriver.io](http://webdriver.io) to speak to various browsers.
 The test command operates differently than a standard WDIO utility by compiling the tests themselves and running everything in the browser. A websocket is setup with the browser instance to stream logs. A subset of WDIO options are exposed under `markoCli.config.wdioOptions`.
 
 _my-app/marko-cli.js:_
@@ -322,4 +300,4 @@ module.exports = function(markoCli) {
 
 As mentioned above [chromedriver](https://www.npmjs.com/package/chromedriver) is used by default for running browser tests. This package is versioned in lockstep with chrome itself and so it is up to you to ensure that you have the appropriate version of `chromedriver` installed to match the version of chrome you have on your local machine.
 
-`chromedriver` is marked as a `peerDependency` of `@marko/test` (the `marko test` command) and so you will need to `npm i chromedriver@YOUR_CHROME_VERSION -D` in order for this to work.
+`chromedriver` is marked as a `peerDependency` of `@marko/test` and so you will need to `npm i chromedriver@YOUR_CHROME_VERSION -D` in order for this to work.

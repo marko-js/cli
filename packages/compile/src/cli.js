@@ -29,7 +29,7 @@ exports.parse = function parse(argv) {
       }
     })
     .usage("Usage: $0 [options]")
-    .example("Compile all templates", "marko compile")
+    .example("Compile all templates", "$0")
     .validate(function(result) {
       if (result.help) {
         this.printUsage();
@@ -46,11 +46,11 @@ exports.parse = function parse(argv) {
   return options;
 };
 
-exports.run = function run(options, markoCli) {
+exports.run = function run(options) {
   const { ignore, server, browser, clean, files: patterns } = options;
 
   return markoCompile.run({
-    dir: markoCli.cwd,
+    dir: process.cwd(),
     ignore,
     server,
     browser,

@@ -22,16 +22,10 @@ Utility to migrate Marko templates to avoid using deprecated features.
 
 # CLI
 
-## Installation
+## Getting Started
 
 ```terminal
-npm install marko-cli
-```
-
-## Example
-
-```terminal
-marko migrate ./components/my-component.marko
+npx @marko/migrate ./components/my-component.marko
 ```
 
 ## Options

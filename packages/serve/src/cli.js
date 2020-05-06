@@ -32,9 +32,9 @@ exports.parse = function parse(argv) {
         description: "Don't automatically open the browser"
       }
     })
-    .usage("$0 serve <path> [options]")
-    .example("Serve a marko file", "$0 serve component.marko")
-    .example("Serve the current directory", "$0 serve .")
+    .usage("$0 <path> [options]")
+    .example("Serve a marko file", "$0 component.marko")
+    .example("Serve the current directory", "$0 .")
 
     .validate(function(result) {
       if (result.help) {

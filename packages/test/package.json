@@ -34,11 +34,13 @@
     "raptor-renderer": "^1.5.0",
     "resolve-from": "^5.0.0",
     "strip-ansi": "2.0.1",
+    "update-notifier": "^4.1.0",
     "wdio-chromedriver-service": "^5.0.2",
     "webdriverio": "^5.8.4"
   },
   "peerDependencies": {
-    "chromedriver": "*"
+    "chromedriver": "*",
+    "marko-cli": "^7.0.25"
   },
   "files": [
     "dist"
@@ -53,6 +55,9 @@
   ],
   "license": "MIT",
   "main": "dist/index.js",
+  "bin": {
+    "marko-test": "./dist/bin.js"
+  },
   "maintainers": [
     "Patrick Steele-Idem <pnidem@gmail.com>",
     "Michael Rawlings <ml.rawlings@gmail.com>",

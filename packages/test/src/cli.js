@@ -1,5 +1,6 @@
 const markoTest = require(".");
 const parseNodeArgs = require("parse-node-args");
+const MarkoCli = require("marko-cli");
 
 exports.parse = function parse(argv) {
   const { cliArgs, nodeArgs } = parseNodeArgs(argv);
@@ -30,7 +31,7 @@ exports.parse = function parse(argv) {
       // the `pageTemplate` option in the browser tests runner.
     })
     .usage("Usage: $0 [options]")
-    .example("Run all tests", "marko test")
+    .example("Run all tests", "$0")
     .example(
       "Run all tests for a single component",
       "marko test ./src/components/app-foo/**/test*.js"
@@ -67,7 +68,8 @@ exports.parse = function parse(argv) {
   return options;
 };
 
-exports.run = function run(options, markoCli) {
+exports.run = function run(options) {
+  const markoCli = MarkoCli.create();
   const {
     mochaOptions,
     browserBuilder, // Deprecated, will be removed in the next major.

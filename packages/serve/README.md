@@ -48,7 +48,7 @@ To get started, let's create a new directory and serve it using `npx` (requires 
 ```bash
 mkdir my-new-app
 cd my-new-app
-npx marko-cli serve .
+npx @marko/serve .
 ```
 
 When you serve a directory, a browser tab is automatically opened. Since this directory is empty, you should now be looking at an empty directory index.

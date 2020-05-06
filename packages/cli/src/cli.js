@@ -1,4 +1,6 @@
 var MarkoDevTools = require("./MarkoDevTools");
+const chalk = require("chalk");
+const boxen = require("boxen");
 const checkForMarkoCliUpdates = require("./util/checkForMarkoCliUpdates");
 
 exports.run = function(argv) {
@@ -21,6 +23,24 @@ exports.run = function(argv) {
     );
     process.exit(1);
   }
+
+  const message =
+    "\n" +
+    boxen(
+      `The marko-cli package has been ${chalk.red(
+        "deprecated"
+      )}.\nInstall and use the individual commands instead:\n\n${chalk.cyan(
+        `npx @marko/${commandName} ${argv.slice(3).join(" ")}`
+      )}`,
+      {
+        padding: 1,
+        margin: 1,
+        borderColor: "yellow",
+        borderStyle: "round"
+      }
+    );
+
+  console.error(message);
 
   return markoDevTools.runCommand(commandName, argv.slice(3)).catch(err => {
     console.error(

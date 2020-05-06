@@ -24,9 +24,9 @@ exports.parse = function parse(argv) {
         description: "Print a JSON stats object for analysis tools"
       }
     })
-    .usage("$0 build <path> [options]")
-    .example("Build a marko file", "$0 build component.marko")
-    .example("Build the current directory", "$0 build .")
+    .usage("$0 <path> [options]")
+    .example("Build a marko file", "$0 component.marko")
+    .example("Build the current directory", "$0 .")
 
     .validate(function(result) {
       if (result.help) {
