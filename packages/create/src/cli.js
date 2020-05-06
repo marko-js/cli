@@ -21,29 +21,26 @@ exports.parse = function parse(argv) {
       }
     })
     .usage(
-      `${chalk.bold.underline("Usage:")} $0 create ${chalk.green(
+      `${chalk.bold.underline("Usage:")} $0 ${chalk.green(
         "<app-name>"
       )} ${chalk.dim("[options]")}`
     )
-    .example(
-      "Create a marko app in the current directory",
-      "marko create my-new-app"
-    )
+    .example("Create a marko app in the current directory", "$0 my-new-app")
     .example(
       "…in a specific directory",
-      `marko create my-new-app ${chalk.green.bold("--dir ~/Desktop")}`
+      `$0 my-new-app ${chalk.green.bold("--dir ~/Desktop")}`
     )
     .example(
       "…from the min template (marko-js-samples/marko-starter-min)",
-      `marko create ${chalk.green.bold("min:")}my-new-app`
+      `$0 ${chalk.green.bold("min:")}my-new-app`
     )
     .example(
       "…from a github repo",
-      `marko create ${chalk.green.bold("user/repo:")}my-new-app`
+      `$0 ${chalk.green.bold("user/repo:")}my-new-app`
     )
     .example(
       "…from a github repo at a specific branch/tag/commit",
-      `marko create ${chalk.green.bold("user/repo@commit:")}my-new-app`
+      `$0 ${chalk.green.bold("user/repo@commit:")}my-new-app`
     )
     .validate(function(result) {
       let noArgs =

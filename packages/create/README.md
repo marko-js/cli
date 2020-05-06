@@ -22,17 +22,11 @@ Used to create a template Marko project in a specific directory.
 
 # CLI
 
-## Installation
-
-```terminal
-npm install marko-cli
-```
-
 ## Example
 
 ```terminal
 # Creates a Marko project in a folder called "myapp" in the current directory.
-marko create myapp
+npx @marko/create myapp
 ```
 
 ## Options

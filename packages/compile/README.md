@@ -22,17 +22,24 @@ Utility to compile Marko templates to JavaScript.
 
 # CLI
 
-## Installation
+## Getting Started
 
 ```terminal
-npm install marko-cli
+npm install @marko/compile
+marko-compile template.marko
+```
+
+or
+
+```terminal
+npx @marko/compile template.marko
 ```
 
 ## Example
 
 ```terminal
-marko compile --server ./components/my-component.marko
-marko compile --browser ./components/my-component.marko
+marko-compile --server ./components/my-component.marko
+marko-compile --browser ./components/my-component.marko
 ```
 
 ## Options

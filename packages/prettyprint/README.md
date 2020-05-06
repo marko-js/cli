@@ -22,20 +22,27 @@ Prettyprint Marko template files in the syntax of your choice.
 
 # CLI
 
-## Installation
+## Getting Started
 
 ```terminal
-npm install marko-cli
+npm install @marko/prettyprint
+marko-prettyprint template.marko
+```
+
+or
+
+```terminal
+npx @marko/prettyprint template.marko
 ```
 
 ## Example
 
 ```terminal
 # Pretty print a single file.
-marko prettyprint template.marko --syntax html
+marko-prettyprint template.marko --syntax html
 
 # Pretty print all Marko files in a directory.
-marko prettyprint . --syntax html
+marko-prettyprint . --syntax html
 ```
 
 ## Options
@@ -91,7 +98,7 @@ _my-project/.marko-prettyprint:_
 
 ## `.editorconfig` file
 
-`marko prettyprint` also supports [EditorConfig](https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties) files for configuring `maxLen`, `indent` and `eol`. For example:
+`@marko/prettyprint` also supports [EditorConfig](https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties) files for configuring `maxLen`, `indent` and `eol`. For example:
 
 _my-project/.editorconfig:_
 
