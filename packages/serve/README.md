@@ -141,7 +141,7 @@ The possibilities are endless! Let's add a few to our menu:
 When you're ready to let the world see what you've built, run the [`build`](../build/README.md) command to get a production-ready app.
 
 ```
-npx marko-cli build .
+npx @marko/build .
 ```
 
 This produces a `build/` directory that contains the app and its assets, all optimized and compressed. We no longer need `serve`, `build` or any other dependencies. We can run the server using just `node`:
@@ -161,15 +161,16 @@ This build directory can now be deployed to your favorite hosting service. We're
 ## Installation
 
 ```bash
-npm install marko-cli
+npm install @marko/serve
 ```
 
 ## Example
 
 ```bash
-marko serve .                                # serve the current directory
-marko serve ./pages                          # serve a pages directory
-marko serve ./components/my-component.marko  # serve a single component
+marko-serve .                                # serve the current directory
+marko-serve ./pages                          # serve a pages directory
+marko-serve ./components/my-component.marko  # serve a single component
+marko-serve . --inspect-brk                  # debug by passing node arguments through
 ```
 
 ## Options
