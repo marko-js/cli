@@ -18,103 +18,108 @@
   </a>
 </h1>
 
-Utility to test Marko files in both a server and browser environment.
+Utility to test Marko files in both a server and browser environment (bundled with [lasso](https://github.com/lasso-js/lasso)).
 
 ## Getting Started
 
-```terminal
+```bash
 npm install @marko/test
 marko-test ./test.js
 ```
 
 or
 
-```terminal
+```bash
 npx @marko/test ./test.js
 ```
 
 ## Usage:
 
-`marko-test` supports glob patterns
-for locating and running test files. See [Component Testing](#component-testing) below for more
-details on how to write unit tests for UI components.
+`marko-test` supports glob patterns for locating and running test files.
 
 Run all of the tests in a project/directory:
 
-```terminal
+```bash
 marko-test
 ```
 
+> equivalent to: `marko-test **/test.js **/test.*.js **/test/*.js`
+
 Run all of the unit tests for a single UI component:
 
-```terminal
+```bash
 marko-test ./src/components/app-foo/**/test*.js
 ```
 
 Run all of the unit tests for all UI components:
 
-```terminal
+```bash
 marko-test ./src/components/**/test*.js
 ```
 
 Run only server tests:
 
-```terminal
+```bash
 marko-test ./src/components/**/test*server.js --server
 ```
 
 Keep server open after the tests finish and disable headless mode for browser tests:
 
-```terminal
+```bash
 marko-test --debug
 ```
 
 All node options are forwarded to the mocha process for server testing, allowing the following:
 
-```terminal
+```bash
 # Will start a debugging session on the spawned mocha process.
 marko-test --server --inspect-brk
 ```
 
-## Component testing
+## Writing Tests
 
-Marko CLI includes a testing framework (built on top of [mocha](https://mochajs.org/)) that targets UI components built using Marko or Marko Widgets. Each UI
-component may include test files alongside components or in a `test/` directory that consists of one or more JavaScript test files with a name in any of the
-following formats:
+The test runner (built on top of [mocha](https://mochajs.org/)) will run server tests in a node environment and browser tests will be bundled with lasso and run in a browser using webdriver.io. The test environment is determined based on the test's filename.
 
-- `test.js` - runs only in the browser
-- `test.server.js` _or_ `test-server.js` - runs only on the server
-- `test.browser.js` _or_ `test-browser.js` - runs only in the browser
+The following will run the test in the **node** environment:
 
-An optional prefix can also be provided for grouping tests:
+- `test.server.js`
+- `test-server.js`
+- `foo.test.server.js`
+- `foo-test-server.js`
 
-- `foo.test.js` _or_ `foo-test.js`
-- `foo.test.server.js` _or_ `foo-test-server.js`
-- `foo.test.browser.js` _or_ `foo-test-browser.js`
+All other matched test files run in the **browser** environment:
 
-Below is a sample set of tests:
+- `test.js`
+- `test.browser.js`
+- `test-browser.js`
+- `foo.test.browser.js`
+- `foo-test-browser.js`
+
+Below is an example test:
 
 ```javascript
-/* globals test */
+const expect = require("chai").expect;
+const template = require("../index.marko");
+const { render } = require("@marko/testing-library");
 
-var expect = require("chai").expect;
-
-test("variant-danger", function(context) {
-  var output = context.render({ variant: "danger" });
-  expect(output.html).to.contain("app-button-danger");
-});
-
-// A similar test can be done using jQuery selectors (powered by cheerio):
-test("variant-info", function(context) {
-  var output = context.render({ variant: "info" });
-  expect(output.$("button").attr("class")).to.equal(
-    "app-button app-button-info"
+it("variant-danger", async function() {
+  var { getByRole } = await render(template, { variant: "danger" });
+  expect(getByRole("button").getAttribute("class")).to.contain(
+    "app-button-danger"
   );
 });
+```
 
-// Async test: (will be required if using any tags that are async)
-test("my async test", async function(contex) {
-  var output = await context.renderAsync({ variant: "danger" });
+## Component testing API (deprecated)
+
+The following APIs are deprecated. Prefer to use [`@marko/testing-library`](https://github.com/marko-js/testing-library) instead.
+
+Example of the deprecated testing api:
+
+```js
+// the `test` fn passes a `context` (documented below)
+test("variant-info", function(context) {
+  var output = context.render({ variant: "info" });
   expect(output.$("button").attr("class")).to.equal(
     "app-button app-button-info"
   );
@@ -129,19 +134,12 @@ test.only("foo", function(context) {
 test.skip("bar", function(context) {
   // ...
 });
+
+// Because `context` is passed, mocha's `done` becomes the second parameter
+test("foo", function(context, done) {
+  setTimeout(done, 1000);
+});
 ```
-
-## Component testing API
-
-### Globals
-
-#### `it(desc, [done])`
-
-#### `test(desc, context[, done])`
-
-#### `test.only(desc, context[, done])`
-
-#### `test.skip(desc, context[, done])`
 
 ### `Context`
 
@@ -169,7 +167,7 @@ Returns a rendered instance of the component.
 
 This is an alias for the above `component` getter.
 
-## Snapshots
+### Snapshots
 
 When a component is rendered, a snapshot of the HTML output will automatically be saved into the `test/snapshots/` directory. This directory should be excluded from source control. For example:
 

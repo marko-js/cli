@@ -3,6 +3,7 @@
 var fs = require("fs");
 var path = require("path");
 var cheerio = require("cheerio");
+var complain = require("complain");
 
 class RenderResult {
   constructor(html) {
@@ -41,6 +42,9 @@ class ServerContext {
 
   render(data) {
     var htmlString;
+    complain(
+      "render has been deprecated.  Prefer to render components using @marko/testing-library"
+    );
     if (this.component.renderSync) {
       htmlString = this.component.renderSync(data);
     } else {
@@ -57,6 +61,9 @@ class ServerContext {
   }
 
   renderAsync(data) {
+    complain(
+      "renderAsync has been deprecated.  Prefer to render components using @marko/testing-library"
+    );
     return new Promise((resolve, reject) =>
       this.component.render(data, (err, result) =>
         err ? reject(err) : resolve(result)
