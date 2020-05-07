@@ -1,6 +1,6 @@
 const markoTest = require(".");
 const parseNodeArgs = require("parse-node-args");
-const MarkoCli = require("marko-cli");
+const MarkoDevTools = require("./util/MarkoDevTools");
 
 exports.parse = function parse(argv) {
   const { cliArgs, nodeArgs } = parseNodeArgs(argv);
@@ -69,7 +69,7 @@ exports.parse = function parse(argv) {
 };
 
 exports.run = function run(options) {
-  const markoCli = MarkoCli.create();
+  const markoCli = new MarkoDevTools();
   const {
     mochaOptions,
     browserBuilder, // Deprecated, will be removed in the next major.

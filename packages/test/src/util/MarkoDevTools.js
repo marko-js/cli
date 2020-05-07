@@ -4,7 +4,6 @@ const EventEmitter = require("events").EventEmitter;
 const lassoPackageRoot = require("lasso-package-root");
 const resolveFrom = require("resolve-from");
 const path = require("path");
-const Commands = require("./Commands");
 const complain = require("complain");
 
 function getPackagePluginPath(markoCli, fileName) {
@@ -22,7 +21,6 @@ class MarkoDevTools extends EventEmitter {
     this.cwd = cwd || process.cwd();
     this.__dirname = __dirname;
     this._rootPackage = lassoPackageRoot.getRootPackage(this.cwd);
-    this._commands = undefined;
     this.config = {
       workDir: path.join(this.packageRoot, ".marko-cli")
     };
@@ -51,30 +49,14 @@ class MarkoDevTools extends EventEmitter {
   }
 
   get commands() {
-    var commands = this._commands;
-    if (!commands) {
-      // Lazy load commands since that might take a little longer
-      commands = this._commands = new Commands();
-    }
-    return commands;
+    return [];
   }
 
-  hasCommand(commandName) {
-    return this.commands.has(commandName);
+  hasCommand() {
+    return false;
   }
 
-  runCommand(commandName, args) {
-    var command = this.commands.get(commandName);
-    if (!command) {
-      throw new Error("Command not found: " + commandName);
-    }
-    var options = command.parse(args);
-    try {
-      return Promise.resolve(command.run(options, this));
-    } catch (err) {
-      return Promise.reject(err);
-    }
-  }
+  runCommand() {}
 
   _loadPackagePlugin() {
     if (this._rootPackage) {
