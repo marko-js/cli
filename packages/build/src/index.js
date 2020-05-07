@@ -127,7 +127,6 @@ module.exports = ({
       loader: require.resolve("file-loader"),
       options: {
         publicPath: PUBLIC_PATH,
-        esModule: false,
         name: production
           ? `${CONTENT_HASH}.[ext]`
           : `[name].${CONTENT_HASH}.[ext]`,
