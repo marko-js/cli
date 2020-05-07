@@ -85,7 +85,7 @@ prettyPrintAST(ast, options) // -> Output Marko file string.
 
 ## `.marko-prettyprint` config file
 
-When pretty printing a Marko template, `marko-cli` will search up the directory tree looking for a `.marko-prettyprint` file. This file should be in the JSON format. For example:
+When pretty printing a Marko template, `@marko/prettyprint` will search up the directory tree looking for a `.marko-prettyprint` file. This file should be in the JSON format. For example:
 
 _my-project/.marko-prettyprint:_
 
