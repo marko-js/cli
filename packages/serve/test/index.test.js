@@ -45,7 +45,7 @@ describe("scope(serve)", function() {
 });
 
 function createTest(createServer) {
-  return async ({ resolve, test, snapshot, mode }) => {
+  return ({ resolve, test, snapshot, mode }) => {
     test(async () => {
       let browser, closeServer, backupPath, targetPath;
       try {
@@ -83,7 +83,8 @@ function createTest(createServer) {
           resolve
         );
         await page.goto(
-          `http://localhost:${options.port}${(main && main.path) || "/"}`
+          `http://localhost:${options.port}${(main && main.path) || "/"}`,
+          { waitUntil: "networkidle2" }
         );
 
         await screenshot();
@@ -119,5 +120,11 @@ async function screenshotUtility(page, mode, snapshot, resolve, name, element) {
   );
   const html = await page.evaluate(el => el.outerHTML, target);
   await target.screenshot({ path: screenshotPath });
-  snapshot(html, { name: nameWithMode, ext: ".html" });
+  snapshot(normalizeHashes(html), { name: nameWithMode, ext: ".html" });
+}
+
+function normalizeHashes(html) {
+  return html
+    .replace(/(\.|\/)[a-f0-9]{10}\./gi, "$1HASH.")
+    .replace(/_[0-9a-z]{4}\./gi, "_HASH.");
 }

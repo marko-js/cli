@@ -22,9 +22,9 @@ module.exports = ({ dir, file, port = 3000, verbose, nodeArgs }) => {
   }
 
   const server = new DevServer(compiler, {
-    quiet: !verbose,
     overlay: true,
     stats: verbose ? "verbose" : "errors-only",
+    logLevel: verbose ? "info" : "silent",
     clientLogLevel: verbose ? "info" : "error",
     watchOptions: { ignored: [/node_modules/] },
     ...spawnedServer.devServerConfig

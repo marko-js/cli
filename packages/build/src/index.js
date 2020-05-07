@@ -36,11 +36,7 @@ module.exports = ({
   // getClientCompilerName gets stringified and added to the output bundle
   // if it is instrumented, the cov_${id} variable will cause a ReferenceError
   /* istanbul ignore next */
-  const markoPlugin = new MarkoPlugin({
-    getClientCompilerName:
-      production &&
-      ($global => ($global.isModern ? "Browser-modern" : "Browser-legacy"))
-  });
+  const markoPlugin = new MarkoPlugin();
 
   const markoCompiler = (() => {
     process.env.APP_DIR = APP_DIR;
@@ -77,7 +73,9 @@ module.exports = ({
     loader: require.resolve("babel-loader"),
     options: {
       presets: [[require.resolve("@babel/preset-env"), { targets }]],
-      plugins: [require.resolve("babel-plugin-macros")]
+      plugins: [require.resolve("babel-plugin-macros")],
+      babelrc: false,
+      configFile: false
     }
   });
 
@@ -129,6 +127,7 @@ module.exports = ({
       loader: require.resolve("file-loader"),
       options: {
         publicPath: PUBLIC_PATH,
+        esModule: false,
         name: production
           ? `${CONTENT_HASH}.[ext]`
           : `[name].${CONTENT_HASH}.[ext]`,
@@ -173,13 +172,18 @@ module.exports = ({
       publicPath: PUBLIC_PATH,
       filename: "index.js",
       chunkFilename: `[name].${CHUNK_HASH}.js`,
-      libraryTarget: "commonjs2"
+      libraryTarget: "commonjs2",
+      devtoolModuleFilenameTemplate: "[resource-path]"
     },
     plugins: [
       new webpack.DefinePlugin({
+        "typeof window": "'undefined'",
         "process.browser": undefined,
         "process.env.BUNDLE": true,
         "global.PORT": production ? 3000 : "'0'"
+      }),
+      new InjectPlugin(() => {
+        return production ? "" : `require("source-map-support").install();`;
       }),
       new InjectPlugin(() => {
         if (dir) {
@@ -196,7 +200,7 @@ module.exports = ({
         return `global.MODERN_BROWSERS_REGEXP = ${getUserAgentRegExp({
           browsers: modernBrowsers,
           allowHigherVersions: true
-        })}`;
+        })};`;
       }),
       markoPlugin.server,
       ...serverPlugins
@@ -220,6 +224,7 @@ module.exports = ({
     },
     plugins: [
       new webpack.DefinePlugin({
+        "typeof window": "'object'",
         "process.browser": true
       }),
       new ExtractCSSPlugin({
