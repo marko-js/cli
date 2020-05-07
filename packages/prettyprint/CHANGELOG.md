@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.1.2...@marko/prettyprint@2.2.0) (2020-05-07)
+
+
+### Bug Fixes
+
+* **test:** issue with cleanup not happending, upgrade chromedriver ([5c47e7a](https://github.com/marko-js/cli/commit/5c47e7a05a93c6876c12d3db12641ca68dc0b719))
+
+
+### Features
+
+* allow commands to run apart from marko-cli ([#152](https://github.com/marko-js/cli/issues/152)) ([4226988](https://github.com/marko-js/cli/commit/42269889bdf89e3811e465852ad0061e8e06cd03))
+
+
+
+
+
 ## [2.1.2](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.1.1...@marko/prettyprint@2.1.2) (2019-07-12)
 
 **Note:** Version bump only for package @marko/prettyprint

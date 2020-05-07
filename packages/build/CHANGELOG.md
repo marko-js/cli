@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/marko-js/cli/compare/@marko/build@1.2.0...@marko/build@1.3.0) (2020-05-07)
+
+
+### Features
+
+* allow commands to run apart from marko-cli ([#152](https://github.com/marko-js/cli/issues/152)) ([4226988](https://github.com/marko-js/cli/commit/42269889bdf89e3811e465852ad0061e8e06cd03))
+
+
+
+
+
 # [1.2.0](https://github.com/marko-js/cli/compare/@marko/build@1.1.1...@marko/build@1.2.0) (2019-10-16)
 
 

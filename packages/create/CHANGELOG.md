@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/marko-js/cli/compare/@marko/create@4.1.1...@marko/create@4.2.0) (2020-05-07)
+
+
+### Features
+
+* allow commands to run apart from marko-cli ([#152](https://github.com/marko-js/cli/issues/152)) ([4226988](https://github.com/marko-js/cli/commit/42269889bdf89e3811e465852ad0061e8e06cd03))
+
+
+
+
+
 ## [4.1.1](https://github.com/marko-js/cli/compare/@marko/create@4.1.0...@marko/create@4.1.1) (2019-07-12)
 
 **Note:** Version bump only for package @marko/create

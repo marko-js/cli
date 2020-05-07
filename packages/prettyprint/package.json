@@ -1,7 +1,7 @@
 {
   "name": "@marko/prettyprint",
   "description": "Prettyprint Marko template files in the syntax of your choice",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "author": "Patrick Steele-Idem <pnidem@gmail.com>",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
