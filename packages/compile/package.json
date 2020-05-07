@@ -4,7 +4,7 @@
   "version": "4.0.2",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
-    "@babel/runtime": "^7.2.0",
+    "@babel/runtime": "^7.9.6",
     "argly": "^1.2.0",
     "glob": "^7.1.3",
     "lasso-package-root": "^1.0.1",

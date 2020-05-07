@@ -5,7 +5,7 @@ const address = require("address");
 const serve = require("./");
 const parseNodeArgs = require("parse-node-args");
 const openBrowser = require("open-browsers");
-const getPort = require("get-port");
+const getPort = require("./get-port");
 
 exports.parse = function parse(argv) {
   const { cliArgs, nodeArgs } = parseNodeArgs(argv);
@@ -80,8 +80,7 @@ exports.parse = function parse(argv) {
 
 exports.run = async options => {
   const defaultPort = options.port || 3000;
-  const ports = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => n + defaultPort);
-  const port = await getPort({ port: ports });
+  const port = await getPort(defaultPort);
   const local = `http://localhost:${port}`;
   const network = `http://${address.ip()}:${port}`;
   const location =

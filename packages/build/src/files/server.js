@@ -1,5 +1,3 @@
-require("source-map-support").install({ hookRequire: true });
-
 const http = require("http");
 const path = require("path");
 const gzipStatic =
@@ -31,7 +29,9 @@ const middleware =
       } else {
         route.template.render(
           {
-            $global: { isModern: req.isModern },
+            $global: {
+              buildName: req.isModern ? "Browser-modern" : "Browser-legacy"
+            },
             params: route.params,
             query,
             pathname
