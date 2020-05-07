@@ -35,7 +35,7 @@ function convertMochaConfigToArgs(config) {
 exports.run = function(allTests, options) {
   let { dir, cliRoot, mochaOptions, nodeArgs } = options;
   var filteredTests = allTests.filter(test => {
-    return test.env === "server" || test.env === "both";
+    return test.env === "server";
   });
 
   if (!filteredTests.length) {

@@ -1,4 +1,5 @@
 const cheerio = require("cheerio");
+const complain = require("complain");
 const raptorRenderer = require("raptor-renderer");
 const { hasOwnProperty } = Object;
 
@@ -27,6 +28,10 @@ class BrowserContext {
   render(data) {
     let renderResult;
     const { component } = this;
+
+    complain(
+      "render has been deprecated.  Prefer to render components using @marko/testing-library"
+    );
 
     if (typeof component.renderer === "function") {
       // component exposes renderer function

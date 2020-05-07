@@ -52,5 +52,5 @@ exports.run = async (tests, options) => {
 };
 
 function isBrowserTest(test) {
-  return test.env === "browser" || test.env === "both";
+  return test.env === "browser";
 }
