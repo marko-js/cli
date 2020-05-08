@@ -17,12 +17,15 @@ module.exports = ({ dir, file, port = 3000, verbose, nodeArgs }) => {
   });
 
   if (!verbose) {
-    const friendlyErrors = new FriendlyErrorPlugin();
+    const friendlyErrors = new FriendlyErrorPlugin({ clearConsole: false });
     friendlyErrors.apply(compiler);
   }
 
   const server = new DevServer(compiler, {
     overlay: true,
+    host: "0.0.0.0",
+    disableHostCheck: true,
+    headers: { "Access-Control-Allow-Origin": "*" },
     stats: verbose ? "verbose" : "errors-only",
     logLevel: verbose ? "info" : "silent",
     clientLogLevel: verbose ? "info" : "error",
@@ -30,9 +33,5 @@ module.exports = ({ dir, file, port = 3000, verbose, nodeArgs }) => {
     ...spawnedServer.devServerConfig
   });
 
-  server.listen(port);
-
-  return new Promise(resolve =>
-    spawnedServer.once("listening", () => resolve(server))
-  );
+  return new Promise(resolve => server.listen(port, resolve));
 };

@@ -1,15 +1,20 @@
-const http = require("http");
-const path = require("path");
-const gzipStatic =
-  process.env.NODE_ENV === "production" &&
-  require("connect-gzip-static")(
-    // eslint-disable-next-line
-    path.join(__non_webpack_require__.main.filename, "..", "assets")
-  );
+import http from "http";
+import path from "path";
+import connectGzipStatic from "connect-gzip-static";
+
 const getRoute = global.GET_ROUTE;
 const modernBrowsers = global.MODERN_BROWSERS_REGEXP;
 const PORT = process.env.PORT || global.PORT;
 const assetsMatch = /^\/assets\//;
+let gzipStatic;
+
+if (process.env.NODE_ENV === "production") {
+  gzipStatic = connectGzipStatic(
+    // eslint-disable-next-line
+    path.join(__non_webpack_require__.main.filename, "..", "assets"),
+    { maxAge: 31536000 }
+  );
+}
 
 const middleware =
   global.MARKO_MIDDLEWARE ||
@@ -45,18 +50,18 @@ const middleware =
     }
   });
 
-const server = http.createServer((req, res) => {
-  if (assetsMatch.test(req.url)) {
-    req.url = req.url.slice(7);
-    gzipStatic(req, res, () => {
-      res.end("Not Found");
-    });
-  } else {
-    req.isModern = modernBrowsers.test(req.headers["user-agent"] || "");
-    middleware(req, res, () => {
-      res.end("Not Found");
-    });
-  }
-});
-
-server.listen(PORT);
+http
+  .createServer((req, res) => {
+    if (assetsMatch.test(req.url)) {
+      req.url = req.url.slice(7);
+      gzipStatic(req, res, () => {
+        res.end("Not Found");
+      });
+    } else {
+      req.isModern = modernBrowsers.test(req.headers["user-agent"] || "");
+      middleware(req, res, () => {
+        res.end("Not Found");
+      });
+    }
+  })
+  .listen(PORT);

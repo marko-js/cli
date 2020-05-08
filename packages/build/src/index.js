@@ -13,8 +13,7 @@ const MarkoPlugin = require("@marko/webpack/plugin").default;
 const { getUserAgentRegExp } = require("browserslist-useragent-regexp");
 const { useAppModuleOrFallback, getRouterCode } = require("./util");
 
-const CONTENT_HASH = "[contenthash:10]";
-const CHUNK_HASH = "[chunkhash:10]";
+const CONTENT_HASH = "[contenthash:8]";
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
 const CWD = process.cwd();
 
@@ -26,9 +25,12 @@ module.exports = ({
   serverPlugins = [],
   clientPlugins = []
 }) => {
+  const NODE_ENV = (process.env.NODE_ENV = production
+    ? "production"
+    : undefined);
   const MODE = production ? "production" : "development";
   const DEVTOOL = production ? "source-map" : "cheap-module-source-map";
-  const BUILD_PATH = path.resolve(CWD, production ? output : "");
+  const BUILD_PATH = path.resolve(CWD, output);
   const ASSETS_PATH = path.join(BUILD_PATH, "assets");
   const PUBLIC_PATH = "/assets/";
   const APP_DIR = dir || path.dirname(file);
@@ -75,14 +77,15 @@ module.exports = ({
       presets: [[require.resolve("@babel/preset-env"), { targets }]],
       plugins: [require.resolve("babel-plugin-macros")],
       babelrc: false,
-      configFile: false
+      configFile: false,
+      cacheDirectory: true
     }
   });
 
   const sharedRules = ({ isServer, targets }) => [
     {
       test: /\.js$/,
-      exclude: isServer ? /node_modules/ : undefined,
+      exclude: !production || isServer ? /node_modules/ : undefined,
       use: [babelLoader(targets)]
     },
     {
@@ -106,9 +109,7 @@ module.exports = ({
             {
               loader: require.resolve("css-loader"),
               options: {
-                modules: false,
-                sourceMap: true,
-                importLoaders: 1
+                sourceMap: true
               }
             },
             {
@@ -123,7 +124,7 @@ module.exports = ({
           ]
     },
     {
-      test: file => !/\.(js(on)?|css|marko)$/.test(file),
+      test: file => !/\.(m?js|json|css|wasm|marko)$/.test(file),
       loader: require.resolve("file-loader"),
       options: {
         publicPath: PUBLIC_PATH,
@@ -164,13 +165,11 @@ module.exports = ({
     name: "Server",
     target: "async-node",
     entry: SERVER_FILE,
-    cache: false,
     output: {
-      pathinfo: true,
       path: BUILD_PATH,
       publicPath: PUBLIC_PATH,
       filename: "index.js",
-      chunkFilename: `[name].${CHUNK_HASH}.js`,
+      chunkFilename: `[name].${CONTENT_HASH}.js`,
       libraryTarget: "commonjs2",
       devtoolModuleFilenameTemplate: "[resource-path]"
     },
@@ -179,27 +178,36 @@ module.exports = ({
         "typeof window": "'undefined'",
         "process.browser": undefined,
         "process.env.BUNDLE": true,
-        "global.PORT": production ? 3000 : "'0'"
+        "global.PORT": production ? 3000 : 0,
+        "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
       }),
       new InjectPlugin(() => {
-        return production ? "" : `require("source-map-support").install();`;
-      }),
-      new InjectPlugin(() => {
-        if (dir) {
-          return getRouterCode(dir);
-        } else if (file.endsWith(".js")) {
-          return `global.MARKO_MIDDLEWARE = require(${JSON.stringify(file)});`;
-        } else {
-          return `const template = require(${JSON.stringify(
-            file
-          )}); global.GET_ROUTE = () => ({ key:'main', template });`;
+        const parts = [
+          `global.MODERN_BROWSERS_REGEXP = ${getUserAgentRegExp({
+            browsers: modernBrowsers,
+            allowHigherVersions: true
+          })}`
+        ];
+
+        if (production) {
+          parts.push(`import "source-map-support/register"`);
         }
-      }),
-      new InjectPlugin(() => {
-        return `global.MODERN_BROWSERS_REGEXP = ${getUserAgentRegExp({
-          browsers: modernBrowsers,
-          allowHigherVersions: true
-        })};`;
+
+        if (dir) {
+          parts.push(getRouterCode(dir, [BUILD_PATH, "**/node_modules"]));
+        } else if (file.endsWith(".js")) {
+          parts.push(
+            `import middleware from JSON.stringify(file)`,
+            `global.MARKO_MIDDLEWARE = middleware`
+          );
+        } else {
+          parts.push(
+            `import template from ${JSON.stringify(file)}`,
+            `global.GET_ROUTE = () => ({ key: 'main', template })`
+          );
+        }
+
+        return parts.join(";");
       }),
       markoPlugin.server,
       ...serverPlugins
@@ -209,26 +217,26 @@ module.exports = ({
 
   const getBrowserConfig = ({ targetsName, targets }) => ({
     name: `Browser-${targetsName}`,
-    target: "web",
     entry: markoPlugin.emptyEntry,
+    optimization: {
+      splitChunks: {
+        chunks: "all",
+        maxInitialRequests: 3
+      }
+    },
     output: {
-      pathinfo: true,
       publicPath: PUBLIC_PATH,
       path: ASSETS_PATH,
-      filename: `[name].${targetsName}.${CHUNK_HASH}.js`,
-      libraryTarget: "var",
-      devtoolModuleFilenameTemplate: production
-        ? "webpack://[namespace]/[resource-path]?[loaders]"
-        : info => info.absoluteResourcePath + "?" + info.hash
+      filename: `[name].${CONTENT_HASH}.js`
     },
     plugins: [
       new webpack.DefinePlugin({
         "typeof window": "'object'",
-        "process.browser": true
+        "process.browser": true,
+        "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
       }),
       new ExtractCSSPlugin({
-        filename: `[name].${targetsName}.${CONTENT_HASH}.css`,
-        allChunks: true
+        filename: `[name].${CONTENT_HASH}.css`
       }),
       markoPlugin.browser,
       ...clientPlugins
