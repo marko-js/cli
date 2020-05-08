@@ -1,7 +1,10 @@
 "use strict";
 
+const ora = require("ora");
+const path = require("path");
 const chalk = require("chalk");
-const markoCreate = require(".");
+const { Select, Input } = require("enquirer");
+const { getExamples, createProject } = require(".");
 
 exports.parse = function parse(argv) {
   var options = require("argly")
@@ -17,7 +20,17 @@ exports.parse = function parse(argv) {
       },
       "--name -n *": {
         type: "string",
-        description: "Name of the new app (with optional source)"
+        description: "Name of the new app"
+      },
+      "--template -t": {
+        type: "string",
+        description:
+          "An example from marko-js/examples or a git repo to use as the project template"
+      },
+      "--interactive -i": {
+        type: "boolean",
+        description:
+          "An example from marko-js/examples or a git repo to use as the project template"
       }
     })
     .usage(
@@ -31,21 +44,19 @@ exports.parse = function parse(argv) {
       `$0 my-new-app ${chalk.green.bold("--dir ~/Desktop")}`
     )
     .example(
-      "…from the min template (marko-js-samples/marko-starter-min)",
-      `$0 ${chalk.green.bold("min:")}my-new-app`
+      "…from the min template (marko-js/examples:examples/min)",
+      `$0 my-new-app ${chalk.green.bold("--template min")}`
     )
     .example(
       "…from a github repo",
-      `$0 ${chalk.green.bold("user/repo:")}my-new-app`
+      `$0 my-new-app ${chalk.green.bold("--template user/repo")}`
     )
     .example(
       "…from a github repo at a specific branch/tag/commit",
-      `$0 ${chalk.green.bold("user/repo@commit:")}my-new-app`
+      `$0 my-new-app ${chalk.green.bold("--template user/repo#commit")}`
     )
     .validate(function(result) {
-      let noArgs =
-        Object.keys(result).length === 1 && result.dir === process.cwd();
-      if (noArgs || result.help) {
+      if (result.help) {
         this.printUsage();
         process.exit(0);
       }
@@ -60,6 +71,102 @@ exports.parse = function parse(argv) {
   return options;
 };
 
-exports.run = function run(options) {
-  return markoCreate.run(options);
+exports.run = async function run(options = {}) {
+  const spinner = ora("Starting...").start();
+
+  try {
+    if (!options.name || !options.template) {
+      spinner.stop();
+      const examples = !options.template && getExamples();
+      const trimHints = choices =>
+        choices.map(choice => {
+          const size = 4 + choice.name.length + 1 + choice.hint.length;
+          if (size > process.stdout.columns) {
+            return {
+              ...choice,
+              hint:
+                choice.hint.slice(0, -1 + process.stdout.columns - size) + "…"
+            };
+          }
+          return choice;
+        });
+
+      if (!options.name) {
+        const nameInput = new Input({
+          name: "name",
+          message: "Type your project name",
+          initial: "my-app"
+        });
+        options.name = await nameInput.run();
+      }
+
+      if (!options.template) {
+        const templateSelect = new Select({
+          name: "template",
+          message: "Choose a template",
+          hint: "Use ↑ and ↓. Return ⏎ to submit.",
+          choices: [
+            {
+              name: "Default starter app"
+            },
+            {
+              name: "Example from marko-js/examples"
+            }
+          ]
+        });
+
+        if ("Default starter app" !== (await templateSelect.run())) {
+          const choices = await examples;
+          const exampleSelect = new Select({
+            name: "template",
+            message: "Choose an example",
+            choices: trimHints(choices)
+          });
+          const resizeListener = async () => {
+            const trimmed = trimHints(choices);
+            exampleSelect.choices.forEach((choice, i) => {
+              choice.hint = trimmed[i].hint;
+            });
+            exampleSelect.render();
+          };
+          process.stdout.on("resize", resizeListener);
+          options.template = await exampleSelect.run();
+          process.stdout.off("resize", resizeListener);
+        }
+      }
+      spinner.start();
+    }
+
+    const result = createProject(options);
+    result.on("download", () =>
+      setLoadingMessage(spinner, "Downloading app...")
+    );
+    result.on("install", () =>
+      setLoadingMessage(spinner, "Installing npm modules...")
+    );
+    result.on("init", () => setLoadingMessage(spinner, "Initializing repo..."));
+    const { projectPath, scripts: { start, dev } = {} } = await result;
+    spinner.succeed(
+      "Project created! To get started, run:\n\n" +
+        chalk.cyan(`    cd ${path.relative(process.cwd(), projectPath)}\n`) +
+        (dev
+          ? chalk.cyan("    npm run dev\n")
+          : start
+          ? chalk.cyan("    npm start\n")
+          : "")
+    );
+  } catch (err) {
+    spinner.fail(err.message + "\n");
+    console.error(err);
+  } finally {
+    clearTimeout(spinner.timeout);
+  }
 };
+
+function setLoadingMessage(spinner, message) {
+  clearTimeout(spinner.timeout);
+  spinner.text = message;
+  spinner.timeout = setTimeout(() => {
+    spinner.text = `${message} (this may take a minute)`;
+  }, 3000);
+}

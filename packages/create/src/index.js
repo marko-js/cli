@@ -2,80 +2,83 @@
 
 const fs = require("fs");
 const got = require("got");
-const ora = require("ora");
 const path = require("path");
-const unzip = require("unzip");
+const degit = require("degit");
+const EventEmitter = require("events");
 const exec = require("child_process").exec;
 const initGitRepo = require("./init-git-repo");
 
-const DEFAULT_REPO = "demo";
-const MARKO_PREFIX = "marko-";
-const MARKO_STARTER_PREFIX = "marko-starter-";
-const MARKO_SAMPLES_ORG = "marko-js-samples";
+const DEFAULT_EXAMPLE = "basic";
+const EXAMPLES_REPO = "marko-js/examples";
+const EXAMPLES_SUBDIRECTORY = "examples";
 const GITHUB_URL = "https://github.com/";
-const REPO_PATH = (org, repo) => `${GITHUB_URL}${org}/${repo}`;
-const TREE_PATH = (org, repo, tag) => `${REPO_PATH(org, repo)}/tree/${tag}`;
-const ARCHIVE_PATH = (org, repo, tag) =>
-  `${REPO_PATH(org, repo)}/archive/${tag}.zip`;
 const MASTER_TAG = "master";
 
-exports.run = function(options = {}) {
-  const { dir, name: projectName } = options;
-  console.log("");
-  const spinner = ora("Starting...").start();
-  return Promise.resolve()
-    .then(() => {
-      const parts = getOrgRepoTagAndName(projectName);
-      const { name, org, repo, tag } = parts;
-      const fullPath = path.resolve(dir, name);
-
-      assertAllGood(dir, name, fullPath);
-
-      return getExistingRepo(org, repo, tag).then(existing => {
-        let org = existing.org;
-        let repo = existing.repo;
-        let tag = existing.tag;
-        spinner.text = "Downloading app...";
-        return getZipArchive(org, repo, tag, dir, name).then(() => {
-          rewritePackageJson(fullPath, name);
-          spinner.text = "Installing npm modules... (this may take a minute)";
-          return installPackages(fullPath).then(() => {
-            return initGitRepo(fullPath, spinner).then(() => {
-              spinner.succeed(
-                "Successfully created app! To get started, run:\n\n" +
-                  getRunInstructions(fullPath) +
-                  "\n"
-              );
-            });
-          });
-        });
-      });
-    })
-    .catch(err => spinner.fail(err.message + "\n"));
+exports.createProject = function createProject(options) {
+  const emitter = new EventEmitter();
+  const result = create(options, emitter);
+  emitter.then = result.then.bind(result);
+  emitter.catch = result.catch.bind(result);
+  return emitter;
 };
 
-function getOrgRepoTagAndName(arg) {
-  const argParts = splitOrUnshiftDefault(arg, ":", DEFAULT_REPO);
-  const source = argParts[0];
-  const name = argParts[1];
-  const sourceParts = splitOrUnshiftDefault(source, "/", MARKO_SAMPLES_ORG);
-  const org = sourceParts[0];
-  const repoAndTag = sourceParts[1];
-  const repoAndTagParts = repoAndTag.split("@");
-  const repo = repoAndTagParts[0] || DEFAULT_REPO;
-  const tag = repoAndTagParts[1] || MASTER_TAG;
-  return { name, org, repo, tag };
-}
+async function create(options = {}, emitter) {
+  let { dir, name, template = DEFAULT_EXAMPLE } = options;
+  const projectPath = path.resolve(dir, name);
+  await assertAllGood(dir, projectPath, name);
 
-function splitOrUnshiftDefault(string, char, defaultValue) {
-  let parts = string.split(char);
-  if (parts.length === 1) {
-    parts.unshift(defaultValue);
+  if (!template.includes("/")) {
+    await assertExampleExists(template);
+    template = `${EXAMPLES_REPO}/${EXAMPLES_SUBDIRECTORY}/${template}`;
   }
-  return parts;
+
+  await downloadRepo(template, projectPath, options, emitter);
+  const { scripts } = await rewritePackageJson(projectPath, name);
+  await installPackages(projectPath, emitter);
+  await initGitRepo(projectPath, emitter);
+
+  return { projectPath, scripts };
 }
 
-function assertAllGood(dir, name, fullPath) {
+exports.getExamples = async function() {
+  const tempPath = path.join(__dirname, "examples-cache");
+  await downloadRepo(EXAMPLES_REPO, tempPath, { force: true });
+  const tempExamplesPath = path.join(tempPath, EXAMPLES_SUBDIRECTORY);
+  const examples = await fs.promises.readdir(tempExamplesPath);
+  return Promise.all(
+    examples.map(async name => {
+      let description = "";
+
+      try {
+        const packagePath = path.join(tempExamplesPath, name, "package.json");
+        const packageData = JSON.parse(await fs.promises.readFile(packagePath));
+        description = packageData.description || "";
+      } catch (e) {
+        // ignore error
+      }
+
+      return {
+        name,
+        isDefault: name === DEFAULT_EXAMPLE,
+        hint: description
+      };
+    })
+  );
+};
+
+async function assertExampleExists(example) {
+  const [exampleName, tag = MASTER_TAG] = example.split("#");
+
+  if (!(await isUrlFound(getExampleUrl(exampleName, tag)))) {
+    throw new Error(
+      `Example ${exampleName} does not exist in ${EXAMPLES_REPO}${
+        tag === MASTER_TAG ? "" : ` at branch/tag/commit named ${tag}`
+      }.`
+    );
+  }
+}
+
+async function assertAllGood(dir, fullPath, name) {
   if (!fs.existsSync(dir)) {
     throw new Error(`Invalid directory specified '${dir}'`);
   }
@@ -91,60 +94,6 @@ function isValidAppName(name) {
   return !/\/|\\/.test(name);
 }
 
-function getExistingRepo(org, repo, tag) {
-  let possibleRepos =
-    org === MARKO_SAMPLES_ORG
-      ? [
-          { org, repo },
-          { org, repo: MARKO_PREFIX + repo },
-          { org, repo: MARKO_STARTER_PREFIX + repo }
-        ]
-      : [{ org, repo }];
-
-  return Promise.all(
-    possibleRepos.map(possible => {
-      let org = possible.org;
-      let repo = possible.repo;
-      return isUrlFound(REPO_PATH(org, repo));
-    })
-  ).then(results => {
-    let matchingRepo;
-    if (results[0]) {
-      matchingRepo = possibleRepos[0];
-    } else if (results[1]) {
-      matchingRepo = possibleRepos[1];
-    } else if (results[2]) {
-      matchingRepo = possibleRepos[2];
-    } else {
-      throw new Error(
-        "Unable to find a matching app template. None of the following exist:\n" +
-          possibleRepos
-            .map(possible => {
-              const org = possible.org;
-              const repo = possible.repo;
-              return "  - " + org + "/" + repo;
-            })
-            .join("\n")
-      );
-    }
-
-    let org = matchingRepo.org;
-    let repo = matchingRepo.repo;
-
-    return isUrlFound(TREE_PATH(org, repo, tag)).then(found => {
-      if (!found) {
-        throw new Error(
-          `Unable to find a branch/tag/commit named ${tag} in ${org}/${repo}.`
-        );
-      }
-
-      matchingRepo.tag = tag;
-
-      return matchingRepo;
-    });
-  });
-}
-
 function isUrlFound(url) {
   return got
     .head(url)
@@ -152,20 +101,13 @@ function isUrlFound(url) {
     .catch(() => false);
 }
 
-function getZipArchive(org, repo, tag, dir, name) {
-  let resource = ARCHIVE_PATH(org, repo, tag);
-  let extractor = unzip.Extract({ path: dir });
-
-  return new Promise((resolve, reject) => {
-    let zipStream = got.stream(resource).pipe(extractor);
-    zipStream.on("error", reject).on("close", () => {
-      fs.renameSync(path.join(dir, repo + "-" + tag), path.join(dir, name));
-      resolve();
-    });
-  });
+async function downloadRepo(source, target, options, emitter) {
+  emitter && emitter.emit("download");
+  const downloader = degit(source, options);
+  await downloader.clone(target);
 }
 
-function rewritePackageJson(fullPath, name) {
+async function rewritePackageJson(fullPath, name) {
   let packagePath = path.resolve(fullPath, "./package.json");
   let packageData = fs.readFileSync(packagePath, "utf8");
 
@@ -175,10 +117,16 @@ function rewritePackageJson(fullPath, name) {
   packageData.version = "1.0.0";
   packageData.private = true;
 
-  fs.writeFileSync(packagePath, JSON.stringify(packageData, null, 2));
+  await fs.promises.writeFile(
+    packagePath,
+    JSON.stringify(packageData, null, 2)
+  );
+
+  return packageData;
 }
 
-function installPackages(fullPath) {
+function installPackages(fullPath, emitter) {
+  emitter.emit("install");
   return new Promise((resolve, reject) => {
     exec(`cd ${fullPath} && npm install`, err => {
       if (err) reject(err);
@@ -187,6 +135,6 @@ function installPackages(fullPath) {
   });
 }
 
-function getRunInstructions(fullPath) {
-  return `cd ${path.relative(process.cwd(), fullPath)}\nnpm start`;
+function getExampleUrl(example, tag) {
+  return `${GITHUB_URL}/${EXAMPLES_REPO}/tree/${tag}/${EXAMPLES_SUBDIRECTORY}/${example}`;
 }
