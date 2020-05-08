@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.2](https://github.com/marko-js/cli/compare/@marko/build@1.3.1...@marko/build@1.3.2) (2020-05-08)
+
+
+### Bug Fixes
+
+* issue with adding a new route in serve ([#159](https://github.com/marko-js/cli/issues/159)) ([0b7195f](https://github.com/marko-js/cli/commit/0b7195fba89bd3e29cc30dad907b11e10fef054c))
+
+
+
+
+
 ## [1.3.1](https://github.com/marko-js/cli/compare/@marko/build@1.3.0...@marko/build@1.3.1) (2020-05-08)
 
 **Note:** Version bump only for package @marko/build
