@@ -164,6 +164,7 @@ module.exports = ({
   const serverConfig = {
     name: "Server",
     target: "async-node",
+    cache: false, // This is needed because `InjectPlugin` is caching, we need to make a PR to opt out of caching.
     entry: SERVER_FILE,
     output: {
       path: BUILD_PATH,

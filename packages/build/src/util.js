@@ -1,7 +1,6 @@
 const path = require("path");
 const resolveFrom = require("resolve-from");
 const fastGlob = require("fast-glob");
-const globToRegexp = require("glob-to-regexp");
 
 const useAppModuleOrFallback = (dir, moduleName) => {
   const packageName = `${moduleName}/package`;
@@ -26,7 +25,6 @@ const getDirectoryLookup = async (cwd, ignore) => {
 
 const getRouterCode = async (cwd, ignore) => {
   const tree = {};
-  const varNames = [];
   const imports = [];
   const directoryLookup = await getDirectoryLookup(cwd, ignore);
   for (let key in directoryLookup) {
@@ -41,21 +39,23 @@ const getRouterCode = async (cwd, ignore) => {
     }
     let files = (dir.files = dir.files || {});
     files[pathParts[pathParts.length - 1]] = { key, varName };
-    varNames.push(varName);
     imports.push(`import ${varName} from ${JSON.stringify(absolute)};`);
   }
 
   // When new .marko files are added, we want to recompute the router code
-  const watchContext = `require.context(${JSON.stringify(
-    cwd
-  )}, true, /(?<!(${ignore
-    .map(it => globToRegexp(it, { globstar: true }).source)
-    .join("|")}).*)\\.marko$/);`;
+  const watchContext = `
+    (_ => import(
+      /* webpackInclude: /\\.marko$/ */
+      /* webpackExclude: /node_modules|build/ */
+      /* webpackMode: "weak" */
+      \`${cwd + path.sep}\${_}\`
+    ));
+  `;
 
-  return watchContext + `\n` + buildRouter(imports, varNames, tree);
+  return watchContext + `\n` + buildRouter(imports, tree);
 };
 
-const buildRouter = (imports, varNames, tree) => `
+const buildRouter = (imports, tree) => `
 import $$index from ${JSON.stringify(
   require.resolve("./files/dir-index.marko")
 )};
