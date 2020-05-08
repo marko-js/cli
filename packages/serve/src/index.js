@@ -21,7 +21,7 @@ module.exports = ({ dir, file, port = 3000, verbose, nodeArgs }) => {
     friendlyErrors.apply(compiler);
   }
 
-  const server = new DevServer(compiler, {
+  const devServerConfig = {
     overlay: true,
     host: "0.0.0.0",
     disableHostCheck: true,
@@ -31,7 +31,13 @@ module.exports = ({ dir, file, port = 3000, verbose, nodeArgs }) => {
     clientLogLevel: verbose ? "info" : "error",
     watchOptions: { ignored: [/node_modules/] },
     ...spawnedServer.devServerConfig
-  });
+  };
 
-  return new Promise(resolve => server.listen(port, resolve));
+  const server = new DevServer(compiler, devServerConfig);
+
+  return new Promise((resolve, reject) =>
+    server.listen(port, devServerConfig.host, (_, err) =>
+      err ? reject(err) : resolve(server)
+    )
+  );
 };

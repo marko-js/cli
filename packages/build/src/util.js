@@ -49,7 +49,7 @@ const getRouterCode = async (cwd, ignore) => {
   const watchContext = `require.context(${JSON.stringify(
     cwd
   )}, true, /(?<!(${ignore
-    .map(it => globToRegexp(it, { globstar: true }))
+    .map(it => globToRegexp(it, { globstar: true }).source)
     .join("|")}).*)\\.marko$/);`;
 
   return watchContext + `\n` + buildRouter(imports, varNames, tree);

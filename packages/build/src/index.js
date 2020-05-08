@@ -181,7 +181,7 @@ module.exports = ({
         "global.PORT": production ? 3000 : 0,
         "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
       }),
-      new InjectPlugin(() => {
+      new InjectPlugin(async () => {
         const parts = [
           `global.MODERN_BROWSERS_REGEXP = ${getUserAgentRegExp({
             browsers: modernBrowsers,
@@ -194,7 +194,7 @@ module.exports = ({
         }
 
         if (dir) {
-          parts.push(getRouterCode(dir, [BUILD_PATH, "**/node_modules"]));
+          parts.push(await getRouterCode(dir, [BUILD_PATH, "**/node_modules"]));
         } else if (file.endsWith(".js")) {
           parts.push(
             `import middleware from JSON.stringify(file)`,
@@ -207,7 +207,7 @@ module.exports = ({
           );
         }
 
-        return parts.join(";");
+        return parts.join(";\n");
       }),
       markoPlugin.server,
       ...serverPlugins
