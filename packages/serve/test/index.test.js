@@ -125,6 +125,6 @@ async function screenshotUtility(page, mode, snapshot, resolve, name, element) {
 
 function normalizeHashes(html) {
   return html
-    .replace(/(\.|\/)[a-f0-9]{10}\./gi, "$1HASH.")
+    .replace(/(\.|\/)[a-f0-9]{8}\./gi, "$1HASH.")
     .replace(/_[0-9a-z]{4}\./gi, "_HASH.");
 }
