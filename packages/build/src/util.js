@@ -39,7 +39,11 @@ const getRouterCode = async (cwd, ignore) => {
     }
     let files = (dir.files = dir.files || {});
     files[pathParts[pathParts.length - 1]] = { key, varName };
-    imports.push(`import ${varName} from ${JSON.stringify(absolute)};`);
+    imports.push(`const ${varName} = () => import(
+      /* webpackMode: "lazy-once" */
+      /* webpackChunkName: ${JSON.stringify(key)} */
+      ${JSON.stringify(absolute)}
+    );`);
   }
 
   // When new .marko files are added, we want to recompute the router code
@@ -56,9 +60,10 @@ const getRouterCode = async (cwd, ignore) => {
 };
 
 const buildRouter = (imports, tree) => `
-import $$index from ${JSON.stringify(
-  require.resolve("./files/dir-index.marko")
-)};
+const $$index = () => import(
+  /* webpackMode: "lazy-once" */
+  ${JSON.stringify(require.resolve("./files/dir-index.marko"))}
+);
 ${imports.join("\n")}
 
 function getRoute(url) {
@@ -120,7 +125,7 @@ const buildRoute = (dir, level = 0) => {
       const paramMatch = paramPattern.exec(key);
       if (!paramMatch) {
         ifs.unshift(
-          `if (${partMatch}) {\n${indent}  return { params, template:${file.varName} };\n${indent}}`
+          `if (${partMatch}) {\n${indent}  return { params, load:${file.varName} };\n${indent}}`
         );
         needsPart = true;
       } else {
@@ -128,7 +133,7 @@ const buildRoute = (dir, level = 0) => {
         ifs.push(
           `if (true) {\n${indent}  params[${JSON.stringify(
             paramName
-          )}] = part_${level};\n${indent}  return { params, template:${
+          )}] = part_${level};\n${indent}  return { params, load:${
             file.varName
           } };\n${indent}}`
         );
@@ -140,7 +145,7 @@ const buildRoute = (dir, level = 0) => {
     const dirs = Object.keys(dir.dirs || {});
     const files = Object.keys(dir.files || {});
     ifs.push(
-      `if (part_${level} === undefined) {\n${indent}  return { template:$$index, params:{ dirs:${JSON.stringify(
+      `if (part_${level} === undefined) {\n${indent}  return { load:$$index, params:{ dirs:${JSON.stringify(
         dirs
       )}, files:${JSON.stringify(files)} } };\n${indent}}`
     );

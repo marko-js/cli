@@ -32,16 +32,18 @@ const middleware =
           }</a>`
         );
       } else {
-        route.template.render(
-          {
-            $global: {
-              buildName: req.isModern ? "Browser-modern" : "Browser-legacy"
+        route.load().then(template =>
+          template.render(
+            {
+              $global: {
+                buildName: req.isModern ? "Browser-modern" : "Browser-legacy"
+              },
+              params: route.params,
+              query,
+              pathname
             },
-            params: route.params,
-            query,
-            pathname
-          },
-          res
+            res
+          )
         );
       }
     } else {
