@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0](https://github.com/marko-js/cli/compare/@marko/create@4.2.0...@marko/create@5.0.0) (2020-05-12)
+
+
+### Features
+
+* create now uses marko-js/examples ([#160](https://github.com/marko-js/cli/issues/160)) ([265acdb](https://github.com/marko-js/cli/commit/265acdbdf5f1ebf6e2eaacd861d24bd9c4e24261))
+
+
+### BREAKING CHANGES
+
+* --template flag replaces old template:name convention
+
+
+
+
+
 # [4.2.0](https://github.com/marko-js/cli/compare/@marko/create@4.1.1...@marko/create@4.2.0) (2020-05-07)
 
 
