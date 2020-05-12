@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.2](https://github.com/marko-js/cli/compare/@marko/create@5.0.1...@marko/create@5.0.2) (2020-05-12)
+
+
+### Bug Fixes
+
+* **create:** improve windows support, prevent writing to node_modules ([3e15a5f](https://github.com/marko-js/cli/commit/3e15a5f81c5c9e275db6a1445bad2c4c5db17cc2))
+
+
+
+
+
 ## [5.0.1](https://github.com/marko-js/cli/compare/@marko/create@5.0.0...@marko/create@5.0.1) (2020-05-12)
 
 
