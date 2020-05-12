@@ -1,3 +1,4 @@
+const details = require("../package.json");
 const markoCompile = require(".");
 
 exports.parse = function parse(argv) {
@@ -26,11 +27,20 @@ exports.parse = function parse(argv) {
       "--ignore -i": {
         type: "string[]",
         description: "File patterns to ignore"
+      },
+      "--version -v": {
+        type: "boolean",
+        descrption: `print ${details.name} version`
       }
     })
     .usage("Usage: $0 [options]")
     .example("Compile all templates", "$0")
     .validate(function(result) {
+      if (result.version) {
+        console.log(`v${details.version}`);
+        process.exit(0);
+      }
+
       if (result.help) {
         this.printUsage();
         process.exit(0);

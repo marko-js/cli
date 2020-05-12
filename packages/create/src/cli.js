@@ -4,6 +4,7 @@ const ora = require("ora");
 const path = require("path");
 const chalk = require("chalk");
 const { Select, Input } = require("enquirer");
+const details = require("../package.json");
 const { getExamples, createProject } = require(".");
 
 exports.parse = function parse(argv) {
@@ -27,10 +28,9 @@ exports.parse = function parse(argv) {
         description:
           "An example from marko-js/examples or a git repo to use as the project template"
       },
-      "--interactive -i": {
+      "--version -v": {
         type: "boolean",
-        description:
-          "An example from marko-js/examples or a git repo to use as the project template"
+        descrption: `print ${details.name} version`
       }
     })
     .usage(
@@ -56,6 +56,11 @@ exports.parse = function parse(argv) {
       `$0 my-new-app ${chalk.green.bold("--template user/repo#commit")}`
     )
     .validate(function(result) {
+      if (result.version) {
+        console.log(`v${details.version}`);
+        process.exit(0);
+      }
+
       if (result.help) {
         this.printUsage();
         process.exit(0);

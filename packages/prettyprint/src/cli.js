@@ -2,6 +2,7 @@ const fs = require("fs");
 const chalk = require("chalk");
 const nodePath = require("path");
 const Minimatch = require("minimatch").Minimatch;
+const details = require("../package.json");
 const markoPrettyprint = require("./");
 const cwd = process.cwd();
 const mmOptions = {
@@ -41,6 +42,10 @@ exports.parse = function parse(argv) {
       "--single-quote": {
         type: "boolean",
         description: "If set, will prefer single quotes"
+      },
+      "--version -v": {
+        type: "boolean",
+        descrption: `print ${details.name} version`
       }
     })
     .usage("Usage: $0 <pattern> [options]")
@@ -50,6 +55,11 @@ exports.parse = function parse(argv) {
     .example("Prettyprint multiple templates", "$0 template.marko src/ foo/")
 
     .validate(function(result) {
+      if (result.version) {
+        console.log(`v${details.version}`);
+        process.exit(0);
+      }
+
       if (result.help) {
         this.printUsage();
         process.exit(0);
@@ -116,9 +126,7 @@ exports.run = function run(options) {
       }
       console.log(
         chalk.bold.red(
-          `\nPrettyprinted ${updateCount} of ${foundCount} template(s) with ${
-            errorEntries.length
-          } error(s)`
+          `\nPrettyprinted ${updateCount} of ${foundCount} template(s) with ${errorEntries.length} error(s)`
         )
       );
     } else {

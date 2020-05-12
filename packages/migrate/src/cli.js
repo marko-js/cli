@@ -1,6 +1,7 @@
 import fs from "mz/fs";
 import { prompt } from "enquirer";
 import dependentPathUpdate from "dependent-path-update";
+import details from "../package.json";
 import markoMigrate from ".";
 
 export function parse(argv) {
@@ -38,6 +39,10 @@ export function parse(argv) {
       "--safe": {
         type: "boolean",
         description: "Run all safe migrations ignoring any prompts"
+      },
+      "--version -v": {
+        type: "boolean",
+        descrption: `print ${details.name} version`
       }
     })
     .usage("Usage: $0 <pattern> [options]")
@@ -47,6 +52,11 @@ export function parse(argv) {
     .example("Migrate multiple templates", "$0 template.marko src/ foo/")
 
     .validate(function(result) {
+      if (result.version) {
+        console.log(`v${details.version}`);
+        process.exit(0);
+      }
+
       if (result.help) {
         this.printUsage();
         process.exit(0);

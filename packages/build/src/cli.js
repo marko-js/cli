@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const build = require("./");
+const details = require("../package.json");
 const parseNodeArgs = require("parse-node-args");
 
 exports.parse = function parse(argv) {
@@ -22,6 +23,10 @@ exports.parse = function parse(argv) {
       "--json": {
         type: "boolean",
         description: "Print a JSON stats object for analysis tools"
+      },
+      "--version -v": {
+        type: "boolean",
+        descrption: `print ${details.name} version`
       }
     })
     .usage("$0 <path> [options]")
@@ -29,6 +34,11 @@ exports.parse = function parse(argv) {
     .example("Build the current directory", "$0 .")
 
     .validate(function(result) {
+      if (result.version) {
+        console.log(`v${details.version}`);
+        process.exit(0);
+      }
+
       if (result.help) {
         this.printUsage();
         process.exit(0);

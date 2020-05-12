@@ -1,6 +1,7 @@
-const markoTest = require(".");
 const parseNodeArgs = require("parse-node-args");
+const details = require("../package.json");
 const MarkoDevTools = require("./util/MarkoDevTools");
+const markoTest = require(".");
 
 exports.parse = function parse(argv) {
   const { cliArgs, nodeArgs } = parseNodeArgs(argv);
@@ -26,6 +27,10 @@ exports.parse = function parse(argv) {
       "--files --file -f *": {
         type: "string[]",
         description: "File patterns to match tests to run"
+      },
+      "--version -v": {
+        type: "boolean",
+        descrption: `print ${details.name} version`
       }
       // TODO: Add `--test-template-path` option, which should ultimately map to
       // the `pageTemplate` option in the browser tests runner.
@@ -49,6 +54,11 @@ exports.parse = function parse(argv) {
       "marko test ./src/components/**/test*browser.js --browser"
     )
     .validate(function(result) {
+      if (result.version) {
+        console.log(`v${details.version}`);
+        process.exit(0);
+      }
+
       if (result.help) {
         this.printUsage();
         process.exit(0);

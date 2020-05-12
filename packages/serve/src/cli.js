@@ -2,10 +2,11 @@ const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
 const address = require("address");
-const serve = require("./");
 const parseNodeArgs = require("parse-node-args");
 const openBrowser = require("open-browsers");
+const details = require("../package.json");
 const getPort = require("./get-port");
+const serve = require("./");
 
 exports.parse = function parse(argv) {
   const { cliArgs, nodeArgs } = parseNodeArgs(argv);
@@ -30,13 +31,21 @@ exports.parse = function parse(argv) {
       "--no-browser": {
         type: "boolean",
         description: "Don't automatically open the browser"
+      },
+      "--version -v": {
+        type: "boolean",
+        descrption: `print ${details.name} version`
       }
     })
     .usage("$0 <path> [options]")
     .example("Serve a marko file", "$0 component.marko")
     .example("Serve the current directory", "$0 .")
-
     .validate(function(result) {
+      if (result.version) {
+        console.log(`v${details.version}`);
+        process.exit(0);
+      }
+
       if (result.help) {
         this.printUsage();
         process.exit(0);
