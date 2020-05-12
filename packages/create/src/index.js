@@ -5,7 +5,7 @@ const got = require("got");
 const path = require("path");
 const degit = require("degit");
 const EventEmitter = require("events");
-const exec = require("child_process").exec;
+const execFile = require("child_process").execFile;
 const initGitRepo = require("./init-git-repo");
 
 const DEFAULT_EXAMPLE = "basic";
@@ -128,7 +128,7 @@ async function rewritePackageJson(fullPath, name) {
 function installPackages(fullPath, emitter) {
   emitter.emit("install");
   return new Promise((resolve, reject) => {
-    exec(`cd ${fullPath} && npm install`, err => {
+    execFile("npm", ["install"], { cwd: fullPath }, err => {
       if (err) reject(err);
       else resolve();
     });
