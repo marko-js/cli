@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.1](https://github.com/marko-js/cli/compare/@marko/create@5.0.0...@marko/create@5.0.1) (2020-05-12)
+
+
+### Bug Fixes
+
+* **create:** support spaces in directory ([2c4ed54](https://github.com/marko-js/cli/commit/2c4ed547cb963cfd57cf8d94f9c01d750873fde1))
+
+
+
+
+
 # [5.0.0](https://github.com/marko-js/cli/compare/@marko/create@4.2.0...@marko/create@5.0.0) (2020-05-12)
 
 
