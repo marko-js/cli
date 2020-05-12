@@ -24,20 +24,37 @@ Used to create a template Marko project in a specific directory.
 
 ## Example
 
-```terminal
-# Creates a Marko project in a folder called "myapp" in the current directory.
-npx @marko/create myapp
+```bash
+# Creates a Marko project
+npx @marko/create
+```
+
+```bash
+# Creates a project called "myapp" from the "webpack" example template
+npx @marko/create myapp --template webpack
 ```
 
 ## Options
 
 - `--dir`: Provide a different directory to setup the project in (default to `pwd`).
+- `--template`: The name of an example from [marko-js/examples](https://github.com/marko-js/examples/tree/master/examples).
+  - An example name
+    ```bash
+    webpack
+    rollup
+    ```
+  - A tag/branch/commit other than `master` is supported
+    ```bash
+    basic#next     # example branch
+    webpack#v1.2.3 # repo release tag
+    rollup#62e9fb1 # repo commit hash
+    ```
 
 # API
 
 ## Installation
 
-```terminal
+```bash
 npm install @marko/create
 ```
 
