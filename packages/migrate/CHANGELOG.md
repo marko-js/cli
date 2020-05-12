@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.1](https://github.com/marko-js/cli/compare/@marko/migrate@5.3.0...@marko/migrate@5.3.1) (2020-05-12)
+
+
+### Bug Fixes
+
+* include version flag for all commands ([802de9d](https://github.com/marko-js/cli/commit/802de9daa9e70b2912b5a718352f667d7bc2eb03))
+
+
+
+
+
 # [5.3.0](https://github.com/marko-js/cli/compare/@marko/migrate@5.2.0...@marko/migrate@5.3.0) (2020-05-07)
 
 

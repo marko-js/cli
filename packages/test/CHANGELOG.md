@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.2](https://github.com/marko-js/cli/compare/@marko/test@7.1.1...@marko/test@7.1.2) (2020-05-12)
+
+
+### Bug Fixes
+
+* include version flag for all commands ([802de9d](https://github.com/marko-js/cli/commit/802de9daa9e70b2912b5a718352f667d7bc2eb03))
+
+
+
+
+
 ## [7.1.1](https://github.com/marko-js/cli/compare/@marko/test@7.1.0...@marko/test@7.1.1) (2020-05-08)
 
 **Note:** Version bump only for package @marko/test
