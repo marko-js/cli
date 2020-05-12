@@ -1,47 +1,32 @@
 "use strict";
 
-const spawn = require("child_process").spawn;
-const execSync = require("child_process").execSync;
+const exec = require("./exec");
 
 module.exports = async function initGitRepo(cwd, emitter) {
-  if (hasGit() && !isGitRepo() && !isMercurialRepo()) {
+  const [hasGit, isGitRepo] = await Promise.all([
+    tryExecGit(cwd, ["--version"]),
+    tryExecGit(cwd, ["rev-parse", "--is-inside-work-tree"])
+  ]);
+
+  if (hasGit && !isGitRepo) {
     emitter.emit("init");
-    await spawnPromise("git", ["init"], { cwd });
-    await spawnPromise("git", ["add", "."], { cwd });
-    await spawnPromise("git", ["commit", "-m", commitMessage], { cwd });
+    await execGit(cwd, ["init"]);
+    await execGit(cwd, ["add", "."]);
+    await execGit(cwd, ["commit", "-m", `"${commitMessage}"`]);
   }
 };
 
-function hasGit() {
-  return tryCommand("git --version");
-}
-
-function isGitRepo() {
-  return tryCommand("git rev-parse --is-inside-work-tree");
-}
-
-function isMercurialRepo() {
-  return tryCommand("hg --cwd . root");
-}
-
-function tryCommand(cmd) {
+async function tryExecGit(cwd, args) {
   try {
-    execSync(cmd, { stdio: "ignore" });
+    await execGit(cwd, args);
     return true;
-  } catch (e) {
+  } catch (_) {
     return false;
   }
 }
 
-function spawnPromise(cmd, args, options = {}) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(cmd, args, { stdio: "ignore", ...options });
-    child.on("close", code => {
-      if (!code) resolve();
-      else
-        reject(new Error(`${cmd} ${args.join(" ")} exited with code ${code}`));
-    });
-  });
+function execGit(cwd, args) {
+  return exec(cwd, "git", args);
 }
 
 let commitMessage = `initial commit from @marko/create

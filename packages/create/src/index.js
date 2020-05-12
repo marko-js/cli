@@ -1,18 +1,28 @@
 "use strict";
 
+const os = require("os");
 const fs = require("fs");
 const got = require("got");
 const path = require("path");
+const util = require("util");
 const degit = require("degit");
 const EventEmitter = require("events");
-const execFile = require("child_process").execFile;
+
+const exec = require("./exec");
 const initGitRepo = require("./init-git-repo");
+
+const readdir = util.promisify(fs.readdir);
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
+const exists = request =>
+  new Promise(resolve => fs.access(request, err => resolve(!err)));
 
 const DEFAULT_EXAMPLE = "basic";
 const EXAMPLES_REPO = "marko-js/examples";
 const EXAMPLES_SUBDIRECTORY = "examples";
 const GITHUB_URL = "https://github.com/";
 const MASTER_TAG = "master";
+const TEMP_DIR = os.tmpdir();
 
 exports.createProject = function createProject(options) {
   const emitter = new EventEmitter();
@@ -41,17 +51,17 @@ async function create(options = {}, emitter) {
 }
 
 exports.getExamples = async function() {
-  const tempPath = path.join(__dirname, "examples-cache");
+  const tempPath = path.join(TEMP_DIR, "marko-create-examples");
   await downloadRepo(EXAMPLES_REPO, tempPath, { force: true });
   const tempExamplesPath = path.join(tempPath, EXAMPLES_SUBDIRECTORY);
-  const examples = await fs.promises.readdir(tempExamplesPath);
+  const examples = await readdir(tempExamplesPath);
   return Promise.all(
     examples.map(async name => {
       let description = "";
 
       try {
         const packagePath = path.join(tempExamplesPath, name, "package.json");
-        const packageData = JSON.parse(await fs.promises.readFile(packagePath));
+        const packageData = JSON.parse(await readFile(packagePath));
         description = packageData.description || "";
       } catch (e) {
         // ignore error
@@ -79,14 +89,16 @@ async function assertExampleExists(example) {
 }
 
 async function assertAllGood(dir, fullPath, name) {
-  if (!fs.existsSync(dir)) {
-    throw new Error(`Invalid directory specified '${dir}'`);
-  }
-  if (fs.existsSync(fullPath)) {
-    throw new Error(`Project path already exists '${fullPath}'`);
-  }
   if (!isValidAppName(name)) {
     throw new Error(`Invaid app name: ${name}`);
+  }
+
+  if (!(await exists(dir))) {
+    throw new Error(`Invalid directory specified '${dir}'`);
+  }
+
+  if (await exists(fullPath)) {
+    throw new Error(`Project path already exists '${fullPath}'`);
   }
 }
 
@@ -94,11 +106,13 @@ function isValidAppName(name) {
   return !/\/|\\/.test(name);
 }
 
-function isUrlFound(url) {
-  return got
-    .head(url)
-    .then(() => true)
-    .catch(() => false);
+async function isUrlFound(url) {
+  try {
+    await got.head(url);
+    return true;
+  } catch (_) {
+    return false;
+  }
 }
 
 async function downloadRepo(source, target, options, emitter) {
@@ -109,7 +123,7 @@ async function downloadRepo(source, target, options, emitter) {
 
 async function rewritePackageJson(fullPath, name) {
   let packagePath = path.resolve(fullPath, "./package.json");
-  let packageData = fs.readFileSync(packagePath, "utf8");
+  let packageData = await readFile(packagePath, "utf8");
 
   packageData = JSON.parse(packageData);
 
@@ -117,22 +131,14 @@ async function rewritePackageJson(fullPath, name) {
   packageData.version = "1.0.0";
   packageData.private = true;
 
-  await fs.promises.writeFile(
-    packagePath,
-    JSON.stringify(packageData, null, 2)
-  );
+  await writeFile(packagePath, JSON.stringify(packageData, null, 2));
 
   return packageData;
 }
 
-function installPackages(fullPath, emitter) {
+async function installPackages(fullPath, emitter) {
   emitter.emit("install");
-  return new Promise((resolve, reject) => {
-    execFile("npm", ["install"], { cwd: fullPath }, err => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
+  await exec(fullPath, "npm", ["install"]);
 }
 
 function getExampleUrl(example, tag) {
