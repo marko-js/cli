@@ -7,7 +7,6 @@ const InjectPlugin = require("webpack-inject-plugin").default;
 const MinifyCSSPlugin = require("optimize-css-assets-webpack-plugin");
 const MinifyImgPlugin = require("imagemin-webpack-plugin").default;
 const CompressionPlugin = require("compression-webpack-plugin");
-const BrotliPlugin = require("brotli-webpack-plugin");
 const MarkoPlugin = require("@marko/webpack/plugin").default;
 
 const { getUserAgentRegExp } = require("browserslist-useragent-regexp");
@@ -152,16 +151,30 @@ module.exports = ({
   });
 
   if (production) {
-    serverPlugins = serverPlugins.concat([
-      new InjectPlugin(() => `import "source-map-support/register"`)
-    ]);
+    const getSharedCompressionPlugins = test => [
+      new MinifyImgPlugin({ test }),
+      new CompressionPlugin({
+        test,
+        algorithm: "gzip",
+        filename: "[path].gz[query]"
+      }),
+      new CompressionPlugin({
+        test,
+        algorithm: "brotliCompress",
+        filename: "[path].br[query]",
+        compressionOptions: { level: 11 }
+      })
+    ];
 
-    clientPlugins = clientPlugins.concat([
+    serverPlugins = serverPlugins.concat(
+      new InjectPlugin(() => `import "source-map-support/register"`),
+      getSharedCompressionPlugins(/^assets/)
+    );
+
+    clientPlugins = clientPlugins.concat(
       new MinifyCSSPlugin(),
-      new MinifyImgPlugin(),
-      new CompressionPlugin(),
-      new BrotliPlugin()
-    ]);
+      getSharedCompressionPlugins()
+    );
   }
 
   const serverConfig = {
