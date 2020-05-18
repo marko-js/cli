@@ -142,7 +142,6 @@ module.exports = ({
 
   const sharedConfig = options => ({
     mode: MODE,
-    bail: true,
     context: __dirname,
     devtool: DEVTOOL,
     resolve: {
