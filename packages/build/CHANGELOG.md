@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/marko-js/cli/compare/@marko/build@1.4.0...@marko/build@1.4.1) (2020-05-18)
+
+
+### Bug Fixes
+
+* **build:** allow server bundle to be cached ([#165](https://github.com/marko-js/cli/issues/165)) ([513b5a8](https://github.com/marko-js/cli/commit/513b5a83cab57e876d85fa30c29575289f92aa53))
+* **build:** server bundle source maps in dev mode ([#167](https://github.com/marko-js/cli/issues/167)) ([12355c3](https://github.com/marko-js/cli/commit/12355c3006ad8ffe812c4d0f270f3f4191388e64))
+
+
+
+
+
 # [1.4.0](https://github.com/marko-js/cli/compare/@marko/build@1.3.3...@marko/build@1.4.0) (2020-05-18)
 
 
