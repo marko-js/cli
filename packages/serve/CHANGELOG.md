@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/marko-js/cli/compare/@marko/serve@1.3.3...@marko/serve@1.4.0) (2020-05-18)
+
+
+### Features
+
+* **build:** shorten generated filenames for prod build ([#162](https://github.com/marko-js/cli/issues/162)) ([0c22489](https://github.com/marko-js/cli/commit/0c224897bbbfc3a12561da5ac3961c7368b3c93a))
+
+
+
+
+
 ## [1.3.3](https://github.com/marko-js/cli/compare/@marko/serve@1.3.2...@marko/serve@1.3.3) (2020-05-12)
 
 
