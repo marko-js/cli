@@ -25,9 +25,10 @@ module.exports = ({
   serverPlugins = [],
   clientPlugins = []
 }) => {
-  const NODE_ENV = (process.env.NODE_ENV = production
-    ? "production"
-    : undefined);
+  if (production) {
+    process.env.NODE_ENV = "production";
+  }
+
   const MODE = production ? "production" : "development";
   const DEVTOOL = production ? "source-map" : "cheap-module-source-map";
   const BUILD_PATH = path.resolve(CWD, output);
@@ -179,8 +180,7 @@ module.exports = ({
         "typeof window": "'undefined'",
         "process.browser": undefined,
         "process.env.BUNDLE": true,
-        "global.PORT": production ? 3000 : 0,
-        "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
+        "global.PORT": production ? 3000 : 0
       }),
       new InjectPlugin(async () => {
         const parts = [
@@ -233,8 +233,7 @@ module.exports = ({
     plugins: [
       new webpack.DefinePlugin({
         "typeof window": "'object'",
-        "process.browser": true,
-        "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
+        "process.browser": true
       }),
       new ExtractCSSPlugin({
         filename: `[name].${CONTENT_HASH}.css`
