@@ -13,7 +13,6 @@ const MarkoPlugin = require("@marko/webpack/plugin").default;
 const { getUserAgentRegExp } = require("browserslist-useragent-regexp");
 const { useAppModuleOrFallback, getRouterCode } = require("./util");
 
-const CONTENT_HASH = "[contenthash:8]";
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
 const CWD = process.cwd();
 
@@ -25,6 +24,10 @@ module.exports = ({
   serverPlugins = [],
   clientPlugins = []
 }) => {
+  const ENTRY_FILENAME_TEMPLATE = `[${
+    production ? "id" : "name"
+  }].[contenthash:8]`;
+  const FILENAME_TEMPLATE = `${production ? "" : "[name]."}[contenthash:8]`;
   const NODE_ENV = (process.env.NODE_ENV = production
     ? "production"
     : undefined);
@@ -128,9 +131,7 @@ module.exports = ({
       loader: require.resolve("file-loader"),
       options: {
         publicPath: PUBLIC_PATH,
-        name: production
-          ? `${CONTENT_HASH}.[ext]`
-          : `[name].${CONTENT_HASH}.[ext]`,
+        name: `${FILENAME_TEMPLATE}.[ext]`,
         outputPath: path.relative(
           isServer ? BUILD_PATH : ASSETS_PATH,
           ASSETS_PATH
@@ -170,7 +171,7 @@ module.exports = ({
       path: BUILD_PATH,
       publicPath: PUBLIC_PATH,
       filename: "index.js",
-      chunkFilename: `[name].${CONTENT_HASH}.js`,
+      chunkFilename: `${ENTRY_FILENAME_TEMPLATE}.js`,
       libraryTarget: "commonjs2",
       devtoolModuleFilenameTemplate: "[resource-path]"
     },
@@ -228,7 +229,7 @@ module.exports = ({
     output: {
       publicPath: PUBLIC_PATH,
       path: ASSETS_PATH,
-      filename: `[name].${CONTENT_HASH}.js`
+      filename: `${ENTRY_FILENAME_TEMPLATE}.js`
     },
     plugins: [
       new webpack.DefinePlugin({
@@ -237,7 +238,7 @@ module.exports = ({
         "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
       }),
       new ExtractCSSPlugin({
-        filename: `[name].${CONTENT_HASH}.css`
+        filename: `${FILENAME_TEMPLATE}.css`
       }),
       markoPlugin.browser,
       ...clientPlugins
