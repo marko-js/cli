@@ -152,7 +152,10 @@ module.exports = ({
   });
 
   if (production) {
-    serverPlugins = serverPlugins.concat([]);
+    serverPlugins = serverPlugins.concat([
+      new InjectPlugin(() => `import "source-map-support/register"`)
+    ]);
+
     clientPlugins = clientPlugins.concat([
       new MinifyCSSPlugin(),
       new MinifyImgPlugin(),
@@ -164,7 +167,6 @@ module.exports = ({
   const serverConfig = {
     name: "Server",
     target: "async-node",
-    cache: false, // This is needed because `InjectPlugin` is caching, we need to make a PR to opt out of caching.
     entry: SERVER_FILE,
     output: {
       path: BUILD_PATH,
@@ -182,17 +184,16 @@ module.exports = ({
         "global.PORT": production ? 3000 : 0,
         "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
       }),
-      new InjectPlugin(async () => {
-        const parts = [
+      new InjectPlugin(
+        () =>
           `global.MODERN_BROWSERS_REGEXP = ${getUserAgentRegExp({
             browsers: modernBrowsers,
             allowHigherVersions: true
           })}`
-        ];
-
-        if (production) {
-          parts.push(`import "source-map-support/register"`);
-        }
+      ),
+      new InjectPlugin(async function() {
+        const parts = [];
+        this.cacheable(false);
 
         if (dir) {
           parts.push(await getRouterCode(dir, [BUILD_PATH, "**/node_modules"]));
