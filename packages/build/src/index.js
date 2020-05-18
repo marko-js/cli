@@ -167,13 +167,16 @@ module.exports = ({
     ];
 
     serverPlugins = serverPlugins.concat(
-      new InjectPlugin(() => `import "source-map-support/register"`),
       getSharedCompressionPlugins(/^assets/)
     );
 
     clientPlugins = clientPlugins.concat(
       new MinifyCSSPlugin(),
       getSharedCompressionPlugins()
+    );
+  } else {
+    serverPlugins = serverPlugins.concat(
+      new InjectPlugin(() => `import "source-map-support/register"`)
     );
   }
 
