@@ -12,7 +12,9 @@ if (process.env.NODE_ENV === "production") {
   gzipStatic = connectGzipStatic(
     // eslint-disable-next-line
     path.join(__non_webpack_require__.main.filename, "..", "assets"),
-    { maxAge: 31536000 }
+    {
+      maxAge: 60 * 60 * 24 * 365 * 1000 // 1 year in ms
+    }
   );
 }
 
