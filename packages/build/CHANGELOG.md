@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/marko-js/cli/compare/@marko/build@1.4.1...@marko/build@1.5.0) (2020-05-19)
+
+
+### Features
+
+* **build:** marko 5 support ([903997b](https://github.com/marko-js/cli/commit/903997b37ee06fdfbf92c8f13559f3f1fe0e3416))
+
+
+
+
+
 ## [1.4.1](https://github.com/marko-js/cli/compare/@marko/build@1.4.0...@marko/build@1.4.1) (2020-05-18)
 
 
