@@ -47,6 +47,8 @@ module.exports = ({
     return require.resolve("./marko-compiler");
   })();
 
+  const isMarko5 = !markoCompiler.createBuilder;
+
   const legacyBrowsers =
     browserslist.loadConfig({
       path: dir || file,
@@ -73,13 +75,17 @@ module.exports = ({
     "source-map-support": useAppModuleOrFallback(APP_DIR, "source-map-support")
   });
 
+  const babelConfig = targets => ({
+    presets: [[require.resolve("@babel/preset-env"), { targets }]],
+    plugins: [require.resolve("babel-plugin-macros")],
+    babelrc: false,
+    configFile: false
+  });
+
   const babelLoader = targets => ({
     loader: require.resolve("babel-loader"),
     options: {
-      presets: [[require.resolve("@babel/preset-env"), { targets }]],
-      plugins: [require.resolve("babel-plugin-macros")],
-      babelrc: false,
-      configFile: false,
+      ...babelConfig(targets),
       cacheDirectory: true
     }
   });
@@ -92,15 +98,13 @@ module.exports = ({
     },
     {
       test: /\.marko$/,
-      use: [
-        babelLoader(targets),
-        {
-          loader: require.resolve("@marko/webpack/loader"),
-          options: {
-            compiler: markoCompiler
-          }
+      use: (isMarko5 ? [] : [babelLoader(targets)]).concat({
+        loader: require.resolve("@marko/webpack/loader"),
+        options: {
+          compiler: markoCompiler,
+          babelConfig: isMarko5 && babelConfig(targets)
         }
-      ]
+      })
     },
     {
       test: /\.css$/,
