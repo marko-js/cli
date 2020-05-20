@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/marko-js/cli/compare/@marko/build@1.5.0...@marko/build@1.5.1) (2020-05-20)
+
+
+### Bug Fixes
+
+* **build:** regression causing multiple copies of Marko in dev mode ([e227932](https://github.com/marko-js/cli/commit/e227932b734bd56bf318d3fbe3be6a491db07d88))
+
+
+
+
+
 # [1.5.0](https://github.com/marko-js/cli/compare/@marko/build@1.4.1...@marko/build@1.5.0) (2020-05-19)
 
 
