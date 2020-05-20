@@ -27,9 +27,9 @@ module.exports = ({
     production ? "id" : "name"
   }].[contenthash:8]`;
   const FILENAME_TEMPLATE = `${production ? "" : "[name]."}[contenthash:8]`;
-  const NODE_ENV = (process.env.NODE_ENV = production
-    ? "production"
-    : undefined);
+  const NODE_ENV = production
+    ? (process.env.NODE_ENV = "production")
+    : undefined;
   const MODE = production ? "production" : "development";
   const DEVTOOL = production ? "source-map" : "cheap-module-source-map";
   const BUILD_PATH = path.resolve(CWD, output);
