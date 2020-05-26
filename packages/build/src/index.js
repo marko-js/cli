@@ -14,6 +14,14 @@ const { useAppModuleOrFallback, getRouterCode } = require("./util");
 
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
 const CWD = process.cwd();
+let ROOT = __dirname.slice(
+  0,
+  __dirname.indexOf(path.sep + "node_modules" + path.sep) + 2
+);
+
+if (ROOT === path.sep) {
+  ROOT = __dirname;
+}
 
 module.exports = ({
   dir,
@@ -36,6 +44,7 @@ module.exports = ({
   const ASSETS_PATH = path.join(BUILD_PATH, "assets");
   const PUBLIC_PATH = "/assets/";
   const APP_DIR = dir || path.dirname(file);
+  const CONTEXT = APP_DIR.startsWith(ROOT) ? ROOT : APP_DIR;
 
   // getClientCompilerName gets stringified and added to the output bundle
   // if it is instrumented, the cov_${id} variable will cause a ReferenceError
@@ -145,7 +154,7 @@ module.exports = ({
 
   const sharedConfig = options => ({
     mode: MODE,
-    context: __dirname,
+    context: CONTEXT,
     devtool: DEVTOOL,
     resolve: {
       alias: sharedAliases(options),
