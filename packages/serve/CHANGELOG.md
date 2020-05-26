@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.4](https://github.com/marko-js/cli/compare/@marko/serve@1.4.3...@marko/serve@1.4.4) (2020-05-26)
+
+**Note:** Version bump only for package @marko/serve
+
+
+
+
+
 ## [1.4.3](https://github.com/marko-js/cli/compare/@marko/serve@1.4.2...@marko/serve@1.4.3) (2020-05-20)
 
 **Note:** Version bump only for package @marko/serve
