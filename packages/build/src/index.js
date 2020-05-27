@@ -258,6 +258,7 @@ module.exports = ({
       new webpack.DefinePlugin({
         "typeof window": "'object'",
         "process.browser": true,
+        "process.env.BUNDLE": true,
         "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
       }),
       new ExtractCSSPlugin({
