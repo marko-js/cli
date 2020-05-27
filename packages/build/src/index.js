@@ -14,14 +14,8 @@ const { useAppModuleOrFallback, getRouterCode } = require("./util");
 
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
 const CWD = process.cwd();
-let ROOT = __dirname.slice(
-  0,
-  __dirname.indexOf(path.sep + "node_modules" + path.sep) + 2
-);
-
-if (ROOT === path.sep) {
-  ROOT = __dirname;
-}
+const NMS_INDEX = __dirname.indexOf(path.sep + "node_modules" + path.sep);
+const ROOT = NMS_INDEX === -1 ? __dirname : __dirname.slice(0, NMS_INDEX + 2);
 
 module.exports = ({
   dir,
