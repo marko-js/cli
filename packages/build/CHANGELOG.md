@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.2](https://github.com/marko-js/cli/compare/@marko/build@1.6.1...@marko/build@1.6.2) (2020-05-27)
+
+
+### Bug Fixes
+
+* **build:** define BUNDLE env for browser compiler ([dec6fd7](https://github.com/marko-js/cli/commit/dec6fd7bc9eaee529ca0951b19cf670e5dbe1d86))
+
+
+
+
+
 ## [1.6.1](https://github.com/marko-js/cli/compare/@marko/build@1.6.0...@marko/build@1.6.1) (2020-05-27)
 
 
