@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.2](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.2.1...@marko/prettyprint@2.2.2) (2020-06-25)
+
+
+### Bug Fixes
+
+* add missing babel runtime dep ([9d04f7c](https://github.com/marko-js/cli/commit/9d04f7cbf4a21aabf01f4aac3aaf2c8a97d31253))
+
+
+
+
+
 ## [2.2.1](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.2.0...@marko/prettyprint@2.2.1) (2020-05-12)
 
 

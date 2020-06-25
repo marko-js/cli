@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.3](https://github.com/marko-js/cli/compare/@marko/build@1.6.2...@marko/build@1.6.3) (2020-06-25)
+
+
+### Bug Fixes
+
+* add missing babel runtime dep ([9d04f7c](https://github.com/marko-js/cli/commit/9d04f7cbf4a21aabf01f4aac3aaf2c8a97d31253))
+
+
+
+
+
 ## [1.6.2](https://github.com/marko-js/cli/compare/@marko/build@1.6.1...@marko/build@1.6.2) (2020-05-27)
 
 
