@@ -4,6 +4,7 @@
   "version": "7.1.2",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
+    "@babel/runtime": "^7.9.6",
     "@lasso/marko-taglib": "^1.0.13",
     "@wdio/cli": "^5.8.4",
     "argly": "^1.2.0",
