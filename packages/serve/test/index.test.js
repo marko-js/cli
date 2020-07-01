@@ -4,7 +4,8 @@ import puppeteer from "puppeteer";
 import cluster from "cluster";
 import { copy, remove } from "fs-extra";
 import { run } from "../src/cli";
-import build from "../../build/src/index";
+import { loadWebpackConfig } from "../../build/src/index";
+import webpack from "webpack";
 
 describe("scope(serve)", function() {
   this.slow(20000);
@@ -18,9 +19,9 @@ describe("scope(serve)", function() {
       const outputPath = resolve("dist");
 
       await new Promise((resolve, reject) => {
-        build({ output: outputPath, ...options }).run(err =>
-          err ? reject(err) : resolve()
-        );
+        webpack(
+          loadWebpackConfig({ output: outputPath, ...options })
+        ).run(err => (err ? reject(err) : resolve()));
       });
 
       cluster.setupMaster({
@@ -52,7 +53,6 @@ function createTest(createServer) {
         const mainPath = resolve("test.js");
         const hasMainFile = fs.existsSync(mainPath);
         const targetFilePath = resolve("target.marko");
-        const hasTargetFile = fs.existsSync(targetFilePath);
         const targetDirPath = resolve("target");
         const hasTargetDir = fs.existsSync(targetDirPath);
 
@@ -64,13 +64,9 @@ function createTest(createServer) {
           options = Object.assign(options, main.options);
         }
 
-        if (hasTargetDir) {
-          options.dir = targetPath = targetDirPath;
-        }
-
-        if (hasTargetFile) {
-          options.file = targetPath = targetFilePath;
-        }
+        options.entry = targetPath = hasTargetDir
+          ? targetDirPath
+          : targetFilePath;
 
         closeServer = await createServer(options, { resolve });
         browser = await puppeteer.launch();

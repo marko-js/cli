@@ -1,8 +1,11 @@
 const fs = require("fs");
 const path = require("path");
-const build = require("./");
+const { loadWebpackConfig } = require("./");
 const details = require("../package.json");
+const { buildStaticSite } = require("./util");
 const parseNodeArgs = require("parse-node-args");
+const rimraf = require("rimraf");
+const webpack = require("webpack");
 
 exports.parse = function parse(argv) {
   const { cliArgs, nodeArgs } = parseNodeArgs(argv);
@@ -12,7 +15,7 @@ exports.parse = function parse(argv) {
         type: "boolean",
         description: "Show this help message"
       },
-      "--file -f *": {
+      "--entry *": {
         type: "string",
         description: "A marko file to serve"
       },
@@ -44,22 +47,16 @@ exports.parse = function parse(argv) {
         process.exit(0);
       }
 
-      if (!result.file) {
+      if (!result.entry) {
         this.printUsage();
         process.exit(1);
       }
 
-      const resolved = path.resolve(process.cwd(), result.file);
+      const resolved = path.resolve(process.cwd(), result.entry);
       if (fs.existsSync(resolved)) {
-        const stat = fs.statSync(resolved);
-        if (stat.isDirectory()) {
-          result.dir = resolved;
-          delete result.file;
-        } else {
-          result.file = resolved;
-        }
+        result.entry = resolved;
       } else {
-        console.warn("Unable to find file or directory: " + result.file);
+        console.warn("Unable to find file or directory: " + result.entry);
         process.exit(1);
       }
     })
@@ -76,13 +73,25 @@ exports.parse = function parse(argv) {
     .parse(cliArgs);
 
   options.nodeArgs = nodeArgs;
+  options.production = true;
 
   return options;
 };
 
 exports.run = async options => {
-  build(options).run((err, stats) => {
+  process.env.NODE_ENV = "production";
+
+  const config = loadWebpackConfig(options);
+  const compiler = webpack(config);
+
+  compiler.hooks.run.tapAsync("@marko/build", (_, done) =>
+    config.forEach(({ output: { path } }) => rimraf(path, done))
+  );
+
+  compiler.run(async (err, stats) => {
     if (err) console.error(err);
-    console.log(stats.toString());
+    if (options.static) {
+      await buildStaticSite(options, stats);
+    }
   });
 };

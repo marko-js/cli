@@ -1,5 +1,5 @@
+const fs = require("fs");
 const path = require("path");
-const rimraf = require("rimraf");
 const webpack = require("webpack");
 const browserslist = require("browserslist");
 const ExtractCSSPlugin = require("mini-css-extract-plugin");
@@ -16,15 +16,61 @@ const SERVER_FILE = path.join(__dirname, "./files/server.js");
 const CWD = process.cwd();
 const NMS_INDEX = __dirname.indexOf(path.sep + "node_modules" + path.sep);
 const ROOT = NMS_INDEX === -1 ? __dirname : __dirname.slice(0, NMS_INDEX + 2);
+const IDENTITY_FN = x => x;
 
-module.exports = ({
-  dir,
-  file,
+exports.loadWebpackConfig = options => {
+  let foundConfig;
+  let currentDirectory = options.entry;
+  const root = path.parse(currentDirectory).root;
+
+  while (!foundConfig) {
+    let configPath;
+    if (
+      fs.existsSync(
+        (configPath = path.join(currentDirectory, "webpack.config.js"))
+      )
+    ) {
+      foundConfig = require(configPath);
+    } else if (fs.existsSync(path.join(currentDirectory, "package.json"))) {
+      break;
+    } else if (currentDirectory === root) {
+      break;
+    }
+    currentDirectory = path.dirname(currentDirectory);
+  }
+
+  if (!foundConfig) {
+    const {
+      getServerConfig,
+      getBrowserConfig,
+      getBrowserConfigs
+    } = configBuilder(options);
+    foundConfig =
+      options.production === false
+        ? [
+            getBrowserConfig({
+              env: "modern",
+              targets: [
+                "last 3 Chrome versions",
+                "last 2 Firefox versions",
+                "last 1 Edge versions",
+                "last 1 Safari versions",
+                "unreleased versions"
+              ]
+            }),
+            getServerConfig()
+          ]
+        : [...getBrowserConfigs(), getServerConfig()];
+  }
+  return foundConfig;
+};
+
+const configBuilder = (exports.configBuilder = ({
+  entry,
   production = true,
-  output = "build",
-  serverPlugins = [],
-  clientPlugins = []
+  output = "build"
 }) => {
+  const ENTRY_IS_DIR = fs.statSync(entry).isDirectory();
   const ENTRY_FILENAME_TEMPLATE = `[${
     production ? "id" : "name"
   }].[contenthash:8]`;
@@ -37,7 +83,7 @@ module.exports = ({
   const BUILD_PATH = path.resolve(CWD, output);
   const ASSETS_PATH = path.join(BUILD_PATH, "assets");
   const PUBLIC_PATH = "/assets/";
-  const APP_DIR = dir || path.dirname(file);
+  const APP_DIR = ENTRY_IS_DIR ? entry : path.dirname(entry);
   const CONTEXT = APP_DIR.startsWith(ROOT) ? ROOT : APP_DIR;
 
   // getClientCompilerName gets stringified and added to the output bundle
@@ -54,12 +100,12 @@ module.exports = ({
 
   const legacyBrowsers =
     browserslist.loadConfig({
-      path: dir || file,
+      path: entry,
       env: "legacy"
     }) || browserslist.defaults;
 
   const modernBrowsers = browserslist.loadConfig({
-    path: dir || file,
+    path: entry,
     env: "modern"
   }) || [
     "last 3 Chrome versions",
@@ -157,6 +203,9 @@ module.exports = ({
     module: { rules: sharedRules(options) }
   });
 
+  let serverPlugins = [];
+  let clientPlugins = [];
+
   if (production) {
     const getSharedCompressionPlugins = test => [
       new MinifyImgPlugin({ test }),
@@ -187,108 +236,112 @@ module.exports = ({
     );
   }
 
-  const serverConfig = {
-    name: "Server",
-    target: "async-node",
-    entry: SERVER_FILE,
-    output: {
-      path: BUILD_PATH,
-      publicPath: PUBLIC_PATH,
-      filename: "index.js",
-      chunkFilename: `${ENTRY_FILENAME_TEMPLATE}.js`,
-      libraryTarget: "commonjs2",
-      devtoolModuleFilenameTemplate: "[resource-path]"
-    },
-    plugins: [
-      new webpack.DefinePlugin({
-        "typeof window": "'undefined'",
-        "process.browser": undefined,
-        "process.env.BUNDLE": true,
-        "global.PORT": production ? 3000 : 0,
-        "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
-      }),
-      new InjectPlugin(
-        () =>
-          `global.MODERN_BROWSERS_REGEXP = ${getUserAgentRegExp({
-            browsers: modernBrowsers,
-            allowHigherVersions: true
-          })}`
-      ),
-      new InjectPlugin(async function() {
-        const parts = [];
-        this.cacheable(false);
+  const getServerConfig = (fn = IDENTITY_FN) =>
+    fn({
+      name: "Server",
+      target: "async-node",
+      entry: SERVER_FILE,
+      output: {
+        path: BUILD_PATH,
+        publicPath: PUBLIC_PATH,
+        filename: "index.js",
+        chunkFilename: `${ENTRY_FILENAME_TEMPLATE}.js`,
+        libraryTarget: "commonjs2",
+        devtoolModuleFilenameTemplate: "[resource-path]"
+      },
+      plugins: [
+        new webpack.DefinePlugin({
+          "typeof window": "'undefined'",
+          "process.browser": undefined,
+          "process.env.BUNDLE": true,
+          "global.PORT": production ? 3000 : 0,
+          "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
+        }),
+        new InjectPlugin(
+          () =>
+            `global.MODERN_BROWSERS_REGEXP = ${getUserAgentRegExp({
+              browsers: modernBrowsers,
+              allowHigherVersions: true
+            })}`
+        ),
+        new InjectPlugin(async function() {
+          const parts = [];
+          this.cacheable(false);
 
-        if (dir) {
-          parts.push(await getRouterCode(dir, [BUILD_PATH, "**/node_modules"]));
-        } else if (file.endsWith(".js")) {
-          parts.push(
-            `import middleware from JSON.stringify(file)`,
-            `global.MARKO_MIDDLEWARE = middleware`
-          );
-        } else {
-          parts.push(
-            `import template from ${JSON.stringify(file)}`,
-            `global.GET_ROUTE = () => ({ key: 'main', template })`
-          );
-        }
+          if (ENTRY_IS_DIR) {
+            parts.push(
+              await getRouterCode(entry, [BUILD_PATH, "**/node_modules"])
+            );
+          } else if (entry.endsWith(".js")) {
+            parts.push(
+              `import middleware from ${JSON.stringify(entry)}`,
+              `global.MARKO_MIDDLEWARE = middleware`
+            );
+          } else {
+            parts.push(
+              `import template from ${JSON.stringify(entry)}`,
+              `global.GET_ROUTE = () => ({ key: 'main', template })`
+            );
+          }
 
-        return parts.join(";\n");
-      }),
-      markoPlugin.server,
-      ...serverPlugins
-    ],
-    ...sharedConfig({ isServer: true, targets: { node: true } })
+          return parts.join(";\n");
+        }),
+        markoPlugin.server,
+        ...serverPlugins
+      ],
+      ...sharedConfig({ isServer: true, targets: { node: true } })
+    });
+
+  const getBrowserConfig = (browser, fn = IDENTITY_FN) =>
+    fn(
+      {
+        name: `Browser-${browser.env}`,
+        entry: markoPlugin.emptyEntry,
+        optimization: {
+          splitChunks: {
+            chunks: "all",
+            maxInitialRequests: 3
+          }
+        },
+        output: {
+          publicPath: PUBLIC_PATH,
+          path: ASSETS_PATH,
+          filename: `${ENTRY_FILENAME_TEMPLATE}.js`
+        },
+        plugins: [
+          new webpack.DefinePlugin({
+            "typeof window": "'object'",
+            "process.browser": true,
+            "process.env.BUNDLE": true,
+            "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
+          }),
+          new ExtractCSSPlugin({
+            filename: `${FILENAME_TEMPLATE}.css`
+          }),
+          markoPlugin.browser,
+          ...clientPlugins
+        ],
+        ...sharedConfig({ isServer: false, targets: browser.targets })
+      },
+      browser
+    );
+
+  const getBrowserConfigs = fn => {
+    return [
+      {
+        env: "modern",
+        targets: modernBrowsers
+      },
+      {
+        env: "legacy",
+        targets: legacyBrowsers
+      }
+    ].map(browser => getBrowserConfig(browser, fn));
   };
 
-  const getBrowserConfig = ({ targetsName, targets }) => ({
-    name: `Browser-${targetsName}`,
-    entry: markoPlugin.emptyEntry,
-    optimization: {
-      splitChunks: {
-        chunks: "all",
-        maxInitialRequests: 3
-      }
-    },
-    output: {
-      publicPath: PUBLIC_PATH,
-      path: ASSETS_PATH,
-      filename: `${ENTRY_FILENAME_TEMPLATE}.js`
-    },
-    plugins: [
-      new webpack.DefinePlugin({
-        "typeof window": "'object'",
-        "process.browser": true,
-        "process.env.BUNDLE": true,
-        "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
-      }),
-      new ExtractCSSPlugin({
-        filename: `${FILENAME_TEMPLATE}.css`
-      }),
-      markoPlugin.browser,
-      ...clientPlugins
-    ],
-    ...sharedConfig({ isServer: false, targets })
-  });
-
-  const legacyBrowserConfig =
-    production &&
-    getBrowserConfig({ targetsName: "legacy", targets: legacyBrowsers });
-  const modernBrowserConfig = getBrowserConfig({
-    targetsName: "modern",
-    targets: modernBrowsers
-  });
-
-  const compiler = webpack(
-    production
-      ? [legacyBrowserConfig, modernBrowserConfig, serverConfig]
-      : [modernBrowserConfig, serverConfig]
-  );
-
-  if (production) {
-    compiler.hooks.run.tapAsync("@marko/build", (_, done) =>
-      rimraf(BUILD_PATH, done)
-    );
-  }
-
-  return compiler;
-};
+  return {
+    getServerConfig,
+    getBrowserConfig,
+    getBrowserConfigs
+  };
+});
