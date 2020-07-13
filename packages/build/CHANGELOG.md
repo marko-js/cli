@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.4](https://github.com/marko-js/cli/compare/@marko/build@1.6.3...@marko/build@1.6.4) (2020-07-13)
+
+
+### Bug Fixes
+
+* **build:** path handling in windows ([4cc47ba](https://github.com/marko-js/cli/commit/4cc47ba2235e8a21f71df745e475a5fbca86e0dc))
+
+
+
+
+
 ## [1.6.3](https://github.com/marko-js/cli/compare/@marko/build@1.6.2...@marko/build@1.6.3) (2020-06-25)
 
 

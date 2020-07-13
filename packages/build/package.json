@@ -1,7 +1,7 @@
 {
   "name": "@marko/build",
   "description": "Utility to serve Marko build a server from a template",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/core": "^7.9.6",
