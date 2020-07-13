@@ -55,15 +55,19 @@ const middleware =
 http
   .createServer((req, res) => {
     if (assetsMatch.test(req.url)) {
-      req.url = req.url.slice(7);
-      gzipStatic(req, res, () => {
-        res.end("Not Found");
-      });
+      if (gzipStatic) {
+        req.url = req.url.slice(7);
+        gzipStatic(req, res, notFound);
+      } else {
+        notFound();
+      }
     } else {
       req.isModern = modernBrowsers.test(req.headers["user-agent"] || "");
-      middleware(req, res, () => {
-        res.end("Not Found");
-      });
+      middleware(req, res, notFound);
+    }
+
+    function notFound() {
+      res.end("Not Found");
     }
   })
   .listen(PORT);
