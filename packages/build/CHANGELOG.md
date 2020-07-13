@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.5](https://github.com/marko-js/cli/compare/@marko/build@1.6.4...@marko/build@1.6.5) (2020-07-13)
+
+
+### Bug Fixes
+
+* **build:** 404 when dev mode receives non dev server asset request ([4b0ac20](https://github.com/marko-js/cli/commit/4b0ac20cbddaa5843888298d82d90733eef05ad5))
+
+
+
+
+
 ## [1.6.4](https://github.com/marko-js/cli/compare/@marko/build@1.6.3...@marko/build@1.6.4) (2020-07-13)
 
 
