@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const { loadWebpackConfig } = require("./");
 const details = require("../package.json");
-const { buildStaticSite } = require("./util");
 const parseNodeArgs = require("parse-node-args");
 const rimraf = require("rimraf");
 const webpack = require("webpack");
@@ -88,10 +87,7 @@ exports.run = async options => {
     config.forEach(({ output: { path } }) => rimraf(path, done))
   );
 
-  compiler.run(async (err, stats) => {
+  compiler.run(err => {
     if (err) console.error(err);
-    if (options.static) {
-      await buildStaticSite(options, stats);
-    }
   });
 };
