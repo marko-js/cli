@@ -13,10 +13,17 @@ const getDirectoryLookup = async (cwd, ignore) => {
   const lookup = {};
   const filenames = await fastGlob(["**/*.marko"], { cwd, ignore });
 
-  for (let filename of filenames) {
-    const normalized = filename
-      .replace(/(^|\/)(?:index\/(?=index\.marko$))?([^/]+)?\.marko$/, "$1$2")
-      .replace(/\\/g, "/");
+  for (const filename of filenames) {
+    let normalized = filename;
+
+    if (path.sep === "\\") {
+      normalized = filename.replace(/\\/g, "/");
+    }
+
+    normalized = normalized.replace(
+      /(^|\/)(?:index\/(?=index\.marko$))?([^/]+)?\.marko$/,
+      "$1$2"
+    );
     lookup[normalized] = path.join(cwd, filename);
   }
 
@@ -48,7 +55,7 @@ const getRouterCode = async (cwd, ignore) => {
       /* webpackInclude: /\\.marko$/ */
       /* webpackExclude: /node_modules|build/ */
       /* webpackMode: "weak" */
-      \`${cwd + path.sep}\${_}\`
+      ${JSON.stringify(cwd + path.sep)} + _
     ));
   `;
 

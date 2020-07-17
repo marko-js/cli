@@ -1,10 +1,11 @@
 {
   "name": "@marko/prettyprint",
   "description": "Prettyprint Marko template files in the syntax of your choice",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "author": "Patrick Steele-Idem <pnidem@gmail.com>",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
+    "@babel/runtime": "^7.9.6",
     "argly": "^1.2.0",
     "chalk": "^2.4.2",
     "editorconfig": "^0.15.2",

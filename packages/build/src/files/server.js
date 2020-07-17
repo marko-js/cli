@@ -55,18 +55,22 @@ const middleware =
 http
   .createServer((req, res) => {
     if (assetsMatch.test(req.url)) {
-      req.url = req.url.slice(7);
-      gzipStatic(req, res, () => {
-        res.end("Not Found");
-      });
+      if (gzipStatic) {
+        req.url = req.url.slice(7);
+        gzipStatic(req, res, notFound);
+      } else {
+        notFound();
+      }
     } else {
       const userAgent = req.headers["user-agent"] || "";
       req.browserEnv = browserEnvs.find(
         ({ test }) => !test || test.test(userAgent)
       ).env;
-      middleware(req, res, () => {
-        res.end("Not Found");
-      });
+      middleware(req, res, notFound);
+    }
+
+    function notFound() {
+      res.end("Not Found");
     }
   })
   .listen(PORT);
