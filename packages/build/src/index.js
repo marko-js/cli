@@ -40,28 +40,10 @@ exports.loadWebpackConfig = options => {
   }
 
   if (!foundConfig) {
-    const {
-      getServerConfig,
-      getBrowserConfig,
-      getBrowserConfigs
-    } = configBuilder(options);
-    foundConfig =
-      options.production === false
-        ? [
-            getBrowserConfig({
-              env: "modern",
-              targets: [
-                "last 3 Chrome versions",
-                "last 2 Firefox versions",
-                "last 1 Edge versions",
-                "last 1 Safari versions",
-                "unreleased versions"
-              ]
-            }),
-            getServerConfig()
-          ]
-        : [...getBrowserConfigs(), getServerConfig()];
+    const { getServerConfig, getBrowserConfigs } = configBuilder(options);
+    foundConfig = [...getBrowserConfigs(), getServerConfig()];
   }
+
   return foundConfig;
 };
 
@@ -98,22 +80,7 @@ const configBuilder = (exports.configBuilder = ({
 
   const isMarko5 = !markoCompiler.createBuilder;
 
-  const legacyBrowsers =
-    browserslist.loadConfig({
-      path: entry,
-      env: "legacy"
-    }) || browserslist.defaults;
-
-  const modernBrowsers = browserslist.loadConfig({
-    path: entry,
-    env: "modern"
-  }) || [
-    "last 3 Chrome versions",
-    "last 2 Firefox versions",
-    "last 1 Edge versions",
-    "last 1 Safari versions",
-    "unreleased versions"
-  ];
+  const browserEnvs = loadBrowsersLists(entry, production);
 
   const sharedAliases = () => ({
     marko: useAppModuleOrFallback(APP_DIR, "marko"),
@@ -259,10 +226,22 @@ const configBuilder = (exports.configBuilder = ({
         }),
         new InjectPlugin(
           () =>
-            `global.MODERN_BROWSERS_REGEXP = ${getUserAgentRegExp({
-              browsers: modernBrowsers,
-              allowHigherVersions: true
-            })}`
+            `global.BROWSER_ENVS = [${browserEnvs
+              .map(
+                ({ env, targets }, index) =>
+                  `{ 
+                  env: ${JSON.stringify(env)}, 
+                  test: ${
+                    index === browserEnvs.length - 1
+                      ? "null"
+                      : getUserAgentRegExp({
+                          browsers: targets,
+                          allowHigherVersions: true
+                        })
+                  } 
+                }`
+              )
+              .join(", ")}]`
         ),
         new InjectPlugin(async function() {
           const parts = [];
@@ -326,18 +305,8 @@ const configBuilder = (exports.configBuilder = ({
       browser
     );
 
-  const getBrowserConfigs = fn => {
-    return [
-      {
-        env: "modern",
-        targets: modernBrowsers
-      },
-      {
-        env: "legacy",
-        targets: legacyBrowsers
-      }
-    ].map(browser => getBrowserConfig(browser, fn));
-  };
+  const getBrowserConfigs = fn =>
+    browserEnvs.map(browserEnv => getBrowserConfig(browserEnv, fn));
 
   return {
     getServerConfig,
@@ -345,3 +314,46 @@ const configBuilder = (exports.configBuilder = ({
     getBrowserConfigs
   };
 });
+
+function loadBrowsersLists(entry, production) {
+  const customBrowsersList = browserslist.findConfig(entry);
+
+  if (customBrowsersList) {
+    const customBrowserEnvs = Object.entries(
+      customBrowsersList
+    ).map(([env, targets]) => ({ env, targets }));
+    const activeBrowserEnvs = customBrowserEnvs.filter(({ env }) =>
+      production ? env !== "dev" : env === "dev"
+    );
+    return activeBrowserEnvs.length ? activeBrowserEnvs : customBrowserEnvs;
+  } else {
+    return production
+      ? [
+          {
+            env: "modern",
+            targets: [
+              "last 3 Chrome versions",
+              "last 2 Firefox versions",
+              "last 1 Edge versions",
+              "last 1 Safari versions",
+              "unreleased versions"
+            ]
+          },
+          {
+            env: "legacy",
+            targets: browserslist.defaults
+          }
+        ]
+      : [
+          {
+            env: "dev",
+            targets: [
+              "last 1 Chrome versions",
+              "last 1 Firefox versions",
+              "last 1 Edge versions",
+              "last 1 Safari versions"
+            ]
+          }
+        ];
+  }
+}
