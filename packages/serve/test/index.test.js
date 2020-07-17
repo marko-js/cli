@@ -19,6 +19,7 @@ describe("scope(serve)", function() {
       const outputPath = resolve("dist");
 
       await new Promise((resolve, reject) => {
+        process.env.NODE_ENV = "production";
         webpack(
           loadWebpackConfig({ output: outputPath, ...options })
         ).run(err => (err ? reject(err) : resolve()));
@@ -46,7 +47,7 @@ describe("scope(serve)", function() {
 });
 
 function createTest(createServer) {
-  return ({ resolve, test, snapshot, mode }) => {
+  return ({ resolve, dir, test, snapshot, mode }) => {
     test(async () => {
       let browser, closeServer, backupPath, targetPath;
       try {
@@ -96,6 +97,12 @@ function createTest(createServer) {
           });
         }
       } finally {
+        delete process.env.NODE_ENV;
+        Object.keys(require.cache).forEach(key => {
+          if (key.startsWith(dir)) {
+            delete require.cache[key];
+          }
+        });
         if (browser) await browser.close();
         if (closeServer) await closeServer();
         if (backupPath) {
