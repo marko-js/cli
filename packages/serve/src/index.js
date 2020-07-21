@@ -1,20 +1,26 @@
 const DevServer = require("webpack-dev-server");
 const SpawnServerPlugin = require("spawn-server-webpack-plugin");
 const FriendlyErrorPlugin = require("friendly-errors-webpack-plugin");
-const build = require("@marko/build");
+const { loadWebpackConfig } = require("@marko/build");
+const webpack = require("webpack");
 
-module.exports = ({ dir, file, port = 3000, verbose, nodeArgs }) => {
+module.exports = ({ entry, port = 3000, verbose, nodeArgs }) => {
   const spawnedServer = new SpawnServerPlugin({ args: nodeArgs });
-  const clientPlugins = [];
-  const serverPlugins = [spawnedServer];
-
-  const compiler = build({
-    dir,
-    file,
+  const configs = loadWebpackConfig({
+    entry,
     production: false,
-    clientPlugins,
-    serverPlugins
+    nodeArgs
   });
+
+  const serverConfig = configs.find(
+    ({ target }) => target === "node" || target === "async-node"
+  );
+
+  if (serverConfig) {
+    serverConfig.plugins = (serverConfig.plugins || []).concat(spawnedServer);
+  }
+
+  const compiler = webpack(configs);
 
   if (!verbose) {
     const friendlyErrors = new FriendlyErrorPlugin({ clearConsole: false });

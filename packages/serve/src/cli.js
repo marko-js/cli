@@ -16,7 +16,7 @@ exports.parse = function parse(argv) {
         type: "boolean",
         description: "Show this help message"
       },
-      "--file -f *": {
+      "--entry *": {
         type: "string",
         description: "A marko file to serve"
       },
@@ -51,22 +51,16 @@ exports.parse = function parse(argv) {
         process.exit(0);
       }
 
-      if (!result.file) {
+      if (!result.entry) {
         this.printUsage();
         process.exit(1);
       }
 
-      const resolved = path.resolve(process.cwd(), result.file);
+      const resolved = path.resolve(process.cwd(), result.entry);
       if (fs.existsSync(resolved)) {
-        const stat = fs.statSync(resolved);
-        if (stat.isDirectory()) {
-          result.dir = resolved;
-          delete result.file;
-        } else {
-          result.file = resolved;
-        }
+        result.entry = resolved;
       } else {
-        console.warn("Unable to find file or directory: " + result.file);
+        console.warn("Unable to find file or directory: " + result.entry);
         process.exit(1);
       }
     })
@@ -93,8 +87,7 @@ exports.run = async options => {
   const local = `http://localhost:${port}`;
   const network = `http://${address.ip()}:${port}`;
   const location =
-    path.relative(process.cwd(), options.file || options.dir) ||
-    "the current directory";
+    path.relative(process.cwd(), options.entry) || "the current directory";
 
   const server = await serve({ ...options, port });
 

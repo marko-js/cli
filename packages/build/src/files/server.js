@@ -3,7 +3,7 @@ import path from "path";
 import connectGzipStatic from "connect-gzip-static";
 
 const getRoute = global.GET_ROUTE;
-const modernBrowsers = global.MODERN_BROWSERS_REGEXP;
+const browserEnvs = global.BROWSER_ENVS;
 const PORT = process.env.PORT || global.PORT;
 const assetsMatch = /^\/assets\//;
 let gzipStatic;
@@ -37,7 +37,7 @@ const middleware =
         route.template.render(
           {
             $global: {
-              buildName: req.isModern ? "Browser-modern" : "Browser-legacy"
+              buildName: `Browser-${req.browserEnv}`
             },
             params: route.params,
             query,
@@ -62,7 +62,10 @@ http
         notFound();
       }
     } else {
-      req.isModern = modernBrowsers.test(req.headers["user-agent"] || "");
+      const userAgent = req.headers["user-agent"] || "";
+      req.browserEnv = browserEnvs.find(
+        ({ test }) => !test || test.test(userAgent)
+      ).env;
       middleware(req, res, notFound);
     }
 
