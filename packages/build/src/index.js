@@ -249,11 +249,11 @@ const configBuilder = (exports.configBuilder = ({
 
           if (ENTRY_IS_DIR) {
             parts.push(
-              await getRouterCode(entry, [
-                BUILD_PATH,
-                "**/node_modules",
-                "**/components"
-              ])
+              await getRouterCode(
+                entry,
+                [BUILD_PATH, "**/node_modules", "**/components"],
+                production
+              )
             );
           } else if (entry.endsWith(".js")) {
             parts.push(

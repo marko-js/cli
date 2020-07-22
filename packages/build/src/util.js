@@ -30,7 +30,7 @@ const getDirectoryLookup = async (cwd, ignore) => {
   return lookup;
 };
 
-const getRouterCode = async (cwd, ignore) => {
+const getRouterCode = async (cwd, ignore, production) => {
   const tree = {};
   const imports = [];
   const directoryLookup = await getDirectoryLookup(cwd, ignore);
@@ -49,11 +49,14 @@ const getRouterCode = async (cwd, ignore) => {
     imports.push(`import ${varName} from ${JSON.stringify(absolute)};`);
   }
 
+  // If we're in watch mode (not production),
   // When new .marko files are added, we want to recompute the router code
-  const watchContext = `
+  const watchContext = production
+    ? ""
+    : `
     (_ => import(
       /* webpackInclude: /\\.marko$/ */
-      /* webpackExclude: /node_modules|build/ */
+      /* webpackExclude: /node_modules|components|build/ */
       /* webpackMode: "weak" */
       ${JSON.stringify(cwd + path.sep)} + _
     ));
