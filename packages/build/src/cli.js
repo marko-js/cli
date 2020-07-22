@@ -83,9 +83,15 @@ exports.run = async options => {
   const config = loadWebpackConfig(options);
   const compiler = webpack(config);
 
-  compiler.hooks.run.tapAsync("@marko/build", (_, done) =>
-    config.forEach(({ output: { path } }) => rimraf(path, done))
-  );
+  compiler.hooks.run.tapAsync("@marko/build", (_, done) => {
+    let cleaned = 0;
+    config.forEach(({ output: { path } }) => rimraf(path, finish));
+    function finish() {
+      if (++cleaned === config.length) {
+        done();
+      }
+    }
+  });
 
   compiler.run(err => {
     if (err) console.error(err);
