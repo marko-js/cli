@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/marko-js/cli/compare/@marko/serve@1.4.9...@marko/serve@2.0.0) (2020-07-22)
+
+
+### Features
+
+* add support for custom webpack.config.js ([#170](https://github.com/marko-js/cli/issues/170)) ([d2eba70](https://github.com/marko-js/cli/commit/d2eba708d2923763582187f770dd4729df315357))
+* exclude components directory from served pages ([#173](https://github.com/marko-js/cli/issues/173)) ([e4f0fb9](https://github.com/marko-js/cli/commit/e4f0fb9af7ad8ebcec05eb7ac353d4c092d0d20b))
+* **build:** marko 5 support for src attributes transform ([34b9e76](https://github.com/marko-js/cli/commit/34b9e76d76aed6fc763ebea2829d27d308051849))
+
+
+### BREAKING CHANGES
+
+* This changes the programatic api for @marko/build
+* **build:** resolving asset paths now use nodes resolution only
+
+
+
+
+
 ## [1.4.9](https://github.com/marko-js/cli/compare/@marko/serve@1.4.8...@marko/serve@1.4.9) (2020-07-13)
 
 **Note:** Version bump only for package @marko/serve
