@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/marko-js/cli/compare/@marko/build@2.0.0...@marko/build@2.0.1) (2020-07-23)
+
+
+### Bug Fixes
+
+* don't watch components/ for new pages ([5a96042](https://github.com/marko-js/cli/commit/5a9604261f19e9dd32a2ffd9d7067706d75f590d))
+* only call done once after removing build dirs ([7071b70](https://github.com/marko-js/cli/commit/7071b700bb992cb81f62eaffd9339d16a6cb7fca))
+
+
+
+
+
 # [2.0.0](https://github.com/marko-js/cli/compare/@marko/build@1.6.5...@marko/build@2.0.0) (2020-07-22)
 
 
