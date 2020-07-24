@@ -216,12 +216,9 @@ const configBuilder = (exports.configBuilder = ({
         path: BUILD_PATH,
         publicPath: PUBLIC_PATH,
         filename: "[name].js",
-        chunkFilename: ENTRY_FILENAME_TEMPLATE,
+        chunkFilename: `${ENTRY_FILENAME_TEMPLATE}.js`,
         libraryTarget: "commonjs2",
         devtoolModuleFilenameTemplate: "[resource-path]"
-      },
-      node: {
-        __dirname: false
       },
       plugins: [
         new webpack.DefinePlugin({

@@ -5,9 +5,13 @@ const browserEnvs = global.BROWSER_ENVS;
 
 export const assets =
   process.env.NODE_ENV === "production" &&
-  require("connect-gzip-static")(path.join(__dirname, "assets"), {
-    maxAge: 31536000
-  });
+  require("connect-gzip-static")(
+    // eslint-disable-next-line
+    path.join(__non_webpack_require__.main.filename, "assets"),
+    {
+      maxAge: 31536000
+    }
+  );
 
 export const routes =
   global.MARKO_MIDDLEWARE ||

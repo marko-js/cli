@@ -82,7 +82,7 @@ exports.parse = function parse(argv) {
   return options;
 };
 
-exports.run = async options => {
+exports.run = options => {
   process.env.NODE_ENV = "production";
 
   const config = loadWebpackConfig(options);
@@ -99,9 +99,15 @@ exports.run = async options => {
   });
 
   compiler.run(async (err, stats) => {
-    if (err) console.error(err);
-    if (options.static) {
-      await buildStaticSite(options, stats);
+    if (!err && options.static) {
+      try {
+        await buildStaticSite(options, stats);
+      } catch (_) {
+        err = _;
+      }
     }
+
+    if (err) console.error(err);
+    else console.log("Build complete");
   });
 };
