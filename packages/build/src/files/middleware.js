@@ -1,16 +1,16 @@
 import path from "path";
 
 const getRoute = global.GET_ROUTE;
+const browserEnvs = global.BROWSER_ENVS;
 
 export const assets =
   process.env.NODE_ENV === "production" &&
-  require("connect-gzip-static")(
-    path.join(__dirname, "assets"), 
-    { maxAge: 31536000 }
-  );
+  require("connect-gzip-static")(path.join(__dirname, "assets"), {
+    maxAge: 31536000
+  });
 
 export const routes =
-global.MARKO_MIDDLEWARE ||
+  global.MARKO_MIDDLEWARE ||
   ((req, res, notFound) => {
     res.setHeader("content-type", "text/html");
     const [pathname, query] = req.url.split("?");
@@ -25,10 +25,14 @@ global.MARKO_MIDDLEWARE ||
           }</a>`
         );
       } else {
+        const userAgent = req.headers["user-agent"] || "";
         route.template.render(
           {
             $global: {
-              buildName: `Browser-${req.browserEnv}`
+              buildName: `Browser-${
+                browserEnvs.find(({ test }) => !test || test.test(userAgent))
+                  .env
+              }`
             },
             params: route.params,
             query,

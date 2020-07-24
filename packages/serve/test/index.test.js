@@ -44,30 +44,30 @@ describe("scope(serve)", function() {
           server.kill();
         });
     }),
-    // static: createTest(async (options, { resolve }) => {
-    //   const outputPath = resolve("dist");
-    //   await buildStaticSite({ ...options, output: outputPath });
-    //   const serveExecutable = require.resolve(".bin/http-server");
+    static: createTest(async (options, { resolve }) => {
+      const outputPath = resolve("dist");
+      await buildStaticSite({ ...options, output: outputPath });
+      const serveExecutable = require.resolve(".bin/http-server");
 
-    //   cluster.setupMaster({
-    //     exec: serveExecutable,
-    //     execArgv: [],
-    //     args: [outputPath, "--port", String(options.port)]
-    //   });
+      cluster.setupMaster({
+        exec: serveExecutable,
+        execArgv: [],
+        args: [outputPath, "--port", String(options.port)]
+      });
 
-    //   let server;
+      let server;
 
-    //   await new Promise(resolve => {
-    //     server = cluster.fork();
-    //     server.once("listening", resolve);
-    //   });
+      await new Promise(resolve => {
+        server = cluster.fork();
+        server.once("listening", resolve);
+      });
 
-    //   return () =>
-    //     new Promise(resolve => {
-    //       server.on("exit", resolve);
-    //       server.kill();
-    //     });
-    // })
+      return () =>
+        new Promise(resolve => {
+          server.on("exit", resolve);
+          server.kill();
+        });
+    })
   });
 });
 
