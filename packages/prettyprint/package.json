@@ -10,7 +10,7 @@
     "chalk": "^2.4.2",
     "editorconfig": "^0.15.2",
     "lasso-package-root": "^1.0.1",
-    "marko": "4.14.21",
+    "marko": "^4.14.21",
     "minimatch": "^3.0.4",
     "prettier": "^1.15.3",
     "redent": "^2.0.0",
