@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.1](https://github.com/marko-js/cli/compare/@marko/serve@2.1.0...@marko/serve@2.1.1) (2020-07-28)
+
+
+### Bug Fixes
+
+* **serve:** update tests, asset serving, static site directory ([a3069cc](https://github.com/marko-js/cli/commit/a3069ccd766de065a873fab2cd6e212a5689af3b))
+
+
+
+
+
 # [2.1.0](https://github.com/marko-js/cli/compare/@marko/serve@2.0.1...@marko/serve@2.1.0) (2020-07-28)
 
 
