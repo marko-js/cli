@@ -7,7 +7,7 @@ export const assets =
   process.env.NODE_ENV === "production" &&
   require("connect-gzip-static")(
     // eslint-disable-next-line
-    path.join(__non_webpack_require__.main.filename, "assets"),
+    path.join(__non_webpack_require__.resolve("."), "..", "assets"),
     {
       maxAge: 31536000
     }

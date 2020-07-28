@@ -5,7 +5,10 @@ const { loadWebpackConfig } = require("@marko/build");
 const webpack = require("webpack");
 
 module.exports = ({ entry, port = 3000, verbose, nodeArgs }) => {
-  const spawnedServer = new SpawnServerPlugin({ args: nodeArgs });
+  const spawnedServer = new SpawnServerPlugin({
+    args: nodeArgs,
+    mainEntry: "index"
+  });
   const configs = loadWebpackConfig({
     entry,
     production: false,

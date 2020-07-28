@@ -166,18 +166,24 @@ const buildRoute = (dir, level = 0) => {
   return (needsPart ? partDeclaration : "") + indent + ifs.join(" else ");
 };
 
-const buildStaticSite = async (options, stats) => {
+const buildStaticSite = async options => {
   const outputPath = path.resolve(process.cwd(), options.output || "build");
   const { routes } = require(path.join(outputPath, "middleware.js"));
 
-  if (options.dir) {
+  if (fs.statSync(options.entry).isDirectory()) {
     const cache = new Set();
     await Promise.all(
-      Object.values(await getDirectoryLookup(options.dir)).map(async file => {
+      Object.values(
+        await getDirectoryLookup(options.entry, [
+          outputPath,
+          "**/node_modules",
+          "**/components"
+        ])
+      ).map(async file => {
         const url =
           "/" +
           path
-            .relative(options.dir, file)
+            .relative(options.entry, file)
             .replace(/\\/g, "/")
             .replace(/.marko$/, "")
             .replace(/(^|\/)index(?=\/|$)/g, "")
@@ -210,7 +216,7 @@ const buildStaticPage = async (url, cache, routes, outputPath) => {
     const filePath = path.join(outputPath, getFileName(url));
     const request = { url, headers: {} };
     const response = Object.assign(through(), { setHeader() {} });
-    routes(request, response);
+    routes(request, response, () => {});
     const html = await toString(response);
     const links = getHrefs(html).filter(href => !parseUrl(href).host);
 
