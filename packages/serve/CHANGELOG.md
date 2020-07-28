@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/marko-js/cli/compare/@marko/serve@2.0.1...@marko/serve@2.1.0) (2020-07-28)
+
+
+### Features
+
+* **build:** add static site building and middleware output ([#137](https://github.com/marko-js/cli/issues/137)) ([7f424fe](https://github.com/marko-js/cli/commit/7f424fe25749d0c54e0286419c0cf5b97964be8e))
+
+
+
+
+
 ## [2.0.1](https://github.com/marko-js/cli/compare/@marko/serve@2.0.0...@marko/serve@2.0.1) (2020-07-23)
 
 **Note:** Version bump only for package @marko/serve
