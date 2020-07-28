@@ -13,6 +13,7 @@ const { getUserAgentRegExp } = require("browserslist-useragent-regexp");
 const { useAppModuleOrFallback, getRouterCode } = require("./util");
 
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
+const MIDDLEWARE_FILE = path.join(__dirname, "./files/middleware.js");
 const CWD = process.cwd();
 const NMS_INDEX = __dirname.indexOf(path.sep + "node_modules" + path.sep);
 const ROOT = NMS_INDEX === -1 ? __dirname : __dirname.slice(0, NMS_INDEX + 2);
@@ -207,11 +208,14 @@ const configBuilder = (exports.configBuilder = ({
     fn({
       name: "Server",
       target: "async-node",
-      entry: SERVER_FILE,
+      entry: {
+        index: SERVER_FILE,
+        middleware: MIDDLEWARE_FILE
+      },
       output: {
         path: BUILD_PATH,
         publicPath: PUBLIC_PATH,
-        filename: "index.js",
+        filename: "[name].js",
         chunkFilename: `${ENTRY_FILENAME_TEMPLATE}.js`,
         libraryTarget: "commonjs2",
         devtoolModuleFilenameTemplate: "[resource-path]"
