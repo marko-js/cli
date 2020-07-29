@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.3](https://github.com/marko-js/cli/compare/@marko/build@2.1.2...@marko/build@2.1.3) (2020-07-29)
+
+
+### Bug Fixes
+
+* **build:** ignore empty targets with custom browser list ([cf350ee](https://github.com/marko-js/cli/commit/cf350ee4da74141d36df85905dd69b02655f96f2))
+
+
+
+
+
 ## [2.1.2](https://github.com/marko-js/cli/compare/@marko/build@2.1.1...@marko/build@2.1.2) (2020-07-29)
 
 
