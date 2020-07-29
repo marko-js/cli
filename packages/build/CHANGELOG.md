@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.2](https://github.com/marko-js/cli/compare/@marko/build@2.1.1...@marko/build@2.1.2) (2020-07-29)
+
+
+### Bug Fixes
+
+* **build:** remove hashes from static site paths ([af0b0bf](https://github.com/marko-js/cli/commit/af0b0bf67043d891a2c30f996e4e9c52759a3ad7))
+
+
+
+
+
 ## [2.1.1](https://github.com/marko-js/cli/compare/@marko/build@2.1.0...@marko/build@2.1.1) (2020-07-28)
 
 
