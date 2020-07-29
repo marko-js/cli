@@ -170,7 +170,7 @@ const buildStaticSite = async options => {
   const outputPath = path.resolve(process.cwd(), options.output || "build");
   const { routes } = require(path.join(outputPath, "middleware.js"));
 
-  if (fs.statSync(options.entry).isDirectory()) {
+  if ((await fs.statSync(options.entry)).isDirectory()) {
     const cache = new Set();
     await Promise.all(
       Object.values(
@@ -218,10 +218,15 @@ const buildStaticPage = async (url, cache, routes, outputPath) => {
     const response = Object.assign(through(), { setHeader() {} });
     routes(request, response, () => {});
     const html = await toString(response);
-    const links = getHrefs(html).filter(href => !parseUrl(href).host);
+    const links = getHrefs(html)
+      .map(href => {
+        const { host, path } = parseUrl(href);
+        return host ? false : path;
+      })
+      .filter(Boolean);
 
-    mkdirp.sync(path.dirname(filePath));
-    fs.writeFileSync(filePath, html);
+    await mkdirp(path.dirname(filePath));
+    await fs.promises.writeFile(filePath, html);
 
     await Promise.all(
       links.map(link => buildStaticPage(link, cache, routes, outputPath))
