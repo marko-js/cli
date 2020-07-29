@@ -64,7 +64,7 @@ const getRouterCode = async (cwd, ignore, production) => {
       /* webpackInclude: /\\.marko$/ */
       /* webpackExclude: /node_modules|components|build/ */
       /* webpackMode: "weak" */
-      ${JSON.stringify(cwd + path.sep)} + _
+      ${JSON.stringify(cwd + path.sep)}
     ));
   `;
 
