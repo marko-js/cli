@@ -330,8 +330,9 @@ function loadBrowsersLists(entry, production) {
     const customBrowserEnvs = Object.entries(
       customBrowsersList
     ).map(([env, targets]) => ({ env, targets }));
-    const activeBrowserEnvs = customBrowserEnvs.filter(({ env }) =>
-      production ? env !== "dev" : env === "dev"
+    const activeBrowserEnvs = customBrowserEnvs.filter(
+      ({ env, targets }) =>
+        targets.length && (production ? env !== "dev" : env === "dev")
     );
     return activeBrowserEnvs.length ? activeBrowserEnvs : customBrowserEnvs;
   } else {
