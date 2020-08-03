@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/marko-js/cli/compare/@marko/serve@2.1.3...@marko/serve@2.2.0) (2020-08-03)
+
+
+### Features
+
+* **serve:** all static html saved at index.html for better redirects ([91329ce](https://github.com/marko-js/cli/commit/91329ce03cfe7589234657fd1fde2ecf0f11ff48))
+
+
+
+
+
 ## [2.1.3](https://github.com/marko-js/cli/compare/@marko/serve@2.1.2...@marko/serve@2.1.3) (2020-07-29)
 
 **Note:** Version bump only for package @marko/serve
