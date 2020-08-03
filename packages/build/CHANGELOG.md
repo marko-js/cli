@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.com/marko-js/cli/compare/@marko/build@2.2.0...@marko/build@2.2.1) (2020-08-03)
+
+
+### Bug Fixes
+
+* improve windows support, make sure folder exists for static output ([e382e17](https://github.com/marko-js/cli/commit/e382e17c57fb6e73870bbf5144bc5cbef811c205))
+
+
+
+
+
 # [2.2.0](https://github.com/marko-js/cli/compare/@marko/build@2.1.3...@marko/build@2.2.0) (2020-08-03)
 
 
