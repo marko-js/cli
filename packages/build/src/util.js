@@ -166,7 +166,7 @@ const buildRoute = (dir, level = 0) => {
   return (needsPart ? partDeclaration : "") + indent + ifs.join(" else ");
 };
 
-const buildStaticSite = async options => {
+const buildStaticSite = async (options, stats) => {
   const outputPath = path.resolve(process.cwd(), options.output || "build");
   const { routes } = require(path.join(outputPath, "middleware.js"));
 
@@ -197,17 +197,20 @@ const buildStaticSite = async options => {
     await buildStaticPage("/", new Set(), routes, outputPath);
   }
 
-  // if (stats) {
-  //   const serverStats = stats.stats.find(stats =>
-  //     stats.compilation.name.includes("Server")
-  //   );
-  //   const serverFiles = serverStats.compilation.chunks
-  //     .map(chunk => chunk.files)
-  //     .reduce((all, next) => all.concat(next));
-  //   serverFiles.forEach(fileName => {
-  //     fs.unlinkSync(path.join(outputPath, fileName));
-  //   });
-  // }
+  if (stats) {
+    const assetsPath = path.join(outputPath, "assets") + path.sep;
+    const serverStats = stats.stats.find(stats =>
+      stats.compilation.name.includes("Server")
+    );
+    const serverFiles = serverStats.compilation.chunks
+      .map(chunk => chunk.files)
+      .reduce((all, next) => all.concat(next));
+    serverFiles.forEach(fileName => {
+      if (!fileName.startsWith(assetsPath)) {
+        fs.unlinkSync(path.join(outputPath, fileName));
+      }
+    });
+  }
 };
 
 const buildStaticPage = async (url, cache, routes, outputPath) => {
@@ -235,7 +238,9 @@ const buildStaticPage = async (url, cache, routes, outputPath) => {
 };
 
 const getFileName = url => {
-  return url + (url[url.length - 1] === "/" ? "index.html" : ".html");
+  return (
+    url + (url[url.length - 1] === "/" ? "index.html" : `${path.sep}index.html`)
+  );
 };
 
 module.exports = {
