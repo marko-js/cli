@@ -20,17 +20,12 @@ const getDirectoryLookup = async (cwd, ignore) => {
   const filenames = await fastGlob(["**/*.marko"], { cwd, ignore });
 
   for (const filename of filenames) {
-    let normalized = filename;
-
-    if (path.sep === "\\") {
-      normalized = filename.replace(/\\/g, "/");
-    }
-
-    normalized = normalized.replace(
-      /(^|\/)(?:index\/(?=index\.marko$))?([^/]+)?\.marko$/,
-      "$1$2"
-    );
-    lookup[normalized] = path.join(cwd, filename);
+    lookup[
+      fileNameToURL(filename).replace(
+        /(^|\/)(?:index\/(?=index\.marko$))?([^/]+)?\.marko$/,
+        "$1$2"
+      )
+    ] = path.join(cwd, filename);
   }
 
   return lookup;
@@ -182,9 +177,7 @@ const buildStaticSite = async (options, stats) => {
       ).map(async file => {
         const url =
           "/" +
-          path
-            .relative(options.entry, file)
-            .replace(/\\/g, "/")
+          fileNameToURL(path.relative(options.entry, file))
             .replace(/.marko$/, "")
             .replace(/(^|\/)index(?=\/|$)/g, "")
             .replace(/\/$/, "");
@@ -214,22 +207,18 @@ const buildStaticSite = async (options, stats) => {
 };
 
 const buildStaticPage = async (url, cache, routes, outputPath) => {
-  if (!cache.has(url)) {
-    cache.add(url);
-    const filePath = path.join(outputPath, getFileName(url));
-    const request = { url, headers: {} };
+  const { host, pathname } = parseUrl(url);
+
+  if (pathname && !host && !cache.has(pathname)) {
+    cache.add(pathname);
+    const fileName = path.join(outputPath, getFileName(pathname));
+    const request = { url: pathname, headers: {} };
     const response = Object.assign(through(), { setHeader() {} });
     routes(request, response, () => {});
     const html = await toString(response);
-    const links = getHrefs(html)
-      .map(href => {
-        const { host, path } = parseUrl(href);
-        return host ? false : path;
-      })
-      .filter(Boolean);
-
-    await mkdirp(path.dirname(filePath));
-    await fs.promises.writeFile(filePath, html);
+    const links = getHrefs(html);
+    await mkdirp(path.dirname(fileName));
+    await fs.promises.writeFile(fileName, html);
 
     await Promise.all(
       links.map(link => buildStaticPage(link, cache, routes, outputPath))
@@ -238,9 +227,15 @@ const buildStaticPage = async (url, cache, routes, outputPath) => {
 };
 
 const getFileName = url => {
-  return (
-    url + (url[url.length - 1] === "/" ? "index.html" : `${path.sep}index.html`)
-  );
+  let fileName = urlToFileName(url);
+
+  if (fileName[fileName.length - 1] !== path.sep) {
+    fileName += path.sep;
+  }
+
+  fileName += "index.html";
+
+  return fileName;
 };
 
 module.exports = {
@@ -249,3 +244,9 @@ module.exports = {
   getRouterCode,
   buildStaticSite
 };
+
+const identity = v => v;
+const fileNameToURL =
+  path.sep === "/" ? identity : fileName => fileName.split(path.sep).join("/");
+const urlToFileName =
+  path.sep === "/" ? identity : fileName => fileName.split("/").join(path.sep);
