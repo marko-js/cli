@@ -33,6 +33,7 @@ module.exports = ({ entry, port = 3000, verbose, nodeArgs }) => {
   const devServerConfig = {
     overlay: true,
     host: "0.0.0.0",
+    contentBase: false,
     disableHostCheck: true,
     headers: { "Access-Control-Allow-Origin": "*" },
     stats: verbose ? "verbose" : "errors-only",

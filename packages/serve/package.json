@@ -4,18 +4,18 @@
   "version": "2.2.1",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
-    "@babel/runtime": "^7.9.6",
+    "@babel/runtime": "^7.11.2",
     "@marko/build": "^2.2.1",
     "address": "^1.1.2",
     "argly": "^1.2.0",
-    "chalk": "^4.0.0",
+    "chalk": "^4.1.0",
     "error-overlay-webpack-plugin": "^0.4.1",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "open-browsers": "^1.2.2",
     "parse-node-args": "^1.1.2",
-    "spawn-server-webpack-plugin": "^4.0.0",
+    "spawn-server-webpack-plugin": "^4.0.5",
     "update-notifier": "^4.1.0",
-    "webpack-dev-server": "^3.10.3",
+    "webpack-dev-server": "^3.11.0",
     "webpack-inject-plugin": "^1.5.4"
   },
   "files": [
