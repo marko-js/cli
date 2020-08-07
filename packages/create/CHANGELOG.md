@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.4](https://github.com/marko-js/cli/compare/@marko/create@5.0.3...@marko/create@5.0.4) (2020-08-07)
+
+**Note:** Version bump only for package @marko/create
+
+
+
+
+
 ## [5.0.3](https://github.com/marko-js/cli/compare/@marko/create@5.0.2...@marko/create@5.0.3) (2020-05-12)
 
 

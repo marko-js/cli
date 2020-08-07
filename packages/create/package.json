@@ -1,7 +1,7 @@
 {
   "name": "@marko/create",
   "description": "Create Marko projects",
-  "version": "5.0.3",
+  "version": "5.0.4",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/runtime": "^7.11.2",
