@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.3](https://github.com/marko-js/cli/compare/@marko/build@2.2.2...@marko/build@2.2.3) (2020-08-12)
+
+
+### Bug Fixes
+
+* **build:** improve server side sourcemap paths for dev ([37c914f](https://github.com/marko-js/cli/commit/37c914fd4548343649906c6fb478f32c148da896))
+
+
+
+
+
 ## [2.2.2](https://github.com/marko-js/cli/compare/@marko/build@2.2.1...@marko/build@2.2.2) (2020-08-07)
 
 **Note:** Version bump only for package @marko/build
