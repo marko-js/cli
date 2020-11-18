@@ -1,14 +1,14 @@
 {
   "name": "@marko/build",
   "description": "Utility to serve Marko build a server from a template",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/core": "^7.11.1",
     "@babel/preset-env": "^7.11.0",
     "@babel/runtime": "^7.11.2",
-    "@marko/webpack": "^6.2.5",
     "@marko/babel-utils": "^5.0.0-next.40",
+    "@marko/webpack": "^6.2.5",
     "argly": "^1.2.0",
     "babel-loader": "^8.1.0",
     "babel-plugin-macros": "^2.8.0",

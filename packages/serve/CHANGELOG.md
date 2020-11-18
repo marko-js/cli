@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.4](https://github.com/marko-js/cli/compare/@marko/serve@2.2.3...@marko/serve@2.2.4) (2020-11-18)
+
+
+### Bug Fixes
+
+* update outdated Marko 5 transform ([7e8c682](https://github.com/marko-js/cli/commit/7e8c682c733d020b027969c0c677c0ee71d00b1f))
+
+
+
+
+
 ## [2.2.3](https://github.com/marko-js/cli/compare/@marko/serve@2.2.2...@marko/serve@2.2.3) (2020-08-12)
 
 **Note:** Version bump only for package @marko/serve
