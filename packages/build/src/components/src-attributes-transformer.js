@@ -1,5 +1,6 @@
 "use strict";
 
+const markoUtils = require("@marko/babel-utils");
 const attrTags = {
   src: [
     "audio",
@@ -57,7 +58,7 @@ function transformMarko5(path) {
       return;
     }
 
-    attr.set("value", path.hub.file.importDefault(attr, value, "asset"));
+    attr.set("value", markoUtils.importDefault(path.hub.file, value, "asset"));
   });
 }
 

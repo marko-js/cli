@@ -9,11 +9,10 @@
     "address": "^1.1.2",
     "argly": "^1.2.0",
     "chalk": "^4.1.0",
-    "error-overlay-webpack-plugin": "^0.4.1",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "open-browsers": "^1.2.2",
     "parse-node-args": "^1.1.2",
-    "spawn-server-webpack-plugin": "^4.0.5",
+    "spawn-server-webpack-plugin": "^5.0.2",
     "update-notifier": "^4.1.0",
     "webpack-dev-server": "^3.11.0",
     "webpack-inject-plugin": "^1.5.4"
