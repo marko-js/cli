@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.5](https://github.com/marko-js/cli/compare/@marko/build@2.2.4...@marko/build@2.2.5) (2020-11-20)
+
+
+### Bug Fixes
+
+* **build:** add missing dep ([e6b83c4](https://github.com/marko-js/cli/commit/e6b83c41ada5e7f81c54b0b59c2ff4730e903cff))
+
+
+
+
+
 ## [2.2.4](https://github.com/marko-js/cli/compare/@marko/build@2.2.3...@marko/build@2.2.4) (2020-11-18)
 
 
