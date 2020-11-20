@@ -33,6 +33,7 @@
     "postcss-preset-env": "^6.7.0",
     "resolve-from": "^5.0.0",
     "source-map-support": "^0.5.19",
+    "stream-to-string": "^1.2.0",
     "through2": "^4.0.2",
     "update-notifier": "^4.1.0",
     "webpack": "^4.44.1",
