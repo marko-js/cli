@@ -6,7 +6,7 @@ let name;
 let ports;
 let required;
 let startDelay;
-let defaults;
+let launcherOptions;
 
 if (env.BROWSERSTACK_USER) {
   startDelay = 1000;
@@ -59,7 +59,7 @@ if (env.BROWSERSTACK_USER) {
     63342,
     64000
   ];
-  defaults = {
+  launcherOptions = {
     user: env.BROWSERSTACK_USER,
     key: env.BROWSERSTACK_ACCESS_KEY,
     browserstackLocalForcedStop: true,
@@ -128,7 +128,7 @@ if (env.BROWSERSTACK_USER) {
     49221,
     55001
   ];
-  defaults = {
+  launcherOptions = {
     user: env.SAUCE_USERNAME,
     key: env.SAUCE_ACCESS_KEY,
     sauceConnect: true
@@ -137,7 +137,7 @@ if (env.BROWSERSTACK_USER) {
   startDelay = 0;
   name = "testingbot";
   ports = [4445, 4444];
-  defaults = {
+  launcherOptions = {
     user: env.TB_KEY,
     key: env.TB_SECRET,
     tbTunnel: true
@@ -160,7 +160,7 @@ if (env.BROWSERSTACK_USER) {
     ],
     chromeDriverArgs: ["--silent"]
   };
-  defaults = {
+  launcherOptions = {
     path: "/",
     port: 9515
   };
@@ -170,7 +170,7 @@ module.exports = {
   name,
   ports,
   required,
-  defaults: { ...defaults, logLevel: "error" },
+  defaults: { logLevel: "error" },
   startDelay,
   isValidPort(port) {
     return !ports || ports.indexOf(port) !== -1;
@@ -195,7 +195,7 @@ module.exports = {
 
     throw new Error(`No available ports found for the "${name}" service.`);
   },
-  getLauncher(from) {
+  getLauncher(from, capabilities, config) {
     const tryPkgs = [`@wdio/${name}-service`, `wdio-${name}-service`];
     let service;
 
@@ -207,13 +207,14 @@ module.exports = {
       } catch (_) {}
     }
 
-    if (!service || !service.launcher) {
+    if (!service) {
       throw new Error(
         `Unable to load the "${name}" testing service.\n` +
           `Please install "${tryPkgs[0]}" to continue.`
       );
     }
 
-    return service.launcher;
+    const Launcher = (service.default || service).launcher;
+    return new Launcher(launcherOptions, capabilities, config);
   }
 };

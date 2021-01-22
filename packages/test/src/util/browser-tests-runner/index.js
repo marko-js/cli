@@ -16,7 +16,11 @@ exports.run = async (tests, options) => {
     ...wdioDefaults.defaults,
     ...options.wdioOptions,
     ...wdioDefaults.required,
-    launcher: wdioDefaults.getLauncher(options.dir)
+    launcher: wdioDefaults.getLauncher(
+      options.dir,
+      options.wdioOptions.capabilities,
+      options.wdioOptions
+    )
   };
 
   if (wdioDefaults.name === "chromedriver") {
