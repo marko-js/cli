@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0](https://github.com/marko-js/cli/compare/@marko/migrate@5.3.4...@marko/migrate@6.0.0) (2021-01-22)
+
+
+### Features
+
+* update deps, support Marko 5 ([c5d34ff](https://github.com/marko-js/cli/commit/c5d34ff58fa34ef545330dfe1231ebac37282895))
+
+
+### BREAKING CHANGES
+
+* Marko 4 support dropped in serve/build
+* Upgraded webdriver version for test
+
+
+
+
+
 ## [5.3.4](https://github.com/marko-js/cli/compare/@marko/migrate@5.3.3...@marko/migrate@5.3.4) (2020-08-07)
 
 **Note:** Version bump only for package @marko/migrate

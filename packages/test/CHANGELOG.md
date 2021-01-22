@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0](https://github.com/marko-js/cli/compare/@marko/test@7.1.3...@marko/test@8.0.0) (2021-01-22)
+
+
+### Features
+
+* update deps, support Marko 5 ([c5d34ff](https://github.com/marko-js/cli/commit/c5d34ff58fa34ef545330dfe1231ebac37282895))
+
+
+### BREAKING CHANGES
+
+* Marko 4 support dropped in serve/build
+* Upgraded webdriver version for test
+
+
+
+
+
 ## [7.1.3](https://github.com/marko-js/cli/compare/@marko/test@7.1.2...@marko/test@7.1.3) (2020-06-25)
 
 
