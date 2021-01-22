@@ -1,7 +1,7 @@
 {
   "name": "@marko/test",
   "description": "Utility to test Marko files in both a server and browser environment",
-  "version": "8.0.3",
+  "version": "8.0.4",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/runtime": "^7.9.6",

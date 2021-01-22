@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.4](https://github.com/marko-js/cli/compare/@marko/test@8.0.3...@marko/test@8.0.4) (2021-01-22)
+
+
+### Bug Fixes
+
+* **test:** integration with new wdio services ([b22f2e2](https://github.com/marko-js/cli/commit/b22f2e24cf902f01a3d19670c5aeb34f8f384e32))
+* **test:** typo ([56d00d3](https://github.com/marko-js/cli/commit/56d00d3e1fb27f26caa5f674927247fcbe406fee))
+
+
+
+
+
 ## [8.0.3](https://github.com/marko-js/cli/compare/@marko/test@8.0.2...@marko/test@8.0.3) (2021-01-22)
 
 
