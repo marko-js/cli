@@ -6,6 +6,7 @@
   "dependencies": {
     "@babel/runtime": "^7.9.6",
     "@lasso/marko-taglib": "^2.0.0",
+    "@marko/express": "^1.0.0",
     "@wdio/cli": "^6.0.0",
     "argly": "^1.2.0",
     "async": "^2.6.1",

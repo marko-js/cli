@@ -1,5 +1,4 @@
 const path = require("path");
-const complain = require("complain");
 const loadTests = require("./util/loadTests");
 const serverTestsRunner = require("./util/server-tests-runner");
 const browserTestsRunner = require("./util/browser-tests-runner");
@@ -22,14 +21,6 @@ exports.run = function(options) {
 
   if (!options.patterns || !options.patterns.length) {
     options.patterns = ["**/test.js", "**/test.*.js", "**/test/*.js"];
-  }
-
-  if (options.browserBuilder) {
-    options.lassoOptions = options.browserBuilder;
-    complain(
-      "@marko/test: browserBuilder options is deprecated, please use 'lassoOptions' instead.",
-      { location: false }
-    );
   }
 
   if (options.debug) {

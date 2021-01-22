@@ -1,5 +1,4 @@
 require("marko/node-require").install();
-require("marko/express");
 
 const pEvent = require("p-event");
 const express = require("express");
@@ -16,6 +15,7 @@ exports.start = async (templateData, options) => {
   const pageTemplate = options.pageTemplate || defaultPageTemplate;
   const server = express()
     .use(require("lasso/middleware").serveStatic({ lasso: templateData.lasso }))
+    .use(require("@marko/express")())
     .get("/", (req, res) => {
       const out = res.marko(pageTemplate, templateData);
       // Adds error handler for versions of marko before: https://github.com/marko-js/marko/pull/1119
@@ -47,9 +47,7 @@ exports.start = async (templateData, options) => {
 
   if (!wdioDefaults.isValidPort(port)) {
     console.warn(
-      `@marko/test: We noticed you are using port ${port} with the ${
-        wdioDefaults.name
-      } service.\n` +
+      `@marko/test: We noticed you are using port ${port} with the ${wdioDefaults.name} service.\n` +
         `This port is not in the list of known supported ports for that service and ` +
         `may cause issues when testing against Edge, IE and Safari.`
     );

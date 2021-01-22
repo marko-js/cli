@@ -4,6 +4,7 @@ const isPortFree = require("is-port-free");
 const resolveFrom = require("resolve-from");
 let name;
 let ports;
+let defaults;
 let required;
 let startDelay;
 let launcherOptions;
@@ -59,10 +60,12 @@ if (env.BROWSERSTACK_USER) {
     63342,
     64000
   ];
-  launcherOptions = {
+  defaults = {
     user: env.BROWSERSTACK_USER,
-    key: env.BROWSERSTACK_ACCESS_KEY,
-    browserstackLocalForcedStop: true,
+    key: env.BROWSERSTACK_ACCESS_KEY
+  };
+  launcherOptions = {
+    forcedStop: true,
     browserstackLocal: true
   };
 } else if (env.SAUCE_USERNAME) {
@@ -128,18 +131,22 @@ if (env.BROWSERSTACK_USER) {
     49221,
     55001
   ];
-  launcherOptions = {
+  defaults = {
     user: env.SAUCE_USERNAME,
-    key: env.SAUCE_ACCESS_KEY,
+    key: env.SAUCE_ACCESS_KEY
+  };
+  launcherOptions = {
     sauceConnect: true
   };
 } else if (env.TB_KEY) {
   startDelay = 0;
   name = "testingbot";
   ports = [4445, 4444];
-  launcherOptions = {
+  defaults = {
     user: env.TB_KEY,
-    key: env.TB_SECRET,
+    key: env.TB_SECRET
+  };
+  launcherOptions = {
     tbTunnel: true
   };
 } else {
@@ -160,17 +167,22 @@ if (env.BROWSERSTACK_USER) {
     ],
     chromeDriverArgs: ["--silent"]
   };
-  launcherOptions = {
+
+  defaults = {
     path: "/",
-    port: 9515
+    port: 9515,
+    hostname: "localhost",
+    protocol: "http"
   };
+
+  launcherOptions = {};
 }
 
 module.exports = {
   name,
   ports,
   required,
-  defaults: { logLevel: "error" },
+  defaults: { ...defaults, logLevel: "error" },
   startDelay,
   isValidPort(port) {
     return !ports || ports.indexOf(port) !== -1;

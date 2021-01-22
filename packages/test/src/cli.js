@@ -82,7 +82,6 @@ exports.run = function run(options) {
   const markoCli = new MarkoDevTools();
   const {
     mochaOptions,
-    browserBuilder, // Deprecated, will be removed in the next major.
     lassoOptions,
     wdioOptions,
     testMatcher,
@@ -94,7 +93,6 @@ exports.run = function run(options) {
     Object.assign(
       {
         mochaOptions,
-        browserBuilder,
         lassoOptions,
         wdioOptions,
         testMatcher,
