@@ -40,7 +40,10 @@ exports.start = async (href, options) => {
     JSON.stringify({ mochaOptions, packageName })
   )}`;
 
-  await launcher.onPrepare(wdioOptions, capabilities);
+  await launcher.onPrepare(
+    wdioOptions,
+    capabilities.map(cap => ({ ...cap }))
+  );
   await delay(wdioDefaults.startDelay); // Give the launcher some time to init.
   ensureCalled(() =>
     Promise.race([launcher.onComplete(exitCode, wdioOptions), delay(3000)])

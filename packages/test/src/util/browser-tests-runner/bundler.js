@@ -6,9 +6,8 @@ const Transform = require("stream").Transform;
 const parseRequire = require("lasso/src/resolve/parseRequire");
 const shouldCover = !!process.env.NYC_CONFIG;
 const baseDependencies = [
-  "mocha/mocha.js",
-  "mocha/mocha.css",
-  "require-run: " + require.resolve("./browser-dependencies")
+  "require-run: " + require.resolve("./browser-dependencies"),
+  "mocha/mocha.css"
 ];
 
 exports.create = async (tests, options) => {

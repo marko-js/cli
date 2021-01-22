@@ -168,14 +168,12 @@ if (env.BROWSERSTACK_USER) {
     chromeDriverArgs: ["--silent"]
   };
 
-  defaults = {
+  defaults = launcherOptions = {
     path: "/",
     port: 9515,
     hostname: "localhost",
     protocol: "http"
   };
-
-  launcherOptions = {};
 }
 
 module.exports = {
