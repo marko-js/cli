@@ -207,14 +207,13 @@ module.exports = {
       } catch (_) {}
     }
 
-    if (!service) {
+    if (!service || typeof service.launcher !== "function") {
       throw new Error(
         `Unable to load the "${name}" testing service.\n` +
           `Please install "${tryPkgs[0]}" to continue.`
       );
     }
 
-    const Launcher = (service.default || service).launcher;
-    return new Launcher(launcherOptions, capabilities, config);
+    return new service.launcher(launcherOptions, capabilities, config);
   }
 };
