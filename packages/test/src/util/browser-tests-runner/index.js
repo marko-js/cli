@@ -14,7 +14,7 @@ exports.run = async (tests, options) => {
 
   const wdioOptions = (options.wdioOptions = {
     ...wdioDefaults.defaults,
-    ...wdioOptions,
+    ...options.wdioOptions,
     ...wdioDefaults.required
   });
 
