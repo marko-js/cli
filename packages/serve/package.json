@@ -13,7 +13,7 @@
     "open-browsers": "^1.2.2",
     "parse-node-args": "^1.1.2",
     "spawn-server-webpack-plugin": "^5.0.2",
-    "update-notifier": "^4.1.0",
+    "update-notifier": "^5.0.1",
     "webpack-dev-server": "^3.11.0",
     "webpack-inject-plugin": "^1.5.4"
   },

@@ -51,6 +51,13 @@ export default async function(options = {}) {
 
   if (!markoCompiler.parse) {
     const markoVersion = requireFromRoot("marko/package", packageRoot).version;
+
+    if (parseInt(markoVersion.split(".")[0], 10) === 5) {
+      throw new Error(
+        `Marko ${markoVersion} does not currently support migrations, did you mean to run with Marko 4?`
+      );
+    }
+
     throw new Error(
       `The version of marko installed (${markoVersion}) does not support migrations. Please update to 4.14.0 or higher.`
     );

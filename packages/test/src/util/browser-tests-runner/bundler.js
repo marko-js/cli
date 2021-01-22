@@ -3,7 +3,7 @@ const path = require("path");
 const lasso = require("lasso");
 const resolveFrom = require("resolve-from");
 const Transform = require("stream").Transform;
-const parseRequire = require("lasso-require/src/util/parseRequire");
+const parseRequire = require("lasso/src/resolve/parseRequire");
 const shouldCover = !!process.env.NYC_CONFIG;
 const baseDependencies = [
   "mocha/mocha.js",

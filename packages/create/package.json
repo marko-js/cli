@@ -11,7 +11,7 @@
     "enquirer": "^2.3.6",
     "got": "^11.5.2",
     "ora": "^5.0.0",
-    "update-notifier": "^4.1.0"
+    "update-notifier": "^5.0.1"
   },
   "files": [
     "dist"
