@@ -196,20 +196,24 @@ module.exports = {
     throw new Error(`No available ports found for the "${name}" service.`);
   },
   getLauncher(from) {
-    const pkg = `wdio-${name}-service`;
-    const launcherPath = `${pkg}/launcher.js`;
+    const tryPkgs = [`@wdio/${name}-service`, `wdio-${name}-service`];
+    let service;
 
-    if (name === "chromedriver") {
-      return require(launcherPath);
+    for (const pkg of tryPkgs) {
+      try {
+        service = require(resolveFrom(from, pkg));
+        break;
+        // eslint-disable-next-line no-empty
+      } catch (_) {}
     }
 
-    try {
-      return require(resolveFrom(from, launcherPath));
-    } catch (err) {
+    if (!service || !service.launcher) {
       throw new Error(
         `Unable to load the "${name}" testing service.\n` +
-          `Please install "${pkg}" to continue.`
+          `Please install "${tryPkgs[0]}" to continue.`
       );
     }
+
+    return service.launcher;
   }
 };
