@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.3](https://github.com/marko-js/cli/compare/@marko/test@8.0.2...@marko/test@8.0.3) (2021-01-22)
+
+
+### Bug Fixes
+
+* **test:** issue with launcher not receiving required/default opts ([ee463be](https://github.com/marko-js/cli/commit/ee463bea133ae999b9a629c21aa354bd03041deb))
+
+
+
+
+
 ## [8.0.2](https://github.com/marko-js/cli/compare/@marko/test@8.0.1...@marko/test@8.0.2) (2021-01-22)
 
 
