@@ -6,7 +6,8 @@ const engine = require("engine.io");
 const fetch = require("node-fetch");
 const wdioDefaults = require("./util/wdio-defaults");
 const ensureCalled = require("./util/ensure-called");
-const defaultPageTemplate = require("./template.marko");
+let defaultPageTemplate = require("./template.marko");
+defaultPageTemplate = defaultPageTemplate.default || defaultPageTemplate;
 
 exports.start = async (templateData, options) => {
   const {

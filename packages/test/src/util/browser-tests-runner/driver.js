@@ -30,20 +30,17 @@ exports.start = async (href, options) => {
     wdioOptions: { launcher, ...wdioOptions }
   } = options;
   const {
-    capabilities,
     viewport = DEFAULT_VIEWPORT,
     suiteTimeout = DEFAULT_TIMEOUTS.suite,
     idleTimeout = DEFAULT_TIMEOUTS.idle
   } = wdioOptions;
+  const capabilities = wdioOptions.capabilities.map(cap => ({ ...cap }));
 
   wdioOptions.baseUrl = `${href}?${encodeURIComponent(
     JSON.stringify({ mochaOptions, packageName })
   )}`;
 
-  await launcher.onPrepare(
-    wdioOptions,
-    capabilities.map(cap => ({ ...cap }))
-  );
+  await launcher.onPrepare(wdioOptions, wdioOptions.capabilities);
   await delay(wdioDefaults.startDelay); // Give the launcher some time to init.
   ensureCalled(() =>
     Promise.race([launcher.onComplete(exitCode, wdioOptions), delay(3000)])
@@ -63,13 +60,15 @@ exports.start = async (href, options) => {
         const browser = await webdriver.remote({
           ...wdioOptions,
           capabilities: {
-            ...capability,
-            ...(wdioDefaults.name !== "chromedriver"
-              ? {
-                  name: TEST_NAME,
-                  build: BUILD_NUMBER
-                }
-              : {})
+            alwaysMatch: {
+              ...capability,
+              ...(wdioDefaults.name !== "chromedriver"
+                ? {
+                    name: TEST_NAME,
+                    build: BUILD_NUMBER
+                  }
+                : {})
+            }
           }
         });
 
@@ -196,7 +195,7 @@ async function waitForResults(browser, { suiteTimeout, idleTimeout }) {
     // The tests are 'complete' once the global '__test_result__' is set on the window.
     if (endTime < Date.now()) {
       throw new Error(
-        'marko-cli: Test suite timed out, use "wdioOptions.suiteTimeout" to increase the delay (default 10 mins).'
+        '@marko/test: Test suite timed out, use "wdioOptions.suiteTimeout" to increase the delay (default 10 mins).'
       );
     }
 

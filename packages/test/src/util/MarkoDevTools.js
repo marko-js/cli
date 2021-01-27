@@ -4,7 +4,6 @@ const EventEmitter = require("events").EventEmitter;
 const lassoPackageRoot = require("lasso-package-root");
 const resolveFrom = require("resolve-from");
 const path = require("path");
-const complain = require("complain");
 
 function getPackagePluginPath(markoCli, fileName) {
   const rootDir = markoCli._rootPackage.__dirname;
@@ -61,16 +60,6 @@ class MarkoDevTools extends EventEmitter {
   _loadPackagePlugin() {
     if (this._rootPackage) {
       let packagePluginPath = getPackagePluginPath(this, "marko-cli");
-
-      if (!packagePluginPath) {
-        packagePluginPath = getPackagePluginPath(this, "marko-devtools");
-
-        if (packagePluginPath) {
-          complain(
-            `The "marko-devtools.js" file found at path "${packagePluginPath}" is deprecated. Please use "marko-cli.js" instead.`
-          );
-        }
-      }
 
       if (packagePluginPath) {
         var plugin = require(packagePluginPath);

@@ -5,7 +5,7 @@
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/runtime": "^7.9.6",
-    "@lasso/marko-taglib": "^2.0.0",
+    "@lasso/marko-taglib": "^2.0.2",
     "@marko/express": "^1.0.0",
     "@wdio/cli": "^6.0.0",
     "argly": "^1.2.0",
@@ -41,8 +41,7 @@
   },
   "peerDependencies": {
     "chromedriver": "*",
-    "marko": "^4 || ^5",
-    "marko-cli": "^7.0.25"
+    "marko": "^4 || ^5"
   },
   "files": [
     "dist"
