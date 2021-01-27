@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.6](https://github.com/marko-js/cli/compare/@marko/test@8.0.5...@marko/test@8.0.6) (2021-01-27)
+
+
+### Bug Fixes
+
+* **test:** issue with running using Marko 5 ([7caadb3](https://github.com/marko-js/cli/commit/7caadb351a228eae716d5f07eb49f5148abd9a83))
+
+
+
+
+
 ## [8.0.5](https://github.com/marko-js/cli/compare/@marko/test@8.0.4...@marko/test@8.0.5) (2021-01-22)
 
 
