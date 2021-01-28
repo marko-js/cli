@@ -95,6 +95,8 @@ const configBuilder = (exports.configBuilder = ({
   const babelConfig = targets => ({
     presets: [[require.resolve("@babel/preset-env"), { targets }]],
     plugins: [require.resolve("babel-plugin-macros")],
+    comments: false,
+    compact: false,
     babelrc: false,
     configFile: false
   });
@@ -180,12 +182,12 @@ const configBuilder = (exports.configBuilder = ({
       new CompressionPlugin({
         test,
         algorithm: "gzip",
-        filename: "[path].gz[query]"
+        filename: "[path][base].gz"
       }),
       new CompressionPlugin({
         test,
         algorithm: "brotliCompress",
-        filename: "[path].br[query]",
+        filename: "[path][base].br",
         compressionOptions: { level: 11 }
       })
     ];

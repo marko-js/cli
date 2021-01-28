@@ -9,14 +9,25 @@ export const assets =
     // eslint-disable-next-line
     path.join(__non_webpack_require__.resolve("."), "..", "assets"),
     {
-      maxAge: 31536000
+      setHeaders(res) {
+        if (!res.getHeader("Cache-Control")) {
+          res.setHeader("Cache-Control", [
+            "public, max-age=31536000",
+            "public, max-age=31536000, immutable"
+          ]);
+          res.setHeader(
+            "Expires",
+            new Date(Date.now() + 31536000000).toUTCString()
+          );
+        }
+      }
     }
   );
 
 export const routes =
   global.MARKO_MIDDLEWARE ||
   ((req, res, notFound) => {
-    res.setHeader("content-type", "text/html");
+    res.setHeader("content-type", "text/html; charset=utf-8");
     const [pathname, query] = req.url.split("?");
     const route = getRoute(pathname);
     if (route) {
