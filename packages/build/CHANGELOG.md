@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/marko-js/cli/compare/@marko/build@3.0.0...@marko/build@3.1.0) (2021-01-28)
+
+
+### Features
+
+* **build:** improve default cache headers, optimize babel config ([bd4d1ff](https://github.com/marko-js/cli/commit/bd4d1ff8e3adaf5c061bb9a8400a70b1f7166c43))
+
+
+
+
+
 # [3.0.0](https://github.com/marko-js/cli/compare/@marko/build@2.2.5...@marko/build@3.0.0) (2021-01-22)
 
 
