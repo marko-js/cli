@@ -4,7 +4,7 @@
   "version": "3.0.1",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
-    "@babel/runtime": "^7.11.2",
+    "@babel/runtime": "^7.12.13",
     "@marko/build": "^3.1.0",
     "address": "^1.1.2",
     "argly": "^1.2.0",
@@ -12,10 +12,15 @@
     "friendly-errors-webpack-plugin": "^1.7.0",
     "open-browsers": "^1.2.2",
     "parse-node-args": "^1.1.2",
-    "spawn-server-webpack-plugin": "^5.0.2",
-    "update-notifier": "^5.0.1",
-    "webpack-dev-server": "^3.11.0",
-    "webpack-inject-plugin": "^1.5.4"
+    "spawn-server-webpack-plugin": "^5.0.5",
+    "update-notifier": "^5.1.0",
+    "webpack-dev-server": "^3.11.2",
+    "webpack-inject-plugin": "^1.5.5"
+  },
+  "devDependencies": {
+    "@marko/compiler": "5.1.9",
+    "@marko/translator-default": "5.1.9",
+    "marko": "^5.1.9"
   },
   "files": [
     "dist"

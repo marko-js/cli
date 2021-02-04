@@ -98,16 +98,35 @@ exports.run = options => {
     }
   });
 
-  compiler.run(async (err, stats) => {
+  compiler.run(async (err, multiStats) => {
+    for (const {
+      compilation: { errors, warnings }
+    } of multiStats.stats) {
+      if (errors.length) {
+        err = (err || []).concat(errors);
+      }
+
+      for (const warning of warnings) {
+        console.warn(warning);
+      }
+    }
+
     if (!err && options.static) {
       try {
-        await buildStaticSite(options, stats);
+        await buildStaticSite(options, multiStats);
       } catch (_) {
         err = _;
       }
     }
 
-    if (err) console.error(err);
-    else console.log("Build complete");
+    if (err) {
+      if (Array.isArray(err)) {
+        err.forEach(it => console.error(it));
+      } else {
+        console.error(err);
+      }
+    } else {
+      console.log("Build complete");
+    }
   });
 };
