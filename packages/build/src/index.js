@@ -2,11 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const webpack = require("webpack");
 const browserslist = require("browserslist");
+const postcssPresetEnv = require("postcss-preset-env");
 const ExtractCSSPlugin = require("mini-css-extract-plugin");
 const InjectPlugin = require("webpack-inject-plugin").default;
-const MinifyCSSPlugin = require("optimize-css-assets-webpack-plugin");
-const MinifyImgPlugin = require("imagemin-webpack-plugin").default;
-const CompressionPlugin = require("compression-webpack-plugin");
 const MarkoPlugin = require("@marko/webpack/plugin").default;
 
 const { getUserAgentRegExp } = require("browserslist-useragent-regexp");
@@ -62,24 +60,16 @@ const configBuilder = (exports.configBuilder = ({
     ? (process.env.NODE_ENV = "production")
     : undefined;
   const MODE = production ? "production" : "development";
-  const DEVTOOL = production ? "source-map" : "cheap-module-source-map";
   const BUILD_PATH = path.resolve(CWD, output);
   const ASSETS_PATH = path.join(BUILD_PATH, "assets");
   const PUBLIC_PATH = "/assets/";
   const APP_DIR = ENTRY_IS_DIR ? entry : path.dirname(entry);
   const CONTEXT = APP_DIR.startsWith(ROOT) ? ROOT : APP_DIR;
-
-  // getClientCompilerName gets stringified and added to the output bundle
-  // if it is instrumented, the cov_${id} variable will cause a ReferenceError
-  /* istanbul ignore next */
   const markoPlugin = new MarkoPlugin();
-
   const markoCompiler = (() => {
     process.env.APP_DIR = APP_DIR;
     return require.resolve("./marko-compiler");
   })();
-
-  const isMarko5 = !markoCompiler.createBuilder;
 
   const browserEnvs = loadBrowsersLists(entry, production);
 
@@ -88,8 +78,7 @@ const configBuilder = (exports.configBuilder = ({
     "connect-gzip-static": useAppModuleOrFallback(
       APP_DIR,
       "connect-gzip-static"
-    ),
-    "source-map-support": useAppModuleOrFallback(APP_DIR, "source-map-support")
+    )
   });
 
   const babelConfig = targets => ({
@@ -117,13 +106,15 @@ const configBuilder = (exports.configBuilder = ({
     },
     {
       test: /\.marko$/,
-      use: (isMarko5 ? [] : [babelLoader(targets)]).concat({
-        loader: require.resolve("@marko/webpack/loader"),
-        options: {
-          compiler: markoCompiler,
-          babelConfig: isMarko5 && babelConfig(targets)
+      use: [
+        {
+          loader: require.resolve("@marko/webpack/loader"),
+          options: {
+            compiler: markoCompiler,
+            babelConfig: babelConfig(targets)
+          }
         }
-      })
+      ]
     },
     {
       test: /\.css$/,
@@ -131,45 +122,59 @@ const configBuilder = (exports.configBuilder = ({
         ? [require.resolve("ignore-loader")]
         : [
             ExtractCSSPlugin.loader,
-            {
-              loader: require.resolve("css-loader"),
-              options: {
-                sourceMap: true
-              }
-            },
+            require.resolve("css-loader"),
             {
               loader: require.resolve("postcss-loader"),
               options: {
-                config: {
-                  path: __dirname,
-                  ctx: { browsers: targets }
+                postcssOptions: {
+                  plugins: [postcssPresetEnv({ browsers: targets })]
                 }
               }
             }
           ]
     },
     {
-      test: file => !/\.(m?js|json|css|wasm|marko)$/.test(file),
-      loader: require.resolve("file-loader"),
-      options: {
-        publicPath: PUBLIC_PATH,
-        name: `${FILENAME_TEMPLATE}.[ext]`,
-        outputPath: path.relative(
-          isServer ? BUILD_PATH : ASSETS_PATH,
-          ASSETS_PATH
-        )
-      }
+      test: file => file && !/\.(m?js|json|css|wasm|marko)$/.test(file),
+      use: [
+        {
+          loader: require.resolve("file-loader"),
+          options: {
+            publicPath: PUBLIC_PATH,
+            name: `${FILENAME_TEMPLATE}.[ext]`,
+            outputPath: path.relative(
+              isServer ? BUILD_PATH : ASSETS_PATH,
+              ASSETS_PATH
+            )
+          }
+        },
+        production && {
+          loader: require("image-minimizer-webpack-plugin").loader,
+          options: {
+            filter(_, filename) {
+              return /\.(jpe?g|png|gif|svg)$/.test(filename);
+            },
+            minimizerOptions: {
+              plugins: [
+                require.resolve("imagemin-gifsicle"),
+                require.resolve("imagemin-jpegtran"),
+                require.resolve("imagemin-optipng"),
+                require.resolve("imagemin-svgo")
+              ]
+            }
+          }
+        }
+      ].filter(Boolean)
     }
   ];
 
   const sharedConfig = options => ({
     mode: MODE,
     context: CONTEXT,
-    devtool: DEVTOOL,
     resolve: {
       alias: sharedAliases(options),
       extensions: [".wasm", ".mjs", ".js", ".json", ".marko"]
     },
+    cache: { type: "filesystem" },
     module: { rules: sharedRules(options) }
   });
 
@@ -177,8 +182,9 @@ const configBuilder = (exports.configBuilder = ({
   let clientPlugins = [];
 
   if (production) {
+    const MinifyCSSPlugin = require("css-minimizer-webpack-plugin");
+    const CompressionPlugin = require("compression-webpack-plugin");
     const getSharedCompressionPlugins = test => [
-      new MinifyImgPlugin({ test }),
       new CompressionPlugin({
         test,
         algorithm: "gzip",
@@ -200,37 +206,34 @@ const configBuilder = (exports.configBuilder = ({
       new MinifyCSSPlugin(),
       getSharedCompressionPlugins()
     );
-  } else {
-    serverPlugins = serverPlugins.concat(
-      new InjectPlugin(() => `import "source-map-support/register"`)
-    );
   }
 
   const getServerConfig = (fn = IDENTITY_FN) =>
     fn({
       name: "Server",
       target: "async-node",
+      devtool: "inline-nosources-cheap-module-source-map",
       entry: {
         index: SERVER_FILE,
         middleware: MIDDLEWARE_FILE
       },
+      optimization: {
+        minimize: false
+      },
       output: {
         path: BUILD_PATH,
-        publicPath: PUBLIC_PATH,
         filename: "[name].js",
-        chunkFilename: `${ENTRY_FILENAME_TEMPLATE}.js`,
+        publicPath: PUBLIC_PATH,
         libraryTarget: "commonjs2",
-        devtoolModuleFilenameTemplate: production
-          ? undefined
-          : "[absolute-resource-path]"
+        chunkFilename: `${ENTRY_FILENAME_TEMPLATE}.js`,
+        devtoolModuleFilenameTemplate: "[absolute-resource-path]"
       },
       plugins: [
         new webpack.DefinePlugin({
-          "typeof window": "'undefined'",
+          "typeof window": `"undefined"`,
           "process.browser": undefined,
           "process.env.BUNDLE": true,
-          "global.PORT": production ? 3000 : 0,
-          "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
+          "process.env.NODE_ENV": JSON.stringify(NODE_ENV)
         }),
         new InjectPlugin(
           () =>
@@ -253,9 +256,9 @@ const configBuilder = (exports.configBuilder = ({
         ),
         new InjectPlugin(async function() {
           const parts = [];
-          this.cacheable(false);
 
           if (ENTRY_IS_DIR) {
+            this.cacheable(false);
             parts.push(
               await getRouterCode(
                 entry,
@@ -287,7 +290,7 @@ const configBuilder = (exports.configBuilder = ({
     fn(
       {
         name: `Browser-${browser.env}`,
-        entry: markoPlugin.emptyEntry,
+        devtool: production ? "source-map" : "eval-cheap-module-source-map",
         optimization: {
           splitChunks: {
             chunks: "all",
@@ -301,13 +304,14 @@ const configBuilder = (exports.configBuilder = ({
         },
         plugins: [
           new webpack.DefinePlugin({
-            "typeof window": "'object'",
+            "typeof window": `"object"`,
             "process.browser": true,
             "process.env.BUNDLE": true,
-            "process.env.NODE_ENV": NODE_ENV && `'${NODE_ENV}'`
+            "process.env.NODE_ENV": JSON.stringify(NODE_ENV)
           }),
           new ExtractCSSPlugin({
-            filename: `${FILENAME_TEMPLATE}.css`
+            filename: `${FILENAME_TEMPLATE}.css`,
+            ignoreOrder: true
           }),
           markoPlugin.browser,
           ...clientPlugins

@@ -4,15 +4,14 @@ const FriendlyErrorPlugin = require("friendly-errors-webpack-plugin");
 const { loadWebpackConfig } = require("@marko/build");
 const webpack = require("webpack");
 
-module.exports = ({ entry, port = 3000, verbose, nodeArgs }) => {
+module.exports = ({ entry, port = 3000, verbose, nodeArgs = [] }) => {
   const spawnedServer = new SpawnServerPlugin({
-    args: nodeArgs,
+    args: nodeArgs.concat("--enable-source-maps"),
     mainEntry: "index"
   });
   const configs = loadWebpackConfig({
     entry,
-    production: false,
-    nodeArgs
+    production: false
   });
 
   const serverConfig = configs.find(
@@ -39,7 +38,6 @@ module.exports = ({ entry, port = 3000, verbose, nodeArgs }) => {
     stats: verbose ? "verbose" : "errors-only",
     logLevel: verbose ? "info" : "silent",
     clientLogLevel: verbose ? "info" : "error",
-    watchOptions: { ignored: [/node_modules/] },
     ...spawnedServer.devServerConfig
   };
 

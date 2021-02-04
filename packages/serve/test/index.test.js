@@ -95,7 +95,13 @@ function createTest(createServer) {
           : targetFilePath;
 
         closeServer = await createServer(options, { resolve });
-        browser = await puppeteer.launch();
+        browser = await puppeteer.launch({
+          args: [
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-setuid-sandbox"
+          ]
+        });
         const page = await browser.newPage();
         const screenshot = screenshotUtility.bind(
           null,
@@ -153,6 +159,8 @@ async function screenshotUtility(page, mode, snapshot, resolve, name, element) {
 
 function normalizeHashes(html) {
   return html
+    .replace(/\d+(\.\d+)*([kmgt]b?)(?=\b)/, "_SIZE_")
+    .replace(/(v\s*)\d+(\.\d+)*/, "_VERSION_")
     .replace(/(\.|\/)[a-f0-9]{8}\./gi, "$1HASH.")
     .replace(/_[0-9a-z]{4}\./gi, "_HASH.");
 }

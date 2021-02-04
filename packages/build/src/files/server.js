@@ -1,7 +1,6 @@
 import http from "http";
 import { assets, routes } from "./middleware";
 
-const PORT = process.env.PORT || global.PORT;
 const assetsMatch = /^\/assets\//;
 
 http
@@ -16,4 +15,6 @@ http
       res.end("Not Found");
     }
   })
-  .listen(PORT);
+  .listen(
+    process.env.PORT || (process.env.NODE_ENV === "production" ? 3000 : 0)
+  );
