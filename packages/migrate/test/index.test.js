@@ -5,6 +5,14 @@ import migrate from "../src";
 const CWD = process.cwd();
 
 describe("scope(migrate)", () => {
+  before(() => {
+    process.chdir(__dirname);
+  });
+
+  after(() => {
+    process.chdir(CWD);
+  });
+
   autotest("fixtures", async ({ dir, test, snapshot }) => {
     test(async () => {
       const fileContents = {};
