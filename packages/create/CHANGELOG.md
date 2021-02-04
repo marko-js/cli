@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.1](https://github.com/marko-js/cli/compare/@marko/create@6.0.0...@marko/create@6.0.1) (2021-02-04)
+
+**Note:** Version bump only for package @marko/create
+
+
+
+
+
 # [6.0.0](https://github.com/marko-js/cli/compare/@marko/create@5.0.4...@marko/create@6.0.0) (2021-01-22)
 
 

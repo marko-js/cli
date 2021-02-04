@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/marko-js/cli/compare/@marko/serve@3.0.1...@marko/serve@4.0.0) (2021-02-04)
+
+
+### Features
+
+* **build:** upgrade to Marko 5 and webpack 5 ([cd15722](https://github.com/marko-js/cli/commit/cd1572232b5a7d6afac89bae693a947f36b10cd2))
+
+
+### BREAKING CHANGES
+
+* **build:** Drops Marko 4 support
+
+
+
+
+
 ## [3.0.1](https://github.com/marko-js/cli/compare/@marko/serve@3.0.0...@marko/serve@3.0.1) (2021-01-28)
 
 **Note:** Version bump only for package @marko/serve

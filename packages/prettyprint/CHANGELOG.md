@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.2.3...@marko/prettyprint@3.0.0) (2021-02-04)
+
+
+### Features
+
+* update deps, support Marko 5 ([c5d34ff](https://github.com/marko-js/cli/commit/c5d34ff58fa34ef545330dfe1231ebac37282895))
+
+
+### BREAKING CHANGES
+
+* Marko 4 support dropped in serve/build
+* Upgraded webdriver version for test
+
+
+
+
+
 ## [2.2.3](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.2.2...@marko/prettyprint@2.2.3) (2020-07-27)
 
 
