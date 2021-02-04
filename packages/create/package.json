@@ -4,14 +4,14 @@
   "version": "6.0.0",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
-    "@babel/runtime": "^7.11.2",
+    "@babel/runtime": "^7.12.13",
     "argly": "^1.2.0",
     "chalk": "^4.1.0",
     "degit": "^2.8.0",
     "enquirer": "^2.3.6",
     "got": "^11.5.2",
     "ora": "^5.0.0",
-    "update-notifier": "^5.0.1"
+    "update-notifier": "^5.1.0"
   },
   "files": [
     "dist"
