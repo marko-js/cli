@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/marko-js/cli/compare/@marko/build@4.0.0...@marko/build@4.1.0) (2021-02-09)
+
+
+### Features
+
+* **build:** improve logging and asset output ([8ce6b9a](https://github.com/marko-js/cli/commit/8ce6b9a2dc04fbff0f4ddcd10211e7565fe8a51c))
+
+
+
+
+
 # [4.0.0](https://github.com/marko-js/cli/compare/@marko/build@3.1.0...@marko/build@4.0.0) (2021-02-04)
 
 

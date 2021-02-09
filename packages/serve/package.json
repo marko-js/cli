@@ -1,11 +1,11 @@
 {
   "name": "@marko/serve",
   "description": "Utility to serve Marko files with a single command",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@babel/runtime": "^7.12.13",
-    "@marko/build": "^4.0.0",
+    "@marko/build": "^4.1.0",
     "address": "^1.1.2",
     "argly": "^1.2.0",
     "chalk": "^4.1.0",
