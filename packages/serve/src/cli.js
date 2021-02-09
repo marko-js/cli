@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
 const address = require("address");
+const prettyMs = require("pretty-ms");
 const parseNodeArgs = require("parse-node-args");
 const openBrowser = require("open-browsers");
 const details = require("../package.json");
@@ -90,6 +91,29 @@ exports.run = async options => {
     path.relative(process.cwd(), options.entry) || "the current directory";
 
   const server = await serve({ ...options, port });
+  const { compiler } = server;
+  let startTime = Date.now();
+
+  compiler.hooks.watchRun.tap("@marko/serve", () => {
+    if (!startTime) {
+      startTime = Date.now();
+      console.log(chalk.italic("\nCompiling..."));
+    }
+  });
+
+  compiler.hooks.done.tap("@marko/serve", multiStats => {
+    if (multiStats.hasErrors()) {
+      console.log(`\nCompilation ${chalk.red("failed")}`);
+    } else {
+      console.log(
+        chalk.italic(
+          `\nCompiled in ${chalk.bold(prettyMs(Date.now() - startTime))}`
+        )
+      );
+    }
+
+    startTime = 0;
+  });
 
   if (!options.noBrowser) {
     openBrowser(local);

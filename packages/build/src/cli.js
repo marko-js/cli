@@ -87,6 +87,8 @@ exports.run = options => {
 
   const config = loadWebpackConfig(options);
   const compiler = webpack(config);
+  const progress = new webpack.ProgressPlugin();
+  progress.apply(compiler);
 
   compiler.hooks.run.tapAsync("@marko/build", (_, done) => {
     let cleaned = 0;
@@ -126,7 +128,13 @@ exports.run = options => {
         console.error(err);
       }
     } else {
-      console.log("Build complete");
+      console.log(
+        multiStats.toString({
+          preset: "minimal",
+          colors: true
+        })
+      );
+      console.log("\nBuild complete");
     }
   });
 };

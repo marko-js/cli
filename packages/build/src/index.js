@@ -140,11 +140,8 @@ const configBuilder = (exports.configBuilder = ({
           loader: require.resolve("file-loader"),
           options: {
             publicPath: PUBLIC_PATH,
-            name: `${FILENAME_TEMPLATE}.[ext]`,
-            outputPath: path.relative(
-              isServer ? BUILD_PATH : ASSETS_PATH,
-              ASSETS_PATH
-            )
+            outputPath: ASSETS_PATH,
+            name: `${FILENAME_TEMPLATE}.[ext]`
           }
         },
         production && {
@@ -285,11 +282,13 @@ const configBuilder = (exports.configBuilder = ({
       ],
       ...sharedConfig({ isServer: true, targets: { node: true } })
     });
-
   const getBrowserConfig = (browser, fn = IDENTITY_FN) =>
     fn(
       {
         name: `Browser-${browser.env}`,
+        target: browser.targets.length
+          ? `browserslist:${browser.targets.join(", ")}`
+          : "web",
         devtool: production ? "source-map" : "eval-cheap-module-source-map",
         optimization: {
           splitChunks: {
@@ -348,13 +347,7 @@ function loadBrowsersLists(entry, production) {
       ? [
           {
             env: "modern",
-            targets: [
-              "last 3 Chrome versions",
-              "last 2 Firefox versions",
-              "last 1 Edge versions",
-              "last 1 Safari versions",
-              "unreleased versions"
-            ]
+            targets: ["supports es6-module", "unreleased versions"]
           },
           {
             env: "legacy",

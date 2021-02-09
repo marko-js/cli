@@ -1,6 +1,5 @@
 const DevServer = require("webpack-dev-server");
 const SpawnServerPlugin = require("spawn-server-webpack-plugin");
-const FriendlyErrorPlugin = require("friendly-errors-webpack-plugin");
 const { loadWebpackConfig } = require("@marko/build");
 const webpack = require("webpack");
 
@@ -24,20 +23,24 @@ module.exports = ({ entry, port = 3000, verbose, nodeArgs = [] }) => {
 
   const compiler = webpack(configs);
 
-  if (!verbose) {
-    const friendlyErrors = new FriendlyErrorPlugin({ clearConsole: false });
-    friendlyErrors.apply(compiler);
-  }
-
   const devServerConfig = {
+    noInfo: true,
     overlay: true,
     host: "0.0.0.0",
     contentBase: false,
+    injectClient: ({ target = "web" }) =>
+      target === "web" || target.startsWith("browserslist"),
+    stats: verbose
+      ? { all: true }
+      : {
+          all: false,
+          colors: true,
+          errors: true,
+          warnings: true
+        },
     disableHostCheck: true,
+    clientLogLevel: "error",
     headers: { "Access-Control-Allow-Origin": "*" },
-    stats: verbose ? "verbose" : "errors-only",
-    logLevel: verbose ? "info" : "silent",
-    clientLogLevel: verbose ? "info" : "error",
     ...spawnedServer.devServerConfig
   };
 
