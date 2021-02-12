@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/marko-js/cli/compare/@marko/build@4.1.0...@marko/build@4.1.1) (2021-02-12)
+
+
+### Bug Fixes
+
+* **build:** image asset path regression ([c34d11d](https://github.com/marko-js/cli/commit/c34d11dc65954e4ffb9c8cc8ef09690ec86a0dbb))
+
+
+
+
+
 # [4.1.0](https://github.com/marko-js/cli/compare/@marko/build@4.0.0...@marko/build@4.1.0) (2021-02-09)
 
 
