@@ -140,7 +140,10 @@ const configBuilder = (exports.configBuilder = ({
           loader: require.resolve("file-loader"),
           options: {
             publicPath: PUBLIC_PATH,
-            outputPath: ASSETS_PATH,
+            outputPath: path.relative(
+              isServer ? BUILD_PATH : ASSETS_PATH,
+              ASSETS_PATH
+            ),
             name: `${FILENAME_TEMPLATE}.[ext]`
           }
         },
