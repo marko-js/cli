@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.2](https://github.com/marko-js/cli/compare/@marko/build@4.1.1...@marko/build@4.1.2) (2021-03-02)
+
+
+### Bug Fixes
+
+* **build:** ignore browserslist configs in node_modules ([4e2b7e2](https://github.com/marko-js/cli/commit/4e2b7e25cac9ca061ff1dd7118b5e25bd1337323))
+
+
+
+
+
 ## [4.1.1](https://github.com/marko-js/cli/compare/@marko/build@4.1.0...@marko/build@4.1.1) (2021-02-12)
 
 
