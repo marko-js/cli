@@ -82,12 +82,14 @@ const configBuilder = (exports.configBuilder = ({
   });
 
   const babelConfig = targets => ({
-    presets: [[require.resolve("@babel/preset-env"), { targets }]],
+    presets: [require.resolve("@babel/preset-env")],
     plugins: [require.resolve("babel-plugin-macros")],
+    targets,
     comments: false,
     compact: false,
     babelrc: false,
-    configFile: false
+    configFile: false,
+    browserslistConfigFile: false
   });
 
   const babelLoader = targets => ({
@@ -283,7 +285,7 @@ const configBuilder = (exports.configBuilder = ({
         markoPlugin.server,
         ...serverPlugins
       ],
-      ...sharedConfig({ isServer: true, targets: { node: true } })
+      ...sharedConfig({ isServer: true, targets: { node: "current" } })
     });
   const getBrowserConfig = (browser, fn = IDENTITY_FN) =>
     fn(
