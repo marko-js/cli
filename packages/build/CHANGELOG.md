@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.3](https://github.com/marko-js/cli/compare/@marko/build@4.1.2...@marko/build@4.1.3) (2021-03-08)
+
+
+### Bug Fixes
+
+* **build:** improve support for .cjs files ([63f5d00](https://github.com/marko-js/cli/commit/63f5d00f68e2866f704fa030569809f16ca9285d))
+
+
+
+
+
 ## [4.1.2](https://github.com/marko-js/cli/compare/@marko/build@4.1.1...@marko/build@4.1.2) (2021-03-02)
 
 
