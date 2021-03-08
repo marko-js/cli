@@ -102,7 +102,7 @@ const configBuilder = (exports.configBuilder = ({
 
   const sharedRules = ({ isServer, targets }) => [
     {
-      test: /\.js$/,
+      test: /\.[cm]?js$/,
       exclude: !production || isServer ? /node_modules/ : undefined,
       use: [babelLoader(targets)]
     },
@@ -136,7 +136,7 @@ const configBuilder = (exports.configBuilder = ({
           ]
     },
     {
-      test: file => file && !/\.(m?js|json|css|wasm|marko)$/.test(file),
+      test: file => file && !/\.([cm]?js|json|css|wasm|marko)$/.test(file),
       use: [
         {
           loader: require.resolve("file-loader"),
