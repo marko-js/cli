@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.4](https://github.com/marko-js/cli/compare/@marko/build@4.1.3...@marko/build@4.1.4) (2021-03-29)
+
+
+### Bug Fixes
+
+* **build:** fix warning about NODE_ENV defined twice ([c8473e4](https://github.com/marko-js/cli/commit/c8473e4436eab6c4e3d5731dc52f5dd738cc0d48))
+
+
+
+
+
 ## [4.1.3](https://github.com/marko-js/cli/compare/@marko/build@4.1.2...@marko/build@4.1.3) (2021-03-08)
 
 

@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.1.0](https://github.com/marko-js/cli/compare/@marko/test@8.0.7...@marko/test@8.1.0) (2021-03-29)
+
+
+### Bug Fixes
+
+* lint errors ([57e87fc](https://github.com/marko-js/cli/commit/57e87fc0027096c8648ac5645db66c0c22889b40))
+* **test:** fix regression with legacy test API ([d94ade1](https://github.com/marko-js/cli/commit/d94ade1e3657fe3bb60326fb999f23621e0e55b0))
+
+
+### Features
+
+* **test:** improve defaults for github actions ([3ac1e1b](https://github.com/marko-js/cli/commit/3ac1e1b0bb232cfec7af9a3480bceeb528d9ce67))
+
+
+
+
+
 ## [8.0.7](https://github.com/marko-js/cli/compare/@marko/test@8.0.6...@marko/test@8.0.7) (2021-02-04)
 
 **Note:** Version bump only for package @marko/test

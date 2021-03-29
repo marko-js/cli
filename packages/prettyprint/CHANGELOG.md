@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/marko-js/cli/compare/@marko/prettyprint@3.0.0...@marko/prettyprint@3.0.1) (2021-03-29)
+
+
+### Bug Fixes
+
+* lint errors ([57e87fc](https://github.com/marko-js/cli/commit/57e87fc0027096c8648ac5645db66c0c22889b40))
+
+
+
+
+
 # [3.0.0](https://github.com/marko-js/cli/compare/@marko/prettyprint@2.2.3...@marko/prettyprint@3.0.0) (2021-02-04)
 
 
