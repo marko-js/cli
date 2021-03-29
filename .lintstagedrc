@@ -1,11 +1,9 @@
 {
     "*.{json,css,less,md}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ],
     "*.js": [
       "prettier --write",
-      "eslint -f visualstudio",
-      "git add"
+      "eslint -f visualstudio"
     ]
 }

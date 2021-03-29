@@ -4,7 +4,7 @@
   "version": "6.0.1",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
-    "@babel/runtime": "^7.12.13",
+    "@babel/runtime": "^7.13.10",
     "@marko/migrate-v3-widget": "^1.1.3",
     "@marko/prettyprint": "^3.0.0",
     "argly": "^1.2.0",
