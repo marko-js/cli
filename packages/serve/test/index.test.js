@@ -153,7 +153,13 @@ async function screenshotUtility(page, mode, snapshot, resolve, name, element) {
     `${nameWithMode && `${nameWithMode}-`}actual.png`
   );
   const html = await page.evaluate(el => el.outerHTML, target);
-  await target.screenshot({ path: screenshotPath });
+  
+  // Cannot screenshot zero size elements, first check body has content
+  // before screenshotting.
+  if (!/<body>\s*<\/body>/.test(html)) {
+    await target.screenshot({ path: screenshotPath });
+  }
+
   snapshot(normalizeHashes(html), { name: nameWithMode, ext: ".html" });
 }
 
