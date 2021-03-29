@@ -46,7 +46,7 @@ class ServerContext {
       "render has been deprecated.  Prefer to render components using @marko/testing-library"
     );
     if (this.component.renderSync) {
-      htmlString = this.component.renderSync(data);
+      htmlString = this.component.renderSync(data).toString();
     } else {
       htmlString = this.component.render(data).toString();
     }
