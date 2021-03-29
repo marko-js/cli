@@ -5,9 +5,9 @@ const wdioDefaults = require("./util/wdio-defaults");
 const ensureCalled = require("./util/ensure-called");
 const { env } = process;
 const {
-  BUILD_NUMBER = env.TRAVIS_BUILD_NUMBER,
-  REPO_SLUG = env.TRAVIS_REPO_SLUG,
-  PULL_REQUEST_SLUG = env.TRAVIS_PULL_REQUEST_SLUG
+  BUILD_NUMBER = env.TRAVIS_BUILD_NUMBER || env.GITHUB_RUN_NUMBER,
+  REPO_SLUG = env.TRAVIS_REPO_SLUG || env.GITHUB_REPOSITORY,
+  PULL_REQUEST_SLUG = env.TRAVIS_PULL_REQUEST_SLUG || env.GITHUB_REF
 } = env;
 const TEST_NAME = `${REPO_SLUG} build #${BUILD_NUMBER}${
   PULL_REQUEST_SLUG ? ` (PR: ${PULL_REQUEST_SLUG})` : ""
