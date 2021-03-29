@@ -1,5 +1,4 @@
 "use strict";
-/* globals describe,it */
 
 var path = require("path");
 
@@ -15,7 +14,7 @@ function requireNoOp() {
   /* no-op */
 }
 
-[".css", ".less"].forEach(ext => {
+[".css", ".less"].forEach((ext) => {
   require.extensions[ext] = requireNoOp;
 });
 
@@ -34,13 +33,13 @@ function groupTests(tests) {
   var componentNodes = {};
   var groupedTests = [];
 
-  tests.forEach(test => {
+  tests.forEach((test) => {
     var componentName = test.componentName;
     var componentNode = componentNodes[componentName];
     if (!componentNode) {
       componentNodes[componentName] = componentNode = {
         componentName,
-        tests: []
+        tests: [],
       };
       groupedTests.push(componentNode);
     }
@@ -53,7 +52,7 @@ function groupTests(tests) {
 
 tests = groupTests(tests);
 
-tests.forEach(componentNode => {
+tests.forEach((componentNode) => {
   var componentName = componentNode.componentName;
 
   function loadTest(test) {
@@ -66,28 +65,28 @@ tests.forEach(componentNode => {
 
     function runTest(it, name, handler) {
       if (handler.length <= 1) {
-        it(name, function() {
+        it(name, function () {
           context.name = name;
           return handler.call(this, context);
         });
       } else if (handler.length >= 2) {
-        it(name, function(done) {
+        it(name, function (done) {
           context.name = name;
           handler.call(this, context, done);
         });
       }
     }
 
-    global.test = function(name, handler) {
+    global.test = function (name, handler) {
       runTest(it, name, handler);
     };
 
-    global.test.only = function(name, handler) {
+    global.test.only = function (name, handler) {
       runTest(it.only, name, handler);
     };
 
     if (test.groupName) {
-      describe(test.groupName, function() {
+      describe(test.groupName, function () {
         require(file);
       });
     } else {
@@ -95,7 +94,7 @@ tests.forEach(componentNode => {
     }
   }
 
-  describe(componentName, function() {
+  describe(componentName, function () {
     componentNode.tests.forEach(loadTest);
   });
 });

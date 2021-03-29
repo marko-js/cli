@@ -1,4 +1,4 @@
-function readConfigFile(filename) {
+function readConfigFile() {
   return {};
 }
 

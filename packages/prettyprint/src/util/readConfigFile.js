@@ -3,9 +3,10 @@ var fs = require("fs");
 var path = require("path");
 var editorconfig = require("editorconfig");
 var os = require("os");
+var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 function removeDashes(str) {
-  return str.replace(/-([a-z])/g, function(match, lower) {
+  return str.replace(/-([a-z])/g, function (match, lower) {
     return lower.toUpperCase();
   });
 }
@@ -60,7 +61,7 @@ function readConfigFile(filename) {
 
   function mergeOptions(newOptions) {
     for (var k in newOptions) {
-      if (!config.hasOwnProperty(k)) {
+      if (!hasOwnProperty.call(config, k)) {
         config[k] = newOptions[k];
       }
     }
@@ -89,9 +90,9 @@ function readConfigFile(filename) {
       }
 
       for (var key in newConfig) {
-        if (newConfig.hasOwnProperty(key)) {
+        if (hasOwnProperty.call(newConfig, key)) {
           var keyCamelCase = removeDashes(key);
-          if (!config.hasOwnProperty(keyCamelCase)) {
+          if (!hasOwnProperty.call(config, keyCamelCase)) {
             config[keyCamelCase] = newConfig[key];
           }
         }
@@ -103,6 +104,7 @@ function readConfigFile(filename) {
   var currentDir = dirname;
   var editorConfigs = null;
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     var files = fs.readdirSync(currentDir);
     if (!files) {
@@ -122,7 +124,7 @@ function readConfigFile(filename) {
 
         editorConfigs.push({
           name: editorConfigFile,
-          contents: fs.readFileSync(editorConfigFile, { encoding: "utf8" })
+          contents: fs.readFileSync(editorConfigFile, { encoding: "utf8" }),
         });
       }
     }
