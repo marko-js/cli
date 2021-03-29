@@ -58,7 +58,7 @@ const configBuilder = (exports.configBuilder = ({
   const FILENAME_TEMPLATE = `${production ? "" : "[name]."}[contenthash:8]`;
   const NODE_ENV = production
     ? (process.env.NODE_ENV = "production")
-    : undefined;
+    : "development";
   const MODE = production ? "production" : "development";
   const BUILD_PATH = path.resolve(CWD, output);
   const ASSETS_PATH = path.join(BUILD_PATH, "assets");
