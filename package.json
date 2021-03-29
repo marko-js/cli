@@ -36,17 +36,6 @@
       "pre-commit": "lint-staged"
     }
   },
-  "lint-staged": {
-    "*.{json,css,less,md}": [
-      "prettier --write",
-      "git add"
-    ],
-    "*.js": [
-      "prettier --write",
-      "eslint -f visualstudio",
-      "git add"
-    ]
-  },
   "scripts": {
     "build": "lerna exec --parallel -- babel src --out-dir dist --config-file ../../babel.config.js --delete-dir-on-start --copy-files",
     "build:watch": "npm run build -- --watch",
