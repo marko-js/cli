@@ -20,8 +20,8 @@
     <img src="https://img.shields.io/github/license/marko-js/cli.svg" alt="MIT"/>
   </a>
   <!-- CI -->
-  <a href="https://travis-ci.com/marko-js/cli">
-    <img src="https://travis-ci.com/marko-js/cli.svg?branch=master" alt="Build status"/>
+  <a href="https://github.com/marko-js/cli/actions/workflows/ci.yml">
+    <img src="https://github.com/marko-js/cli/actions/workflows/ci.yml/badge.svg" alt="Build status"/>
   </a>
 </p>
 
