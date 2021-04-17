@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/marko-js/cli/compare/@marko/build@4.1.4...@marko/build@4.2.0) (2021-04-17)
+
+
+### Features
+
+* **build:** update deps, support css preprocessors ([#186](https://github.com/marko-js/cli/issues/186)) ([2b1c1d7](https://github.com/marko-js/cli/commit/2b1c1d7e44dcfe33f1da80d03856a57eb522cb82))
+
+
+
+
+
 ## [4.1.4](https://github.com/marko-js/cli/compare/@marko/build@4.1.3...@marko/build@4.1.4) (2021-03-29)
 
 
