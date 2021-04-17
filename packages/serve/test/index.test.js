@@ -12,9 +12,9 @@ describe("scope(serve)", function () {
   this.slow(20000);
   this.timeout(60000);
   autotest("fixtures", {
-    serve: createTest(async (options) => {
+    serve: createTest(async options => {
       const server = await run({ noBrowser: true, ...options });
-      return () => new Promise((resolve) => server.close(resolve));
+      return () => new Promise(resolve => server.close(resolve));
     }),
     build: createTest(async (options, { resolve }) => {
       const outputPath = resolve("dist");
@@ -23,23 +23,23 @@ describe("scope(serve)", function () {
         process.env.NODE_ENV = "production";
         webpack(
           loadWebpackConfig({ output: outputPath, ...options })
-        ).run((err) => (err ? reject(err) : resolve()));
+        ).run(err => (err ? reject(err) : resolve()));
       });
 
       cluster.setupMaster({
         exec: outputPath,
-        execArgv: [],
+        execArgv: []
       });
 
       let server;
 
-      await new Promise((resolve) => {
+      await new Promise(resolve => {
         server = cluster.fork({ ...process.env, PORT: options.port });
         server.once("listening", resolve);
       });
 
       return () =>
-        new Promise((resolve) => {
+        new Promise(resolve => {
           server.on("exit", resolve);
           server.kill();
         });
@@ -52,22 +52,22 @@ describe("scope(serve)", function () {
       cluster.setupMaster({
         exec: serveExecutable,
         execArgv: [],
-        args: [outputPath, "--port", String(options.port)],
+        args: [outputPath, "--port", String(options.port)]
       });
 
       let server;
 
-      await new Promise((resolve) => {
+      await new Promise(resolve => {
         server = cluster.fork();
         server.once("listening", resolve);
       });
 
       return () =>
-        new Promise((resolve) => {
+        new Promise(resolve => {
           server.on("exit", resolve);
           server.kill();
         });
-    }),
+    })
   });
 });
 
@@ -99,8 +99,8 @@ function createTest(createServer) {
           args: [
             "--no-sandbox",
             "--disable-dev-shm-usage",
-            "--disable-setuid-sandbox",
-          ],
+            "--disable-setuid-sandbox"
+          ]
         });
         const page = await browser.newPage();
         const screenshot = screenshotUtility.bind(
@@ -124,12 +124,12 @@ function createTest(createServer) {
             screenshot,
             snapshot,
             targetPath,
-            isBuild: mode === "build" || mode === "static",
+            isBuild: mode === "build" || mode === "static"
           });
         }
       } finally {
         delete process.env.NODE_ENV;
-        Object.keys(require.cache).forEach((key) => {
+        Object.keys(require.cache).forEach(key => {
           if (key.startsWith(dir)) {
             delete require.cache[key];
           }
@@ -152,7 +152,10 @@ async function screenshotUtility(page, mode, snapshot, resolve, name, element) {
   const screenshotPath = resolve(
     `${nameWithMode && `${nameWithMode}-`}actual.png`
   );
-  const html = await page.evaluate((el) => el.outerHTML, target);
+  const assetCode = (
+    await page.evaluate(el => el.innerHTML, await page.$("head"))
+  ).trim();
+  const html = assetCode + (await page.evaluate(el => el.outerHTML, target));
 
   // Cannot screenshot zero size elements, first check body has content
   // before screenshotting.

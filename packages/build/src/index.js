@@ -6,10 +6,12 @@ const postcssPresetEnv = require("postcss-preset-env");
 const ExtractCSSPlugin = require("mini-css-extract-plugin");
 const InjectPlugin = require("webpack-inject-plugin").default;
 const MarkoPlugin = require("@marko/webpack/plugin").default;
+const resolveFrom = require("resolve-from");
 
 const { getUserAgentRegExp } = require("browserslist-useragent-regexp");
 const { useAppModuleOrFallback, getRouterCode } = require("./util");
 
+const EMPTY = [];
 const SERVER_FILE = path.join(__dirname, "./files/server.js");
 const MIDDLEWARE_FILE = path.join(__dirname, "./files/middleware.js");
 const CWD = process.cwd();
@@ -100,74 +102,142 @@ const configBuilder = (exports.configBuilder = ({
     }
   });
 
-  const sharedRules = ({ isServer, targets }) => [
-    {
-      test: /\.[cm]?js$/,
-      exclude: !production || isServer ? /node_modules/ : undefined,
-      use: [babelLoader(targets)]
-    },
-    {
-      test: /\.marko$/,
-      use: [
-        {
-          loader: require.resolve("@marko/webpack/loader"),
-          options: {
-            compiler: markoCompiler,
-            babelConfig: babelConfig(targets)
-          }
-        }
-      ]
-    },
-    {
-      test: /\.css$/,
-      use: isServer
-        ? [require.resolve("ignore-loader")]
-        : [
-            ExtractCSSPlugin.loader,
-            require.resolve("css-loader"),
-            {
-              loader: require.resolve("postcss-loader"),
-              options: {
-                postcssOptions: {
-                  plugins: [postcssPresetEnv({ browsers: targets })]
-                }
+  const sharedRules = ({ isServer, targets }) => {
+    const styleLoaders = (loaders = EMPTY) => {
+      if (isServer) {
+        const cssModulesLoaders = [
+          {
+            loader: require.resolve("css-loader"),
+            options: {
+              importLoaders: loaders.length,
+              esModule: false,
+              modules: {
+                exportOnlyLocals: true
               }
             }
-          ]
-    },
-    {
-      test: file => file && !/\.([cm]?js|json|css|wasm|marko)$/.test(file),
-      use: [
-        {
-          loader: require.resolve("file-loader"),
-          options: {
-            publicPath: PUBLIC_PATH,
-            outputPath: path.relative(
-              isServer ? BUILD_PATH : ASSETS_PATH,
-              ASSETS_PATH
-            ),
-            name: `${FILENAME_TEMPLATE}.[ext]`
+          },
+          ...loaders
+        ];
+        const ignoreLoaders = [require.resolve("ignore-loader")];
+
+        return [
+          info => {
+            if (/\.modules?\.\w+$/.test(info.resource)) {
+              return cssModulesLoaders;
+            }
+
+            return ignoreLoaders;
           }
-        },
-        production && {
-          loader: require("image-minimizer-webpack-plugin").loader,
-          options: {
-            filter(_, filename) {
-              return /\.(jpe?g|png|gif|svg)$/.test(filename);
-            },
-            minimizerOptions: {
-              plugins: [
-                require.resolve("imagemin-gifsicle"),
-                require.resolve("imagemin-jpegtran"),
-                require.resolve("imagemin-optipng"),
-                require.resolve("imagemin-svgo")
-              ]
+        ];
+      } else {
+        return [
+          ExtractCSSPlugin.loader,
+          {
+            loader: require.resolve("css-loader"),
+            options: {
+              importLoaders: loaders.length + 1
+            }
+          },
+          {
+            loader: require.resolve("postcss-loader"),
+            options: {
+              postcssOptions: {
+                plugins: [postcssPresetEnv({ browsers: targets })]
+              }
+            }
+          },
+          ...loaders
+        ];
+      }
+    };
+
+    return [
+      {
+        test: /\.[cm]?js$/,
+        exclude: !production || isServer ? /node_modules/ : undefined,
+        use: [babelLoader(targets)]
+      },
+      {
+        test: /\.marko$/,
+        use: [
+          {
+            loader: require.resolve("@marko/webpack/loader"),
+            options: {
+              compiler: markoCompiler,
+              hydrateIncludeImports: /\.\w+(?<![cm]?js|json|wasm|marko)$/,
+              babelConfig: babelConfig(targets)
             }
           }
-        }
-      ].filter(Boolean)
-    }
-  ];
+        ]
+      },
+      {
+        test: /\.css$/,
+        use: styleLoaders()
+      },
+      {
+        test: /\.less$/,
+        use: styleLoaders([
+          {
+            loader: "less-loader",
+            options: {
+              lessOptions: {
+                rewriteUrls: "local"
+              }
+            }
+          },
+          ensurePkgs(APP_DIR, ["less-loader", "less"])
+        ])
+      },
+      {
+        test: /\.s[ac]ss$/,
+        use: styleLoaders([
+          "sass-loader",
+          ensurePkgs(APP_DIR, ["sass-loader", "sass"])
+        ])
+      },
+      {
+        test: /\.styl$/,
+        use: styleLoaders([
+          "stylus-loader",
+          ensurePkgs(APP_DIR, ["stylus-loader", "stylus"])
+        ])
+      },
+      {
+        test: file =>
+          file &&
+          !/\.([cm]?js|json|css|less|s[ac]ss|styl|wasm|marko)$/.test(file),
+        use: [
+          {
+            loader: require.resolve("file-loader"),
+            options: {
+              publicPath: PUBLIC_PATH,
+              outputPath: path.relative(
+                isServer ? BUILD_PATH : ASSETS_PATH,
+                ASSETS_PATH
+              ),
+              name: `${FILENAME_TEMPLATE}.[ext]`
+            }
+          },
+          production && {
+            loader: require("image-minimizer-webpack-plugin").loader,
+            options: {
+              filter(_, filename) {
+                return /\.(jpe?g|png|gif|svg)$/.test(filename);
+              },
+              minimizerOptions: {
+                plugins: [
+                  require.resolve("imagemin-gifsicle"),
+                  require.resolve("imagemin-jpegtran"),
+                  require.resolve("imagemin-optipng"),
+                  require.resolve("imagemin-svgo")
+                ]
+              }
+            }
+          }
+        ].filter(Boolean)
+      }
+    ];
+  };
 
   const sharedConfig = options => ({
     mode: MODE,
@@ -256,7 +326,7 @@ const configBuilder = (exports.configBuilder = ({
               )
               .join(", ")}]`
         ),
-        new InjectPlugin(async function() {
+        new InjectPlugin(async function () {
           const parts = [];
 
           if (ENTRY_IS_DIR) {
@@ -371,4 +441,26 @@ function loadBrowsersLists(entry, production) {
           }
         ];
   }
+}
+
+function ensurePkgs(dir, pkgs) {
+  let checked = false;
+  return info => {
+    if (!checked) {
+      checked = true;
+      for (const pkg of pkgs) {
+        if (!resolveFrom.silent(dir, `${pkg}/package.json`)) {
+          throw new Error(
+            `To load ${path.extname(
+              info.resource
+            )} files you must first install the following packages: ${pkgs.join(
+              ", "
+            )}.`
+          );
+        }
+      }
+    }
+
+    return EMPTY;
+  };
 }
