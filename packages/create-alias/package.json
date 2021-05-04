@@ -1,12 +1,14 @@
 {
   "name": "create-marko",
   "description": "Create Marko projects",
-  "version": "6.0.2",
+  "version": "6.1.0",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
-    "@marko/create": "^6.0.2"
+    "@marko/create": "^6.1.0"
   },
-  "files": ["dist/index.js"],
+  "files": [
+    "dist/index.js"
+  ],
   "homepage": "https://github.com/marko-js/cli/tree/master/packages/create",
   "keywords": [
     "create",

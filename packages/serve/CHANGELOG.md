@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.1](https://github.com/marko-js/cli/compare/@marko/serve@4.2.0...@marko/serve@4.2.1) (2021-05-04)
+
+
+### Bug Fixes
+
+* add support for [id] naming for params ([#187](https://github.com/marko-js/cli/issues/187)) ([7ce2c55](https://github.com/marko-js/cli/commit/7ce2c558a8ffdf828b3d8ebcef3a0386fea21f19))
+
+
+
+
+
 # [4.2.0](https://github.com/marko-js/cli/compare/@marko/serve@4.1.4...@marko/serve@4.2.0) (2021-04-17)
 
 
