@@ -1,7 +1,7 @@
 {
   "name": "create-marko",
   "description": "Create Marko projects",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
     "@marko/create": "^6.1.0"

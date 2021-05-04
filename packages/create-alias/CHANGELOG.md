@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.1.1](https://github.com/marko-js/cli/compare/create-marko@6.1.0...create-marko@6.1.1) (2021-05-04)
+
+
+### Bug Fixes
+
+* **create-marko:** bin name for yarn create ([21cec4e](https://github.com/marko-js/cli/commit/21cec4ec8c2cbc518de17d9c313ff494984f7f83))
+
+
+
+
+
 # 6.1.0 (2021-05-04)
 
 
