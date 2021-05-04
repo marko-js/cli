@@ -114,7 +114,7 @@ We can now use the menu to navigate between pages!
 
 What if we want our app to be able to say "Hello" to more than just the world? Do we need to create a new page for each thing we want to say hello to?
 
-**Nope**. This is where route parameters come in. Route parameters allow you to use dynamic values from the url in your template. Just like normal pages, these are powered by your directory structure, but use a special syntax: files or directories that start with `:` indicate a parameter. Let's rename `hello.marko` to `hello/:name.marko` and update its contents to the following:
+**Nope**. This is where route parameters come in. Route parameters allow you to use dynamic values from the url in your template. Just like normal pages, these are powered by your directory structure, but use a special syntax: files or directories that contain `[PARAM]` indicate a parameter. Let's rename `hello.marko` to `hello/[name].marko` and update its contents to the following:
 
 ```marko
 <h1>Hello ${input.params.name}</h1>

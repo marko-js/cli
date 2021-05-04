@@ -7,6 +7,7 @@ const parseUrl = require("url").parse;
 const through = require("through2");
 const toString = require("stream-to-string");
 const getHrefs = require("get-hrefs");
+let warnedAboutParamNaming = false;
 
 const useAppModuleOrFallback = (dir, moduleName) => {
   const packageName = `${moduleName}/package`;
@@ -59,7 +60,7 @@ const getRouterCode = async (cwd, ignore, production) => {
       /* webpackInclude: /\\.marko$/ */
       /* webpackExclude: /node_modules|components|build/ */
       /* webpackMode: "weak" */
-      ${JSON.stringify(cwd + path.sep)} + _
+      ${JSON.stringify(fileNameToURL(cwd + path.sep))} + _
     ));
   `;
 
@@ -91,7 +92,7 @@ function getRoute(url) {
 global.GET_ROUTE = getRoute;
 `;
 
-const paramPattern = /^:([^/]+)$/;
+const paramPattern = /^:(.+)$|^\[(.+)\]$/;
 
 const buildRoute = (dir, level = 0) => {
   const ifs = [];
@@ -102,8 +103,14 @@ const buildRoute = (dir, level = 0) => {
   if (dir.dirs) {
     for (let key in dir.dirs) {
       const childDir = dir.dirs[key];
-      const paramMatch = paramPattern.exec(key);
-      if (!paramMatch) {
+      const paramName = getParamName(key);
+      if (paramName) {
+        ifs.push(
+          `if (true) {\n${indent}  params[${JSON.stringify(
+            paramName
+          )}] = part_${level};\n${buildRoute(childDir, level + 1)}\n${indent}}`
+        );
+      } else {
         ifs.unshift(
           `if (part_${level} === ${JSON.stringify(key)}) {\n${buildRoute(
             childDir,
@@ -111,13 +118,6 @@ const buildRoute = (dir, level = 0) => {
           )}\n${indent}}`
         );
         needsPart = true;
-      } else {
-        const paramName = paramMatch[1];
-        ifs.push(
-          `if (true) {\n${indent}  params[${JSON.stringify(
-            paramName
-          )}] = part_${level};\n${buildRoute(childDir, level + 1)}\n${indent}}`
-        );
       }
     }
   }
@@ -128,14 +128,8 @@ const buildRoute = (dir, level = 0) => {
       const partMatch = `part_${level} === ${JSON.stringify(
         key === "index" ? undefined : key
       )}`;
-      const paramMatch = paramPattern.exec(key);
-      if (!paramMatch) {
-        ifs.unshift(
-          `if (${partMatch}) {\n${indent}  return { params, template:${file.varName} };\n${indent}}`
-        );
-        needsPart = true;
-      } else {
-        const paramName = paramMatch[1];
+      const paramName = getParamName(key);
+      if (paramName) {
         ifs.push(
           `if (true) {\n${indent}  params[${JSON.stringify(
             paramName
@@ -143,6 +137,11 @@ const buildRoute = (dir, level = 0) => {
             file.varName
           } };\n${indent}}`
         );
+      } else {
+        ifs.unshift(
+          `if (${partMatch}) {\n${indent}  return { params, template:${file.varName} };\n${indent}}`
+        );
+        needsPart = true;
       }
     }
   }
@@ -237,6 +236,25 @@ const getFileName = url => {
 
   return fileName;
 };
+
+function getParamName(key) {
+  const match = paramPattern.exec(key);
+
+  if (match) {
+    if (match[1]) {
+      if (!warnedAboutParamNaming) {
+        warnedAboutParamNaming = true;
+        console.warn(
+          `@marko/build: The file param convention has changed from "folder/:param.marko" to "folder/[param].marko".`
+        );
+      }
+
+      return match[1];
+    }
+
+    return match[2];
+  }
+}
 
 module.exports = {
   useAppModuleOrFallback,
