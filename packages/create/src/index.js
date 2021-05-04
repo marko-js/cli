@@ -23,6 +23,13 @@ const EXAMPLES_SUBDIRECTORY = "examples";
 const GITHUB_URL = "https://github.com/";
 const MASTER_TAG = "master";
 const TEMP_DIR = os.tmpdir();
+const DEFAULT_INSTALLER =
+  (process.env.npm_config_user_agent &&
+    process.env.npm_config_user_agent.slice(
+      0,
+      process.env.npm_config_user_agent.indexOf("/")
+    )) ||
+  "npm";
 
 exports.createProject = function createProject(options) {
   const emitter = new EventEmitter();
@@ -33,7 +40,12 @@ exports.createProject = function createProject(options) {
 };
 
 async function create(options = {}, emitter) {
-  let { dir, name, template = DEFAULT_EXAMPLE } = options;
+  let {
+    dir,
+    name,
+    template = DEFAULT_EXAMPLE,
+    installer = DEFAULT_INSTALLER
+  } = options;
   const projectPath = path.resolve(dir, name);
   await assertAllGood(dir, projectPath, name);
 
@@ -44,13 +56,13 @@ async function create(options = {}, emitter) {
 
   await downloadRepo(template, projectPath, options, emitter);
   const { scripts } = await rewritePackageJson(projectPath, name);
-  await installPackages(projectPath, emitter);
+  await installPackages(installer, projectPath, emitter);
   await initGitRepo(projectPath, emitter);
 
   return { projectPath, scripts };
 }
 
-exports.getExamples = async function() {
+exports.getExamples = async function () {
   const tempPath = path.join(TEMP_DIR, "marko-create-examples");
   await downloadRepo(EXAMPLES_REPO, tempPath, { force: true });
   const tempExamplesPath = path.join(tempPath, EXAMPLES_SUBDIRECTORY);
@@ -136,9 +148,9 @@ async function rewritePackageJson(fullPath, name) {
   return packageData;
 }
 
-async function installPackages(fullPath, emitter) {
+async function installPackages(installer, fullPath, emitter) {
   emitter.emit("install");
-  await exec(fullPath, "npm", ["install"]);
+  await exec(fullPath, installer, ["install"]);
 }
 
 function getExampleUrl(example, tag) {
