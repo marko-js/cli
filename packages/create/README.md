@@ -24,14 +24,25 @@ Used to create a template Marko project in a specific directory.
 
 ## Example
 
-```bash
-# Creates a Marko project
-npx @marko/create
-```
+### npm
 
 ```bash
+# Creates a Marko project
+npm init @marko
 # Creates a project called "myapp" from the "webpack" example template
-npx @marko/create myapp --template webpack
+npm init @marko myapp --template webpack
+```
+
+### yarn
+
+```bash
+yarn create marko
+```
+
+### pnpm
+
+```
+pnpx @marko/create
 ```
 
 ## Options
@@ -48,6 +59,10 @@ npx @marko/create myapp --template webpack
     basic#next     # example branch
     webpack#v1.2.3 # repo release tag
     rollup#62e9fb1 # repo commit hash
+    ```
+- `--installer`: Override the package manager used to install dependencies. By default will determine from create command and fallback to `npm`.
+  - ```bash
+    marko-create --installer pnpm
     ```
 
 # API

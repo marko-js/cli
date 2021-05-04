@@ -28,6 +28,11 @@ exports.parse = function parse(argv) {
         description:
           "An example from marko-js/examples or a git repo to use as the project template"
       },
+      "--installer -i": {
+        type: "string",
+        description:
+          "Override the package manager used to install dependencies. By default will determine from create command and fallback to npm."
+      },
       "--version -v": {
         type: "boolean",
         descrption: `print ${details.name} version`
@@ -55,7 +60,7 @@ exports.parse = function parse(argv) {
       "…from a github repo at a specific branch/tag/commit",
       `$0 my-new-app ${chalk.green.bold("--template user/repo#commit")}`
     )
-    .validate(function(result) {
+    .validate(function (result) {
       if (result.version) {
         console.log(`v${details.version}`);
         process.exit(0);
@@ -66,7 +71,7 @@ exports.parse = function parse(argv) {
         process.exit(0);
       }
     })
-    .onError(function(err) {
+    .onError(function (err) {
       this.printUsage();
       console.error(err);
       process.exit(1);
