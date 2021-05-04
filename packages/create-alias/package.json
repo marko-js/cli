@@ -19,7 +19,7 @@
   ],
   "license": "MIT",
   "bin": {
-    "marko-create": "./dist/index.js"
+    "create-marko": "./dist/index.js"
   },
   "repository": {
     "type": "git",
