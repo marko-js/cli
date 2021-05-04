@@ -12,7 +12,17 @@ module.exports = async function initGitRepo(cwd, emitter) {
     emitter.emit("init");
     await execGit(cwd, ["init"]);
     await execGit(cwd, ["add", "."]);
-    await execGit(cwd, ["commit", "-m", `"${commitMessage}"`]);
+
+    if (!(await tryExecGit(cwd, ["commit", "-m", commitMessage]))) {
+      // Try manually specifying the author if the above failed.
+      await execGit(cwd, [
+        "commit",
+        "--author",
+        `"Marko JS <markojs.com>"`,
+        "-m",
+        commitMessage
+      ]);
+    }
   }
 };
 
@@ -29,7 +39,7 @@ function execGit(cwd, args) {
   return exec(cwd, "git", args);
 }
 
-let commitMessage = `initial commit from @marko/create
+let commitMessage = `"initial commit from @marko/create
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣤⣤⣤⣤⣤⣤⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣤⣤⣤⣤⣤⣤⣤⡀⠀⠀⠀⢤⣤⣤⣤⣤⣤⣤⣤⡀
 ⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣆
 ⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⣷⡀
@@ -44,4 +54,4 @@ let commitMessage = `initial commit from @marko/create
 ⠀⠀⠀⠀⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⡿⠁
 ⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⠏
 ⠀⠀⠀⠀⠀⠀⠀⠀ ⠈⠛⠛⠛⠛⠛⠛⠛⠓⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠚⠛⠛⠛⠛⠛⠛⠛⠁⠀⠀⠀⠚⠛⠛⠛⠛⠛⠛⠛⠁
-`;
+"`;
