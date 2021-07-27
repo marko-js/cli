@@ -4,11 +4,11 @@
   "version": "4.2.1",
   "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "dependencies": {
-    "@babel/runtime": "^7.13.10",
+    "@babel/runtime": "^7.14.8",
     "@marko/build": "^4.2.1",
     "address": "^1.1.2",
     "argly": "^1.2.0",
-    "chalk": "^4.1.0",
+    "chalk": "^4.1.1",
     "open-browsers": "^1.2.2",
     "parse-node-args": "^1.1.2",
     "pretty-ms": "^7.0.1",
@@ -18,9 +18,9 @@
     "webpack-inject-plugin": "^1.5.5"
   },
   "devDependencies": {
-    "@marko/compiler": "^5.8.1",
-    "@marko/translator-default": "^5.8.1",
-    "marko": "^5.8.1"
+    "@marko/compiler": "^5.14.1",
+    "@marko/translator-default": "^5.14.1",
+    "marko": "^5.14.1"
   },
   "files": [
     "dist"
