@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.2](https://github.com/marko-js/cli/compare/@marko/serve@4.2.1...@marko/serve@4.2.2) (2021-07-27)
+
+
+### Bug Fixes
+
+* **build:** update deps ([d0c7dba](https://github.com/marko-js/cli/commit/d0c7dba19299cecbc8a4a500a0284e6e25851170))
+
+
+
+
+
 ## [4.2.1](https://github.com/marko-js/cli/compare/@marko/serve@4.2.0...@marko/serve@4.2.1) (2021-05-04)
 
 
