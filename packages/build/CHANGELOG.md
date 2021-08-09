@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.3](https://github.com/marko-js/cli/compare/@marko/build@4.2.2...@marko/build@4.2.3) (2021-08-09)
+
+
+### Bug Fixes
+
+* **build:** improve sass support, fix css-loader issue ([3b7c978](https://github.com/marko-js/cli/commit/3b7c97892589c024ad37cb847d69ea3322433a71))
+
+
+
+
+
 ## [4.2.2](https://github.com/marko-js/cli/compare/@marko/build@4.2.1...@marko/build@4.2.2) (2021-07-27)
 
 
