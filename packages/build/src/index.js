@@ -131,7 +131,10 @@ const configBuilder = (exports.configBuilder = ({
         ];
       } else {
         return [
-          ExtractCSSPlugin.loader,
+          {
+            loader: ExtractCSSPlugin.loader,
+            options: { publicPath: "" }
+          },
           {
             loader: require.resolve("css-loader"),
             options: {
@@ -191,7 +194,11 @@ const configBuilder = (exports.configBuilder = ({
       {
         test: /\.s[ac]ss$/,
         use: styleLoaders([
-          "sass-loader",
+          "resolve-url-loader",
+          {
+            loader: "sass-loader",
+            options: { sourceMap: true }
+          },
           ensurePkgs(APP_DIR, ["sass-loader", "sass"])
         ])
       },
@@ -210,12 +217,17 @@ const configBuilder = (exports.configBuilder = ({
           {
             loader: require.resolve("file-loader"),
             options: {
-              publicPath: PUBLIC_PATH,
+              name: `${FILENAME_TEMPLATE}.[ext]`,
               outputPath: path.relative(
                 isServer ? BUILD_PATH : ASSETS_PATH,
                 ASSETS_PATH
               ),
-              name: `${FILENAME_TEMPLATE}.[ext]`
+              publicPath(url) {
+                return url;
+              },
+              postTransformPublicPath(url) {
+                return `__webpack_public_path__ + ${url}`;
+              }
             }
           },
           production && {
