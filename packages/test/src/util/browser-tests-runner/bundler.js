@@ -11,7 +11,7 @@ const baseDependencies = [
 exports.create = async (tests, options) => {
   const workDir = options.workDir;
   const outputDir = path.resolve(workDir, "browser-build");
-  const testDependencies = tests.map(requireRunPrefix);
+  const testDependencies = tests.map(test => requireRunPrefix(test.file));
   const additionalDependencies = resolveTestDependencies(
     options.browserTestDependencies || [],
     options.dir
