@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0](https://github.com/marko-js/cli/compare/@marko/test@8.1.0...@marko/test@9.0.0) (2021-09-22)
+
+
+### Features
+
+* **test:** remove deprecated apis ([6bdf774](https://github.com/marko-js/cli/commit/6bdf774b27f7bf4aca7d93adb5d7f6449cd2ff7a))
+
+
+### BREAKING CHANGES
+
+* **test:** legacy render apis are removed
+
+
+
+
+
 # [8.1.0](https://github.com/marko-js/cli/compare/@marko/test@8.0.7...@marko/test@8.1.0) (2021-03-29)
 
 
