@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.1](https://github.com/marko-js/cli/compare/@marko/test@9.0.0...@marko/test@9.0.1) (2021-09-22)
+
+
+### Bug Fixes
+
+* **test:** issue loading test files ([44e20ea](https://github.com/marko-js/cli/commit/44e20ea0f1b59f1e68aef37f84df7b58ce103e5b))
+
+
+
+
+
 # [9.0.0](https://github.com/marko-js/cli/compare/@marko/test@8.1.0...@marko/test@9.0.0) (2021-09-22)
 
 
