@@ -102,79 +102,12 @@ const expect = require("chai").expect;
 const template = require("../index.marko");
 const { render } = require("@marko/testing-library");
 
-it("variant-danger", async function() {
+it("variant-danger", async function () {
   var { getByRole } = await render(template, { variant: "danger" });
   expect(getByRole("button").getAttribute("class")).to.contain(
     "app-button-danger"
   );
 });
-```
-
-## Component testing API (deprecated)
-
-The following APIs are deprecated. Prefer to use [`@marko/testing-library`](https://github.com/marko-js/testing-library) instead.
-
-Example of the deprecated testing api:
-
-```js
-// the `test` fn passes a `context` (documented below)
-test("variant-info", function(context) {
-  var output = context.render({ variant: "info" });
-  expect(output.$("button").attr("class")).to.equal(
-    "app-button app-button-info"
-  );
-});
-
-// Use test.only to only run a single test:
-test.only("foo", function(context) {
-  // ...
-});
-
-// Use test.skip to skip tests
-test.skip("bar", function(context) {
-  // ...
-});
-
-// Because `context` is passed, mocha's `done` becomes the second parameter
-test("foo", function(context, done) {
-  setTimeout(done, 1000);
-});
-```
-
-### `Context`
-
-#### `render(data) : RenderResult`
-
-### `RenderResult`
-
-#### `$(selector)`
-
-Returns a jQuery-compatible object for querying the rendered DOM. Utilizes [cheerio](https://github.com/cheeriojs/cheerio).
-
-#### `html`
-
-The output HTML string.
-
-#### `component`
-
-**_In-browser only_**
-
-Returns a rendered instance of the component.
-
-#### `widget`
-
-**_In-browser only_**
-
-This is an alias for the above `component` getter.
-
-### Snapshots
-
-When a component is rendered, a snapshot of the HTML output will automatically be saved into the `test/snapshots/` directory. This directory should be excluded from source control. For example:
-
-_.gitignore_
-
-```text
-**/test/snapshots/
 ```
 
 ## Code coverage
@@ -192,7 +125,7 @@ You can provide a package-specific plugin by creating a `marko-cli.js` file at t
 _my-app/marko-cli.js:_
 
 ```javascript
-module.exports = function(markoCli) {
+module.exports = function (markoCli) {
   // ...
 };
 ```
@@ -204,7 +137,7 @@ Some options can be specified on the `config` object that `markoCli` exposes.
 For example, shared test dependencies can be specified with the `dependencies` option.
 
 ```javascript
-module.exports = function(markoCli) {
+module.exports = function (markoCli) {
   markoCli.config.browserTestDependencies = [
     "bluebird/js/browser/bluebird.core.js",
     "require-run: ./tools/myDependency.js"
@@ -221,7 +154,7 @@ Lasso plugins and transforms can also be specified using the `lassoOptions` opti
 _my-app/marko-cli.js:_
 
 ```javascript
-module.exports = function(markoCli) {
+module.exports = function (markoCli) {
   markoCli.config.lassoOptions = {
     plugins: [
       "lasso-less" // Marko plugin is included by default.
@@ -246,7 +179,7 @@ in camel case:
 _my-app/marko-cli.js:_
 
 ```javascript
-module.exports = function(markoCli) {
+module.exports = function (markoCli) {
   markoCli.config.mochaOptions = {
     timeout: 5000,
     colors: true

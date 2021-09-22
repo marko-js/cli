@@ -35,7 +35,6 @@ window.addEventListener("beforeunload", () => {
 });
 
 require("chai").config.includeStack = true;
-const BrowserContext = require("./browser-context");
 let options;
 
 try {
@@ -88,58 +87,6 @@ setTimeout(() => {
   });
 });
 
-window.__init_test__ = (test, component, func) => {
-  test.component = component;
-  const context = new BrowserContext(test);
-  window.test = (name, handler) => runTest(it, name, handler, context);
-  Object.keys(it).forEach(function(key) {
-    if (typeof it[key] === "function") {
-      window.test[key] = (name, handler) =>
-        runTest(it[key], name, handler, context);
-    }
-  });
-
-  let desc = test.componentName;
-
-  if (test.groupName) {
-    desc += " - " + test.groupName;
-  }
-
-  describe(desc, func);
-
-  window.test = null;
-};
-
-function runTest(it, name, handler, context) {
-  if (handler.length <= 1) {
-    it(name, function() {
-      context.name = name;
-      const testFunction = handler.call(this, context);
-      if (isPromise(testFunction)) {
-        return testFunction
-          .then(result => {
-            context._afterTest();
-            return result;
-          })
-          .catch(err => {
-            context._afterTest();
-            throw err;
-          });
-      } else {
-        context._afterTest();
-      }
-    });
-  } else if (handler.length >= 2) {
-    it(name, function(done) {
-      context.name = name;
-      handler.call(this, context, function(err) {
-        context._afterTest();
-        done(err);
-      });
-    });
-  }
-}
-
 function send(...args) {
   socket.send(JSON.stringify(args));
 }
@@ -161,10 +108,6 @@ function inspectObject(val) {
   }
 
   return result;
-}
-
-function isPromise(obj) {
-  return obj && obj.then && typeof obj.then === "function";
 }
 
 function isObject(val) {

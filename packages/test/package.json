@@ -14,7 +14,6 @@
     "browser-refresh-taglib": "^1.1.0",
     "chai": "^4.3.4",
     "chalk": "^4.1.0",
-    "cheerio": "^1.0.0-rc.5",
     "child-process-promise": "^2.2.1",
     "complain": "^1.6.0",
     "delay": "^5.0.0",

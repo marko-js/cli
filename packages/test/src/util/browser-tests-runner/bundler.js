@@ -1,19 +1,17 @@
-const fs = require("mz/fs");
 const path = require("path");
 const lasso = require("lasso");
 const resolveFrom = require("resolve-from");
-const Transform = require("stream").Transform;
 const parseRequire = require("lasso/src/resolve/parseRequire");
 const shouldCover = !!process.env.NYC_CONFIG;
 const baseDependencies = [
-  "require-run: " + require.resolve("./browser-dependencies"),
+  requireRunPrefix(require.resolve("./browser-dependencies")),
   "mocha/mocha.css"
 ];
 
 exports.create = async (tests, options) => {
   const workDir = options.workDir;
   const outputDir = path.resolve(workDir, "browser-build");
-  const testDependencies = tests.map(toVirtualModule);
+  const testDependencies = tests.map(requireRunPrefix);
   const additionalDependencies = resolveTestDependencies(
     options.browserTestDependencies || [],
     options.dir
@@ -33,7 +31,7 @@ exports.create = async (tests, options) => {
   try {
     const markoWidgetsPath = resolveFrom(options.dir, "marko-widgets");
     if (markoWidgetsPath) {
-      additionalDependencies.unshift("require-run: " + markoWidgetsPath);
+      additionalDependencies.unshift(requireRunPrefix(markoWidgetsPath));
     }
   } catch (e) {
     // Ignore
@@ -59,41 +57,6 @@ exports.create = async (tests, options) => {
   };
 };
 
-function toVirtualModule(test) {
-  const file = test.file;
-  const rendererPath = test.renderer;
-  const testDir = path.dirname(test.file);
-  let relativePath = path.relative(testDir, rendererPath);
-  if (relativePath.charAt(0) !== ".") {
-    relativePath = "./" + relativePath;
-  }
-
-  return {
-    type: "require",
-    path: file,
-    run: true,
-    virtualModule: {
-      object: false,
-      createReadStream: () => {
-        return fs
-          .createReadStream(file, { encoding: "utf8" })
-          .pipe(
-            new WrapStream(
-              `__init_test__(${JSON.stringify(test)}, require(${JSON.stringify(
-                relativePath
-              )}), function() {`,
-              `});`
-            )
-          );
-      },
-      async getLastModified() {
-        const stat = await fs.stat(file);
-        return stat.mtime ? stat.mtime.getTime() : -1;
-      }
-    }
-  };
-}
-
 function resolveTestDependencies(deps, dir) {
   return deps.map(dep => {
     // resolve paths based on the project's directory
@@ -110,26 +73,6 @@ function resolveTestDependencies(deps, dir) {
   });
 }
 
-class WrapStream extends Transform {
-  constructor(prefix, suffix) {
-    super();
-    this._prefix = prefix;
-    this._suffix = suffix;
-    this._firstChunk = true;
-  }
-
-  _transform(chunk, encoding, callback) {
-    if (this._firstChunk) {
-      this._firstChunk = false;
-      this.push(this._prefix);
-    }
-
-    this.push(chunk);
-    callback();
-  }
-
-  _flush(callback) {
-    this.push(this._suffix);
-    callback();
-  }
+function requireRunPrefix(file) {
+  return `require-run: ${file}`;
 }
