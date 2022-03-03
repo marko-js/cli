@@ -461,7 +461,7 @@ function ensurePkgs(dir, pkgs) {
     if (!checked) {
       checked = true;
       for (const pkg of pkgs) {
-        if (!resolveFrom.silent(dir, `${pkg}/package.json`)) {
+        if (!resolveFrom.silent(dir, pkg)) {
           throw new Error(
             `To load ${path.extname(
               info.resource
