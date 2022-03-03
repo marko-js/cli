@@ -1,4 +1,8 @@
 {
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.13.14",
     "@babel/core": "^7.13.14",
@@ -45,7 +49,6 @@
     "format": "prettier \"**/*.{json,md,js}\" --write",
     "lint": "eslint -f visualstudio packages/",
     "mocha": "mocha -r @babel/register packages/*/test/**/*.test.js",
-    "postinstall": "lerna bootstrap --hoist",
     "publish": "npm run build && lerna publish",
     "report": "open ./coverage/lcov-report/index.html",
     "test": "cross-env NODE_ENV=test nyc npm run mocha",

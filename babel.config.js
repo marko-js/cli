@@ -11,8 +11,8 @@ module.exports = {
     ]
   ],
   plugins: [
-    "@babel/transform-runtime",
-    "@babel/proposal-class-properties",
-    "@babel/proposal-object-rest-spread"
+    ["@babel/transform-runtime", { loose: true }],
+    ["@babel/proposal-class-properties", { loose: true }],
+    ["@babel/proposal-object-rest-spread", { loose: true }]
   ]
 };
