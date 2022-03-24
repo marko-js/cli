@@ -194,14 +194,14 @@ const buildStaticSite = async (options, stats) => {
     const serverStats = stats.stats.find(stats =>
       stats.compilation.name.includes("Server")
     );
-    const serverFiles = serverStats.compilation.chunks
-      .map(chunk => chunk.files)
-      .reduce((all, next) => all.concat(next));
-    serverFiles.forEach(fileName => {
-      if (!fileName.startsWith(assetsPath)) {
-        fs.unlinkSync(path.join(outputPath, fileName));
+
+    for (const chunk of serverStats.compilation.chunks) {
+      for (const fileName of chunk.files) {
+        if (!fileName.startsWith(assetsPath)) {
+          fs.unlinkSync(path.join(outputPath, fileName));
+        }
       }
-    });
+    }
   }
 };
 
