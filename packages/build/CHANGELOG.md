@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.5](https://github.com/marko-js/cli/compare/@marko/build@4.2.4...@marko/build@4.2.5) (2022-03-24)
+
+
+### Bug Fixes
+
+* **build:** avoid using deprecated webpack apis ([2e628b4](https://github.com/marko-js/cli/commit/2e628b47e6d00ae31dfde05a8472f5f910ea48bb))
+
+
+
+
+
 ## [4.2.4](https://github.com/marko-js/cli/compare/@marko/build@4.2.3...@marko/build@4.2.4) (2022-03-03)
 
 
