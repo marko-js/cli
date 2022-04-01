@@ -39,7 +39,7 @@ exports.create = async (tests, options) => {
 
   // Allow for an environment variable or a test runner option
   if (shouldCover || options.testCoverage) {
-    lassoOptions.require.transforms.unshift({
+    lassoOptions.require.transforms.push({
       transform: require("lasso-istanbul-instrument-transform"),
       config: {
         extensions: [".marko", ".js", ".es6"]
