@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.2](https://github.com/marko-js/cli/compare/@marko/test@9.0.1...@marko/test@9.0.2) (2022-04-01)
+
+
+### Bug Fixes
+
+* **test:** ensure istanbul transform runs last ([b7b7add](https://github.com/marko-js/cli/commit/b7b7add8e01810adea543e70ccc33670d49283ff))
+
+
+
+
+
 ## [9.0.1](https://github.com/marko-js/cli/compare/@marko/test@9.0.0...@marko/test@9.0.1) (2021-09-22)
 
 
