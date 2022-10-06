@@ -28,9 +28,9 @@ Used to create a template Marko project in a specific directory.
 
 ```bash
 # Creates a Marko project
-npm init @marko
+npm init marko
 # Creates a project called "myapp" from the "webpack" example template
-npm init @marko myapp --template webpack
+npm init marko myapp -- --template webpack
 ```
 
 ### yarn
