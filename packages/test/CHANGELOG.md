@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.0.0](https://github.com/marko-js/cli/compare/@marko/test@9.0.2...@marko/test@10.0.0) (2022-10-21)
+
+
+### Bug Fixes
+
+* **test:** make lasso a peerDependency ([098cfaa](https://github.com/marko-js/cli/commit/098cfaa82c378aa38eec4abc1d19b71441551add))
+
+
+### BREAKING CHANGES
+
+* **test:** Lasso is now a peer dependency.
+
+
+
+
+
 ## [9.0.2](https://github.com/marko-js/cli/compare/@marko/test@9.0.1...@marko/test@9.0.2) (2022-04-01)
 
 
