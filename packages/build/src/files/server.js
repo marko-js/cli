@@ -7,7 +7,12 @@ http
   .createServer((req, res) => {
     if (assetsMatch.test(req.url)) {
       req.url = req.url.slice(7);
-      assets(req, res, notFound);
+
+      if (assets) {
+        assets(req, res, notFound);
+      } else {
+        notFound();
+      }
     } else {
       routes(req, res, notFound);
     }
