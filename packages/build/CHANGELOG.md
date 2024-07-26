@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.6](https://github.com/marko-js/cli/compare/@marko/build@4.2.5...@marko/build@4.2.6) (2024-07-26)
+
+
+### Bug Fixes
+
+* **build:** avoid calling asset middleware in dev mode ([b747c5c](https://github.com/marko-js/cli/commit/b747c5c6097adbea6d0ce311450f6c3f4dcb387a))
+
+
+
+
+
 ## [4.2.5](https://github.com/marko-js/cli/compare/@marko/build@4.2.4...@marko/build@4.2.5) (2022-03-24)
 
 
