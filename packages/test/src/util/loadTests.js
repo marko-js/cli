@@ -15,7 +15,8 @@ function getRenderer(dir) {
   var paths = [
     path.join(dir, "index"),
     path.join(dir, "renderer"),
-    path.join(dir, "template.marko")
+    path.join(dir, "template.marko"),
+    path.join(dir, path.basename(dir))
   ];
 
   for (var i = 0; i < paths.length; i++) {
