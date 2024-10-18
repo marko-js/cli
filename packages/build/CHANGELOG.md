@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/marko-js/cli/compare/@marko/build@4.2.6...@marko/build@4.3.0) (2024-10-18)
+
+
+### Features
+
+* **build:** add typescript support ([#225](https://github.com/marko-js/cli/issues/225)) ([7d50ed5](https://github.com/marko-js/cli/commit/7d50ed5260c77c38a1077f6bf6ec29787a7a9804))
+
+
+
+
+
 ## [4.2.6](https://github.com/marko-js/cli/compare/@marko/build@4.2.5...@marko/build@4.2.6) (2024-07-26)
 
 
