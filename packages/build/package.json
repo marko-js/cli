@@ -6,6 +6,7 @@
   "dependencies": {
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.17.12",
     "@babel/runtime": "^7.17.2",
     "@marko/babel-utils": "^5.19.1",
     "@marko/compiler": "^5.19.1",
