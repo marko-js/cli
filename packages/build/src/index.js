@@ -91,7 +91,13 @@ const configBuilder = (exports.configBuilder = ({
     compact: false,
     babelrc: false,
     configFile: false,
-    browserslistConfigFile: false
+    browserslistConfigFile: false,
+    overrides: [
+      {
+        test: /\.[cm]?ts$/,
+        presets: [require.resolve("@babel/preset-typescript")]
+      }
+    ]
   });
 
   const babelLoader = targets => ({
@@ -156,7 +162,7 @@ const configBuilder = (exports.configBuilder = ({
 
     return [
       {
-        test: /\.[cm]?js$/,
+        test: /\.[cm]?[jt]s$/,
         exclude: !production || isServer ? /node_modules/ : undefined,
         use: [babelLoader(targets)]
       },
@@ -212,7 +218,7 @@ const configBuilder = (exports.configBuilder = ({
       {
         test: file =>
           file &&
-          !/\.([cm]?js|json|css|less|s[ac]ss|styl|wasm|marko)$/.test(file),
+          !/\.([cm]?[jt]s|json|css|less|s[ac]ss|styl|wasm|marko)$/.test(file),
         use: [
           {
             loader: require.resolve("file-loader"),
@@ -256,7 +262,7 @@ const configBuilder = (exports.configBuilder = ({
     context: CONTEXT,
     resolve: {
       alias: sharedAliases(options),
-      extensions: [".wasm", ".mjs", ".js", ".json", ".marko"]
+      extensions: [".wasm", ".mjs", ".js", ".json", ".ts", ".mts", ".marko"]
     },
     cache: { type: "filesystem" },
     module: { rules: sharedRules(options) }
@@ -421,9 +427,9 @@ function loadBrowsersLists(entry, production) {
   const customBrowsersList = browserslist.findConfig(entry);
 
   if (customBrowsersList) {
-    const customBrowserEnvs = Object.entries(
-      customBrowsersList
-    ).map(([env, targets]) => ({ env, targets }));
+    const customBrowserEnvs = Object.entries(customBrowsersList).map(
+      ([env, targets]) => ({ env, targets })
+    );
     const activeBrowserEnvs = customBrowserEnvs.filter(
       ({ env, targets }) =>
         targets.length && (production ? env !== "dev" : env === "dev")
