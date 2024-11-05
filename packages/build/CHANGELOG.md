@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.1](https://github.com/marko-js/cli/compare/@marko/build@4.3.0...@marko/build@4.3.1) (2024-11-05)
+
+
+### Bug Fixes
+
+* **build:** remove unecessary default translator dep ([2ba31f0](https://github.com/marko-js/cli/commit/2ba31f025d03da08092ab659bfa5b852a5d3be4f))
+
+
+
+
+
 # [4.3.0](https://github.com/marko-js/cli/compare/@marko/build@4.2.6...@marko/build@4.3.0) (2024-10-18)
 
 
