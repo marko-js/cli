@@ -10,7 +10,6 @@
     "@babel/runtime": "^7.17.2",
     "@marko/babel-utils": "^5.19.1",
     "@marko/compiler": "^5.19.1",
-    "@marko/translator-default": "^5.19.1",
     "@marko/webpack": "^9.2.1",
     "argly": "^1.2.0",
     "babel-loader": "^8.2.3",
