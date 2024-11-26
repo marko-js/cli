@@ -17,7 +17,7 @@
     "child-process-promise": "^2.2.1",
     "complain": "^1.6.0",
     "delay": "^5.0.0",
-    "engine.io": "^5.0.0",
+    "engine.io": "^6.2.1",
     "engine.io-client": "^5.0.0",
     "express": "^4.17.1",
     "get-port": "^5.1.1",
