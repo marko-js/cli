@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.2](https://github.com/marko-js/cli/compare/@marko/build@4.3.1...@marko/build@4.3.2) (2024-12-30)
+
+
+### Bug Fixes
+
+* **build:** bump marko compiler version ([3752834](https://github.com/marko-js/cli/commit/375283468eb3820a05ea4d2988d33811919ebdfc))
+
+
+
+
+
 ## [4.3.1](https://github.com/marko-js/cli/compare/@marko/build@4.3.0...@marko/build@4.3.1) (2024-11-05)
 
 
