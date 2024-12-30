@@ -1,6 +1,6 @@
 "use strict";
 
-const markoUtils = require("@marko/babel-utils");
+const markoUtils = require("@marko/compiler/babel-utils");
 const attrTags = {
   src: [
     "audio",
@@ -28,7 +28,7 @@ const tagAttrs = Object.keys(attrTags).reduce((tagAttrs, attrName) => {
   return tagAttrs;
 }, {});
 
-module.exports = function(a, b) {
+module.exports = function (a, b) {
   if (a.hub) {
     return transformMarko5(a, b);
   }
