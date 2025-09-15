@@ -154,5 +154,7 @@ async function installPackages(installer, fullPath, emitter) {
 }
 
 function getExampleUrl(example, tag) {
-  return `${GITHUB_URL}/${EXAMPLES_REPO}/tree/${tag}/${EXAMPLES_SUBDIRECTORY}/${example}`;
+  return `${GITHUB_URL}${EXAMPLES_REPO}/tree/${encodeURIComponent(
+    tag
+  )}/${EXAMPLES_SUBDIRECTORY}/${encodeURIComponent(example)}`;
 }
