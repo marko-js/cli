@@ -82,7 +82,18 @@ export function parse(argv) {
   return options;
 }
 
+const AGENT_ENV = ["CLAUDECODE", "CURSOR_TRACE_ID", "AI_AGENT", "AGENT"];
+const isAgent = () => AGENT_ENV.some(v => process.env[v]);
+
+const nonInteractivePrompt = () => {
+  throw new Error(
+    "This migration needs an interactive prompt, but no interactive terminal is available.\n" +
+      "Re-run with `--safe` to apply only the automatic migrations, or run in an interactive terminal."
+  );
+};
+
 export async function run(options) {
+  const interactive = process.stdin.isTTY && !process.env.CI && !isAgent();
   await markoMigrate({
     syntax: "html",
     maxLen: 80,
@@ -91,7 +102,7 @@ export async function run(options) {
     ignore: ["/node_modules", ".*"],
     dir: process.cwd(),
     ...options,
-    prompt,
+    prompt: interactive || options.safe ? prompt : nonInteractivePrompt,
     onWriteFile(file, source) {
       return fs.writeFile(file, source, "utf-8");
     },

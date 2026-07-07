@@ -33,6 +33,11 @@ exports.parse = function parse(argv) {
         description:
           "Override the package manager used to install dependencies. By default will determine from create command and fallback to npm."
       },
+      "--yes -y": {
+        type: "boolean",
+        description:
+          "Skip interactive prompts and accept defaults (also implied under CI and AI agents)."
+      },
       "--version -v": {
         type: "boolean",
         descrption: `print ${details.name} version`
@@ -81,11 +86,29 @@ exports.parse = function parse(argv) {
   return options;
 };
 
+const AGENT_ENV = ["CLAUDECODE", "CURSOR_TRACE_ID", "AI_AGENT", "AGENT"];
+const isAgent = () => AGENT_ENV.some(v => process.env[v]);
+
 exports.run = async function run(options = {}) {
+  const acceptDefaults = options.yes || isAgent() || process.env.CI;
+  const canPrompt = process.stdin.isTTY && !acceptDefaults;
   const spinner = ora("Starting...").start();
 
   try {
-    if (!options.name || !options.template) {
+    if ((!options.name || !options.template) && !canPrompt) {
+      if (!acceptDefaults) {
+        throw new Error(
+          "An interactive terminal is required to choose a project name and template.\n" +
+            "Pass --name and --template, or --yes to accept the defaults."
+        );
+      }
+      if (!options.name) {
+        options.name = "my-app";
+        spinner.info(chalk.yellow(`No project name given; using "my-app".`));
+      }
+    }
+
+    if ((!options.name || !options.template) && canPrompt) {
       spinner.stop();
       const examples = !options.template && getExamples();
       const trimHints = choices =>
@@ -168,6 +191,7 @@ exports.run = async function run(options = {}) {
   } catch (err) {
     spinner.fail(err.message + "\n");
     console.error(err);
+    process.exitCode = 1;
   } finally {
     clearTimeout(spinner.timeout);
   }

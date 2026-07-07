@@ -38,6 +38,18 @@ npx @marko/migrate ./components/my-component.marko
 - `--dry-run`: Runs the migration in memory only.
 - `--safe`: Run all safe migrations ignoring any prompts.
 
+## Non-interactive usage (CI & AI agents)
+
+Some migrations ask for a decision via an interactive prompt. When there is no
+human to answer — no TTY on `stdin`, `CI` is set, or an AI agent is detected
+(e.g. `CLAUDECODE`/`CURSOR_TRACE_ID`/`AGENT`) — the automatic migrations still
+run, but rather than hanging on a prompt the command exits with guidance to
+re-run with `--safe` (which applies only the automatic migrations):
+
+```bash
+npx @marko/migrate ./src --safe
+```
+
 # API
 
 ## Installation

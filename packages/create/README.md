@@ -47,6 +47,7 @@ pnpx @marko/create
 
 ## Options
 
+- `--name`: The name of the new app (also accepted as the first positional argument).
 - `--dir`: Provide a different directory to setup the project in (default to `pwd`).
 - `--template`: The name of an example from [marko-js/examples](https://github.com/marko-js/examples/tree/master/examples).
   - An example name
@@ -64,6 +65,19 @@ pnpx @marko/create
   - ```bash
     marko-create --installer pnpm
     ```
+- `--yes` (`-y`): Skip the interactive prompts and accept the defaults.
+
+## Non-interactive usage (CI & AI agents)
+
+In a real terminal the prompts behave exactly as before. When there is no human
+to answer them — `--yes` is passed, `CI` is set, or an AI agent is detected
+(e.g. `CLAUDECODE`/`CURSOR_TRACE_ID`/`AGENT`, even with a pseudo-TTY) — the
+prompts are skipped and the name defaults to `my-app` and the template to the
+starter app instead of hanging. Failures exit non-zero.
+
+```bash
+npx @marko/create my-app --template basic --yes
+```
 
 # API
 
