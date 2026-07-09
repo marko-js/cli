@@ -163,9 +163,9 @@ const buildRoute = (dir, level = 0) => {
 const buildStaticSite = async (options, stats) => {
   const outputPath = path.resolve(process.cwd(), options.output || "build");
   const { routes } = require(path.join(outputPath, "middleware.js"));
+  const cache = new Set();
 
   if ((await fs.statSync(options.entry)).isDirectory()) {
-    const cache = new Set();
     await Promise.all(
       Object.values(
         await getDirectoryLookup(options.entry, [
@@ -180,13 +180,21 @@ const buildStaticSite = async (options, stats) => {
             .replace(/.marko$/, "")
             .replace(/(^|\/)index(?=\/|$)/g, "")
             .replace(/\/$/, "");
-        if (!url.includes("/:")) {
+        // Routes with dynamic params cannot be prerendered on their own,
+        // concrete paths for them can be provided via `options.paths`.
+        if (!url.split("/").some(part => paramPattern.test(part))) {
           await buildStaticPage(url, cache, routes, outputPath);
         }
       })
     );
   } else {
-    await buildStaticPage("/", new Set(), routes, outputPath);
+    await buildStaticPage("/", cache, routes, outputPath);
+  }
+
+  if (options.paths) {
+    await Promise.all(
+      options.paths.map(url => buildStaticPage(url, cache, routes, outputPath))
+    );
   }
 
   if (stats) {

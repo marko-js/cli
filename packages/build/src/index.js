@@ -342,7 +342,7 @@ const configBuilder = (exports.configBuilder = ({
                   } 
                 }`
               )
-              .join(", ")}]`
+              .join(", ")}];`
         ),
         new InjectPlugin(async function () {
           const parts = [];
@@ -368,7 +368,7 @@ const configBuilder = (exports.configBuilder = ({
             );
           }
 
-          return parts.join(";\n");
+          return parts.join(";\n") + ";";
         }),
         markoPlugin.server,
         ...serverPlugins
@@ -379,8 +379,14 @@ const configBuilder = (exports.configBuilder = ({
     fn(
       {
         name: `Browser-${browser.env}`,
+        // When the targets come from a browserslist config file, reference the
+        // env by name so webpack loads it from the config. Inlining the raw
+        // queries would fail since browserslist resolves the query string as
+        // an (unknown) env name of the discovered config file.
         target: browser.targets.length
-          ? `browserslist:${browser.targets.join(", ")}`
+          ? browser.fromConfig
+            ? `browserslist:${browser.env}`
+            : `browserslist:${browser.targets.join(", ")}`
           : "web",
         devtool: production ? "source-map" : "eval-cheap-module-source-map",
         optimization: {
@@ -428,7 +434,7 @@ function loadBrowsersLists(entry, production) {
 
   if (customBrowsersList) {
     const customBrowserEnvs = Object.entries(customBrowsersList).map(
-      ([env, targets]) => ({ env, targets })
+      ([env, targets]) => ({ env, targets, fromConfig: true })
     );
     const activeBrowserEnvs = customBrowserEnvs.filter(
       ({ env, targets }) =>

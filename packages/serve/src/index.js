@@ -3,7 +3,7 @@ const SpawnServerPlugin = require("spawn-server-webpack-plugin");
 const { loadWebpackConfig } = require("@marko/build");
 const webpack = require("webpack");
 
-module.exports = ({ entry, port = 3000, verbose, nodeArgs = [] }) => {
+module.exports = async ({ entry, port = 3000, verbose, nodeArgs = [] }) => {
   const spawnedServer = new SpawnServerPlugin({
     args: nodeArgs.concat("--enable-source-maps"),
     mainEntry: "index"
@@ -24,31 +24,29 @@ module.exports = ({ entry, port = 3000, verbose, nodeArgs = [] }) => {
   const compiler = webpack(configs);
 
   const devServerConfig = {
-    noInfo: true,
-    overlay: true,
+    port,
     host: "0.0.0.0",
-    contentBase: false,
-    injectClient: ({ target = "web" }) =>
-      target === "web" || target.startsWith("browserslist"),
-    stats: verbose
-      ? { all: true }
-      : {
-          all: false,
-          colors: true,
-          errors: true,
-          warnings: true
-        },
-    disableHostCheck: true,
-    clientLogLevel: "error",
+    allowedHosts: "all",
+    static: false,
+    client: {
+      logging: "error",
+      overlay: true
+    },
+    devMiddleware: {
+      stats: verbose
+        ? { all: true }
+        : {
+            all: false,
+            colors: true,
+            errors: true,
+            warnings: true
+          }
+    },
     headers: { "Access-Control-Allow-Origin": "*" },
     ...spawnedServer.devServerConfig
   };
 
-  const server = new DevServer(compiler, devServerConfig);
-
-  return new Promise((resolve, reject) =>
-    server.listen(port, devServerConfig.host, (_, err) =>
-      err ? reject(err) : resolve(server)
-    )
-  );
+  const server = new DevServer(devServerConfig, compiler);
+  await server.start();
+  return server;
 };

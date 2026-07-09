@@ -14,16 +14,16 @@ describe("scope(serve)", function () {
   autotest("fixtures", {
     serve: createTest(async options => {
       const server = await run({ noBrowser: true, ...options });
-      return () => new Promise(resolve => server.close(resolve));
+      return () => server.stop();
     }),
     build: createTest(async (options, { resolve }) => {
       const outputPath = resolve("dist");
 
       await new Promise((resolve, reject) => {
         process.env.NODE_ENV = "production";
-        webpack(
-          loadWebpackConfig({ output: outputPath, ...options })
-        ).run(err => (err ? reject(err) : resolve()));
+        webpack(loadWebpackConfig({ output: outputPath, ...options })).run(
+          err => (err ? reject(err) : resolve())
+        );
       });
 
       cluster.setupMaster({
