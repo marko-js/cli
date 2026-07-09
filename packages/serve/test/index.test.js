@@ -71,6 +71,10 @@ describe("scope(serve)", function () {
   });
 });
 
+// Each test gets its own port so a server that fails to close can't cause the
+// rest of the suite to fail with EADDRINUSE.
+let nextPort = 8378;
+
 function createTest(createServer) {
   return ({ resolve, dir, test, snapshot, mode }) => {
     test(async () => {
@@ -82,7 +86,7 @@ function createTest(createServer) {
         const targetDirPath = resolve("target");
         const hasTargetDir = fs.existsSync(targetDirPath);
 
-        let options = { port: 8378 };
+        let options = { port: nextPort++ };
         let main;
 
         if (hasMainFile) {
