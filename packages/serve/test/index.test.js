@@ -21,9 +21,9 @@ describe("scope(serve)", function () {
 
       await new Promise((resolve, reject) => {
         process.env.NODE_ENV = "production";
-        webpack(
-          loadWebpackConfig({ output: outputPath, ...options })
-        ).run(err => (err ? reject(err) : resolve()));
+        webpack(loadWebpackConfig({ output: outputPath, ...options })).run(
+          err => (err ? reject(err) : resolve())
+        );
       });
 
       cluster.setupMaster({
@@ -110,10 +110,17 @@ function createTest(createServer) {
           snapshot,
           resolve
         );
-        await page.goto(
-          `http://localhost:${options.port}${(main && main.path) || "/"}`,
-          { waitUntil: "networkidle2" }
-        );
+        try {
+          await page.goto(
+            `http://localhost:${options.port}${(main && main.path) || "/"}`,
+            { waitUntil: "networkidle2" }
+          );
+        } catch (err) {
+          // A non-2xx navigation (e.g. a param route that isn't statically
+          // prerendered) surfaces as ERR_HTTP_RESPONSE_CODE_FAILURE in newer
+          // Chromium; the resulting empty page is still what we snapshot.
+          if (!/ERR_HTTP_RESPONSE_CODE_FAILURE/.test(err.message)) throw err;
+        }
 
         await screenshot();
 
