@@ -158,19 +158,19 @@ function createTest(createServer) {
 }
 
 async function screenshotUtility(page, mode, snapshot, resolve, name, element) {
-  const target = element || (await page.$("body"));
   const nameWithMode = `${name || ""}${name && mode ? "-" : ""}${mode || ""}`;
   const screenshotPath = resolve(
     `${nameWithMode && `${nameWithMode}-`}actual.png`
   );
-  const assetCode = (
-    await page.evaluate(el => el.innerHTML, await page.$("head"))
-  ).trim();
-  const html = assetCode + (await page.evaluate(el => el.outerHTML, target));
+  // Query + evaluate in one step ($eval) so we never hold a JSHandle across a
+  // navigation/context switch (which newer Chromium rejects).
+  const assetCode = (await page.$eval("head", el => el.innerHTML)).trim();
+  const html = assetCode + (await page.$eval("body", el => el.outerHTML));
 
   // Cannot screenshot zero size elements, first check body has content
   // before screenshotting.
   if (!/<body>\s*<\/body>/.test(html)) {
+    const target = element || (await page.$("body"));
     await target.screenshot({ path: screenshotPath });
   }
 
