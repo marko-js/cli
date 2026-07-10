@@ -28,6 +28,12 @@ module.exports = async ({ entry, port = 3000, verbose, nodeArgs = [] }) => {
     host: "0.0.0.0",
     allowedHosts: "all",
     static: false,
+    // Use a full page reload (not HMR) on changes, matching the previous
+    // webpack-dev-server v3 behaviour. Server-rendered Marko output has no
+    // client runtime to hot-patch, so a reload is what actually reflects
+    // edits in the browser.
+    hot: false,
+    liveReload: true,
     client: {
       logging: "error",
       overlay: true
