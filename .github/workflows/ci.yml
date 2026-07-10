@@ -29,4 +29,5 @@ jobs:
       - name: Run tests
         run: npm run ci:test
       - name: Report code coverage
+        continue-on-error: true
         run: npm run ci:report
