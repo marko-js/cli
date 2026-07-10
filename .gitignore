@@ -6,6 +6,7 @@
 .cache/
 .nyc_output
 node_modules
+yarn.lock
 snapshots
 coverage
 dist

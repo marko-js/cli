@@ -4,7 +4,8 @@
     "packages/*"
   ],
   "overrides": {
-    "cheerio": "1.0.0-rc.12"
+    "cheerio": "1.0.0-rc.12",
+    "chromedriver": "119.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
