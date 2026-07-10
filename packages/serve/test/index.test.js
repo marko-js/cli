@@ -171,5 +171,10 @@ function normalizeHashes(html) {
     .replace(/\d+(\.\d+)*([kmgt]b?)(?=\b)/gi, "_SIZE_")
     .replace(/(v\s*)\d+(\.\d+)*/gi, "_VERSION_")
     .replace(/(\.|\/)[a-f0-9]{8}\./gi, "$1HASH.")
-    .replace(/_[0-9a-z]{4}\./gi, "_HASH.");
+    .replace(/_[0-9a-z]{4}\./gi, "_HASH.")
+    // The dev-server's split vendor chunk is auto-named after whichever
+    // module happens to sort first, which varies between environments
+    // (e.g. webpack-dev-server client vs mini-css-extract HMR runtime).
+    // Collapse it so snapshots aren't tied to the build environment.
+    .replace(/vendors-node_modules[\w-]*\.HASH\.js/gi, "vendors.HASH.js");
 }
