@@ -132,9 +132,7 @@ export async function run(options: CliOptions): Promise<void> {
     ];
 
     p.outro(
-      `Project created! Next steps:\n${steps
-        .map((step) => color.cyan(`  ${step}`))
-        .join("\n")}`,
+      `Next steps:\n${steps.map((step) => color.cyan(`  ${step}`)).join("\n")}`,
     );
   } catch (err) {
     spin.stop("Failed to create project", 1);
