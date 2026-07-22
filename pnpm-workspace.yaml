@@ -1,2 +1,8 @@
 packages:
   - "packages/*"
+
+# esbuild (an optional peer of vite, pulled in by vitest) ships a postinstall
+# that pnpm blocks by default. Allow it so fresh clones don't error with
+# ERR_PNPM_IGNORED_BUILDS.
+onlyBuiltDependencies:
+  - esbuild
