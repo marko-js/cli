@@ -98,31 +98,30 @@ export async function run(options: CliOptions): Promise<void> {
   }
 
   const spin = p.spinner();
-  let spinning = false;
+  spin.start("Setting up project");
+  let installLog = "";
 
   const result = createProject({ ...options, name, template });
-  result.on("download", () => {
-    spin.start("Downloading app");
-    spinning = true;
-  });
-  result.on("install", (installer: string) => {
-    if (spinning) {
-      spin.stop("Downloaded app");
-      spinning = false;
-    }
-    p.log.step(`Installing dependencies with ${color.cyan(installer)}`);
-  });
-  result.on("install-error", (installer: string) =>
-    p.log.warn(
-      `${color.cyan(`${installer} install`)} did not finish cleanly. Your ` +
-        "project was still created — you may need to install dependencies manually.",
-    ),
+  result.on("download", () => spin.message("Downloading app"));
+  result.on("install", (installer: string) =>
+    spin.message(`Installing dependencies with ${installer}`),
   );
-  result.on("init", () => p.log.step("Initializing git repository"));
+  result.on("install-error", (_installer: string, log?: string) => {
+    installLog = log ?? "";
+  });
+  result.on("init", () => spin.message("Setting up git repository"));
 
   try {
     const { projectPath, installer, installed, scripts } = await result;
-    if (spinning) spin.stop("Downloaded app");
+    spin.stop("Project created");
+
+    if (!installed) {
+      p.log.warn(
+        `${color.cyan(`${installer} install`)} did not finish cleanly — you ` +
+          "may need to run it yourself.",
+      );
+      if (installLog.trim()) p.log.message(installLog.trim());
+    }
 
     // `<pm> run <script>` is valid for npm/pnpm/yarn/bun alike.
     const script = scripts.dev ? "dev" : scripts.start ? "start" : undefined;
@@ -138,7 +137,7 @@ export async function run(options: CliOptions): Promise<void> {
         .join("\n")}`,
     );
   } catch (err) {
-    if (spinning) spin.stop("Failed to create project", 1);
+    spin.stop("Failed to create project", 1);
     p.cancel((err as Error).message);
     process.exitCode = 1;
   }

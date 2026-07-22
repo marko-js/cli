@@ -35,7 +35,10 @@ export async function initGitRepo(
   }
 }
 
-const git = (cwd: string, args: string[]) => exec(cwd, "git", args);
+// Capture git's output so internal probes (e.g. `rev-parse` printing
+// "fatal: not a git repository") don't leak to the user.
+const git = (cwd: string, args: string[]) =>
+  exec(cwd, "git", args, { capture: true });
 
 async function tryGit(cwd: string, args: string[]): Promise<boolean> {
   try {

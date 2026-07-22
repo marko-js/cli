@@ -12,7 +12,7 @@ import { join, resolve } from "node:path";
 import { downloadTemplate } from "giget";
 
 import { detectInstaller } from "./env.js";
-import { exec } from "./exec.js";
+import { exec, type ExecError } from "./exec.js";
 import { initGitRepo } from "./git.js";
 
 export const DEFAULT_TEMPLATE = "basic";
@@ -78,8 +78,8 @@ async function create(
   const { scripts } = await rewritePackageJson(projectPath, name);
 
   emitter.emit("install", installer);
-  const installed = await install(installer, projectPath);
-  if (!installed) emitter.emit("install-error", installer);
+  const { installed, log } = await install(installer, projectPath);
+  if (!installed) emitter.emit("install-error", installer, log);
 
   await initGitRepo(projectPath, emitter);
 
@@ -191,27 +191,36 @@ async function rewritePackageJson(
   return { scripts: pkg.scripts ?? {} };
 }
 
-async function install(installer: string, cwd: string): Promise<boolean> {
+async function install(
+  installer: string,
+  cwd: string,
+): Promise<{ installed: boolean; log?: string }> {
+  const run = () =>
+    exec(cwd, installer, ["install"], { shell: true, capture: true });
+
   try {
-    await exec(cwd, installer, ["install"], { shell: true });
-    return true;
-  } catch {
+    await run();
+    return { installed: true };
+  } catch (error) {
     // pnpm exits non-zero when it blocks a dependency's build scripts. The
     // vite-based templates rely on esbuild's, so approve just esbuild — pnpm
     // writes nothing and no-ops if esbuild wasn't actually installed — then
     // re-install to confirm that was the only problem. Any other package
     // manager (or a genuine pnpm failure) is a real error.
-    if (installer !== "pnpm") return false;
-
-    try {
-      await exec(cwd, installer, ["approve-builds", "esbuild"], {
-        shell: true,
-      });
-      await exec(cwd, installer, ["install"], { shell: true });
-      return true;
-    } catch {
-      return false;
+    if (installer === "pnpm") {
+      try {
+        await exec(cwd, installer, ["approve-builds", "esbuild"], {
+          shell: true,
+          capture: true,
+        });
+        await run();
+        return { installed: true };
+      } catch {
+        // Fall through and report the original install failure.
+      }
     }
+
+    return { installed: false, log: (error as ExecError).output };
   }
 }
 
