@@ -6,6 +6,7 @@ import color from "picocolors";
 
 import { createProject, DEFAULT_TEMPLATE, getExamples } from "./create.js";
 import { isAgent, isCI } from "./env.js";
+import { isValidProjectName } from "./name.js";
 import { version } from "./pkg.js";
 
 export interface CliOptions {
@@ -14,6 +15,8 @@ export interface CliOptions {
   dir?: string;
   installer?: string;
   yes?: boolean;
+  install?: boolean;
+  git?: boolean;
   help?: boolean;
   version?: boolean;
 }
@@ -28,6 +31,8 @@ ${color.bold("Options:")}
   -d, --dir        Directory to create the app in (default: current directory)
   -i, --installer  Package manager to install with (default: detected)
   -y, --yes        Skip prompts and accept defaults (implied under CI and agents)
+      --no-install Skip installing dependencies
+      --no-git     Skip initializing a git repository
   -v, --version    Print the version
   -h, --help       Show this help message`;
 
@@ -41,12 +46,24 @@ export function parse(argv: string[]): CliOptions {
       dir: { type: "string", short: "d" },
       installer: { type: "string", short: "i" },
       yes: { type: "boolean", short: "y" },
+      "no-install": { type: "boolean" },
+      "no-git": { type: "boolean" },
       help: { type: "boolean", short: "h" },
       version: { type: "boolean", short: "v" },
     },
   });
 
-  return { ...values, name: values.name ?? positionals[0] };
+  return {
+    name: values.name ?? positionals[0],
+    template: values.template,
+    dir: values.dir,
+    installer: values.installer,
+    yes: values.yes,
+    install: values["no-install"] ? false : undefined,
+    git: values["no-git"] ? false : undefined,
+    help: values.help,
+    version: values.version,
+  };
 }
 
 export async function run(options: CliOptions): Promise<void> {
@@ -87,9 +104,14 @@ export async function run(options: CliOptions): Promise<void> {
       message: "What is your project named?",
       placeholder: "my-app",
       defaultValue: "my-app",
+      validate: (value) => {
+        if (value && !isValidProjectName(value)) {
+          return "Name can't contain slashes.";
+        }
+      },
     });
     if (p.isCancel(answer)) return cancelled();
-    name = answer || "my-app";
+    name = answer.trim() || "my-app";
   }
 
   if (!template) {
@@ -97,25 +119,34 @@ export async function run(options: CliOptions): Promise<void> {
     if (template === undefined) return cancelled();
   }
 
-  const spin = p.spinner();
-  spin.start("Setting up project");
+  // Skip the animated spinner when nothing is watching a terminal (agents/CI/
+  // piped output) — it would otherwise spam frames into captured logs.
+  const plain = !process.stdout.isTTY || isAgent() || isCI();
+  const spin = plain ? undefined : p.spinner();
+  spin?.start("Setting up project");
+  const step = (message: string) =>
+    spin ? spin.message(message) : p.log.step(message);
+
+  let installFailed = false;
   let installLog = "";
 
   const result = createProject({ ...options, name, template });
-  result.on("download", () => spin.message("Downloading app"));
+  result.on("download", () => step("Downloading app"));
   result.on("install", (installer: string) =>
-    spin.message(`Installing dependencies with ${installer}`),
+    step(`Installing dependencies with ${installer}`),
   );
   result.on("install-error", (_installer: string, log?: string) => {
+    installFailed = true;
     installLog = log ?? "";
   });
-  result.on("init", () => spin.message("Setting up git repository"));
+  result.on("init", () => step("Setting up git repository"));
 
   try {
     const { projectPath, installer, installed, scripts } = await result;
-    spin.stop("Project created");
+    if (spin) spin.stop("Project created");
+    else p.log.success("Project created");
 
-    if (!installed) {
+    if (installFailed) {
       p.log.warn(
         `${color.cyan(`${installer} install`)} did not finish cleanly — you ` +
           "may need to run it yourself.",
@@ -125,8 +156,9 @@ export async function run(options: CliOptions): Promise<void> {
 
     // `<pm> run <script>` is valid for npm/pnpm/yarn/bun alike.
     const script = scripts.dev ? "dev" : scripts.start ? "start" : undefined;
+    const dir = relative(process.cwd(), projectPath) || ".";
     const steps = [
-      `cd ${relative(process.cwd(), projectPath) || "."}`,
+      `cd ${/\s/.test(dir) ? `"${dir}"` : dir}`,
       ...(installed ? [] : [`${installer} install`]),
       ...(script ? [`${installer} run ${script}`] : []),
     ];
@@ -135,8 +167,13 @@ export async function run(options: CliOptions): Promise<void> {
       `Next steps:\n${steps.map((step) => color.cyan(`  ${step}`)).join("\n")}`,
     );
   } catch (err) {
-    spin.stop("Failed to create project", 1);
-    p.cancel((err as Error).message);
+    if (spin) spin.stop("Failed to create project", 1);
+    else p.log.error("Failed to create project");
+
+    const error = err as Error & { cause?: unknown };
+    const detail =
+      error.cause instanceof Error ? `\n${error.cause.message}` : "";
+    p.cancel(error.message + detail);
     process.exitCode = 1;
   }
 }
@@ -161,7 +198,11 @@ async function promptTemplate(): Promise<string | undefined> {
 
   const spin = p.spinner();
   spin.start("Loading examples");
-  const examples = await getExamples();
+  // Hide the legacy Marko 5 examples from the browse list; they can still be
+  // used explicitly via `--template <name>-marko-5`.
+  const examples = (await getExamples()).filter(
+    ({ name }) => !name.endsWith("-marko-5"),
+  );
   spin.stop("Loaded examples");
 
   const example = await p.select({

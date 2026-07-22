@@ -29,4 +29,16 @@ describe("parse", () => {
     const options = parse(["-n", "example", "-y"]);
     expect(options.yes).toBe(true);
   });
+
+  it("parses --no-install and --no-git as opt-outs", () => {
+    const options = parse(["-n", "example", "--no-install", "--no-git"]);
+    expect(options.install).toBe(false);
+    expect(options.git).toBe(false);
+  });
+
+  it("leaves install/git undefined by default", () => {
+    const options = parse(["-n", "example"]);
+    expect(options.install).toBeUndefined();
+    expect(options.git).toBeUndefined();
+  });
 });

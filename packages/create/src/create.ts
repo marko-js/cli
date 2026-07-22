@@ -11,9 +11,10 @@ import { join, resolve } from "node:path";
 
 import { downloadTemplate } from "giget";
 
-import { detectInstaller } from "./env.js";
+import { detectInstaller, githubToken } from "./env.js";
 import { exec, type ExecError } from "./exec.js";
 import { initGitRepo } from "./git.js";
+import { toPackageName } from "./name.js";
 
 export const DEFAULT_TEMPLATE = "basic";
 const EXAMPLES_REPO = "marko-js/examples";
@@ -28,6 +29,10 @@ export interface CreateOptions {
   template?: string;
   /** Package manager used to install dependencies. */
   installer?: string;
+  /** Install dependencies after downloading. Defaults to `true`. */
+  install?: boolean;
+  /** Initialize a git repository. Defaults to `true`. */
+  git?: boolean;
 }
 
 export interface CreateResult {
@@ -75,13 +80,25 @@ async function create(
   emitter.emit("download");
   await downloadRepo(template, projectPath);
 
-  const { scripts } = await rewritePackageJson(projectPath, name);
+  const { hasPackageJson, scripts } = await rewritePackageJson(
+    projectPath,
+    name,
+  );
 
-  emitter.emit("install", installer);
-  const { installed, log } = await install(installer, projectPath);
-  if (!installed) emitter.emit("install-error", installer, log);
+  // Nothing to install when the template isn't a node project.
+  let installed = true;
+  if (hasPackageJson) {
+    if (options.install === false) {
+      installed = false; // skipped by the user; surface it in the next steps
+    } else {
+      emitter.emit("install", installer);
+      const result = await install(installer, projectPath);
+      installed = result.installed;
+      if (!installed) emitter.emit("install-error", installer, result.log);
+    }
+  }
 
-  await initGitRepo(projectPath, emitter);
+  if (options.git !== false) await initGitRepo(projectPath, emitter);
 
   return { projectPath, installer, installed, scripts };
 }
@@ -92,7 +109,7 @@ export async function getExamples(): Promise<Example[]> {
   const ref = await resolveDefaultBranch(EXAMPLES_REPO);
   const { dir } = await downloadTemplate(
     `github:${EXAMPLES_REPO}/${EXAMPLES_DIR}#${ref}`,
-    { dir: join(cwd, EXAMPLES_DIR), force: true },
+    { dir: join(cwd, EXAMPLES_DIR), force: true, auth: githubToken() },
   );
   const entries = await readdir(dir, { withFileTypes: true });
 
@@ -107,7 +124,7 @@ export async function getExamples(): Promise<Example[]> {
   );
 }
 
-interface ParsedTemplate {
+export interface ParsedTemplate {
   /** The giget input, minus the ref. */
   input: string;
   /** `owner/repo` the template lives in. */
@@ -117,7 +134,7 @@ interface ParsedTemplate {
 }
 
 /** Map a template reference to a giget input + source repo. */
-function parseTemplate(template: string): ParsedTemplate {
+export function parseTemplate(template: string): ParsedTemplate {
   const [source, ref] = template.split("#");
 
   if (source.includes("/")) {
@@ -149,23 +166,49 @@ async function downloadRepo(
     // giget defaults an unspecified ref to `main`; resolve the repo's actual
     // default branch so templates on `master` (or anything else) still work.
     const resolvedRef = ref ?? (await resolveDefaultBranch(repo));
-    await downloadTemplate(`${input}#${resolvedRef}`, { dir: projectPath });
+    await downloadTemplate(`${input}#${resolvedRef}`, {
+      dir: projectPath,
+      auth: githubToken(),
+    });
   } catch (cause) {
     throw new Error(`Could not download the "${template}" template.`, {
       cause,
     });
   }
+
+  // giget silently produces an empty directory when the path doesn't exist;
+  // treat that as a missing template rather than scaffolding nothing.
+  const files = await readdir(projectPath).catch(() => []);
+  if (files.length === 0) {
+    throw new Error(`Template "${template}" was not found.`);
+  }
 }
 
 /** Look up a GitHub repo's default branch. */
 async function resolveDefaultBranch(repo: string): Promise<string> {
+  const token = githubToken();
   const response = await fetch(`https://api.github.com/repos/${repo}`, {
-    headers: { "user-agent": "create-marko" },
+    headers: {
+      "user-agent": "create-marko",
+      accept: "application/vnd.github+json",
+      ...(token ? { authorization: `Bearer ${token}` } : {}),
+    },
   });
 
   if (!response.ok) {
+    if (
+      (response.status === 403 || response.status === 429) &&
+      response.headers.get("x-ratelimit-remaining") === "0"
+    ) {
+      throw new Error(
+        "Hit GitHub's API rate limit. Set GITHUB_TOKEN to raise it, or try again later.",
+      );
+    }
+    if (response.status === 404) {
+      throw new Error(`GitHub repository "${repo}" not found.`);
+    }
     throw new Error(
-      `GitHub repository "${repo}" not found (${response.status}).`,
+      `GitHub request for "${repo}" failed (${response.status}).`,
     );
   }
 
@@ -178,17 +221,24 @@ async function resolveDefaultBranch(repo: string): Promise<string> {
 async function rewritePackageJson(
   projectPath: string,
   name: string,
-): Promise<{ scripts: Record<string, string> }> {
+): Promise<{ hasPackageJson: boolean; scripts: Record<string, string> }> {
   const packagePath = join(projectPath, "package.json");
-  const pkg = JSON.parse(await readFile(packagePath, "utf8"));
 
-  pkg.name = name;
+  let pkg;
+  try {
+    pkg = JSON.parse(await readFile(packagePath, "utf8"));
+  } catch {
+    // Not a node project (or no readable package.json) — nothing to rewrite.
+    return { hasPackageJson: false, scripts: {} };
+  }
+
+  pkg.name = toPackageName(name);
   pkg.version = "1.0.0";
   pkg.private = true;
 
   await writeFile(packagePath, `${JSON.stringify(pkg, null, 2)}\n`);
 
-  return { scripts: pkg.scripts ?? {} };
+  return { hasPackageJson: true, scripts: pkg.scripts ?? {} };
 }
 
 async function install(
