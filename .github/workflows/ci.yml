@@ -2,29 +2,87 @@ name: CI
 
 on:
   pull_request:
-    paths-ignore: ["*.md"]
+    types: [opened, synchronize]
   push:
-    branches: ["main"]
-    paths-ignore: ["*.md"]
+    branches: [main]
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.head_ref || github.ref }}"
+  cancel-in-progress: true
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [12.x, 14.x, 15.x]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Use node@${{ matrix.node }}
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+      - name: Install node
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - name: Install packages
+        run: pnpm install --frozen-lockfile
+      - name: Run build
+        run: pnpm run @ci:build
+      - name: Run lint
+        run: pnpm run @ci:lint
+  test:
+    runs-on: ${{ matrix.os }}
+    name: "test: node ${{ matrix.node }} on ${{ matrix.os }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [lts/*, lts/-1, lts/-2]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          # standalone pnpm bundles its own Node runtime, so pnpm itself
+          # works even when the matrix Node is older than pnpm requires
+          standalone: true
+      - name: Install node
+        id: node
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
-      - name: Install dependencies
-        run: npm install
-      - name: Lint code
-        run: npm run lint
+          cache: pnpm
+      - name: Install packages (node@${{ steps.node.outputs.node-version }})
+        run: pnpm install --frozen-lockfile
       - name: Run tests
-        run: npm run ci:test
-      - name: Report code coverage
-        run: npm run ci:report
+        run: pnpm run @ci:test
+  release:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    if: "${{ github.repository_owner == 'marko-js' && github.event_name == 'push' }}"
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+      - name: Install node
+        id: node
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - name: Install packages (node@${{ steps.node.outputs.node-version }})
+        run: pnpm install --frozen-lockfile
+      - name: Run release
+        uses: changesets/action@v1
+        with:
+          version: pnpm run @ci:version
+          publish: pnpm run @ci:release
+          commit: "[ci] release"
+          title: "[ci] release"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

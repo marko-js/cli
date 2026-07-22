@@ -1,0 +1,22 @@
+{
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "types": ["node", "vitest/globals"],
+    "lib": ["ESNext"],
+    "strict": true,
+    "noEmit": true,
+    "target": "ESNext",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnusedLabels": false,
+    "noImplicitOverride": true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+    "allowUnreachableCode": false,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}

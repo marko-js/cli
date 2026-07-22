@@ -18,75 +18,34 @@
   </a>
 </h1>
 
-Used to create a template Marko project in a specific directory.
+Scaffold a new Marko project into a directory. This is the library and
+`marko-create` bin behind [`create-marko`](../create-alias) (`npm create marko`).
 
 # CLI
 
-## Example
-
-### npm
-
 ```bash
-# Creates a Marko project
-npm init marko
-# Creates a project called "myapp" from the "webpack" example template
-npm init marko myapp -- --template webpack
-```
-
-### yarn
-
-```bash
-yarn create marko
-```
-
-### pnpm
-
-```
-pnpx @marko/create
+npm create marko
+# or run this package directly
+npx @marko/create my-app --template basic
 ```
 
 ## Options
 
-- `--dir`: Provide a different directory to setup the project in (default to `pwd`).
-- `--template`: The name of an example from [marko-js/examples](https://github.com/marko-js/examples/tree/master/examples).
-  - An example name
+- `--name`, `-n`: Name of the new app (also accepted as the first positional argument).
+- `--template`, `-t`: The name of an example from [marko-js/examples](https://github.com/marko-js/examples/tree/master/examples), or a `user/repo` git template.
+  - An example name, optionally at a branch/tag/commit:
     ```bash
-    webpack
-    rollup
-    ```
-  - A tag/branch/commit other than `master` is supported
-    ```bash
+    basic
     basic#next     # example branch
-    webpack#v1.2.3 # repo release tag
-    rollup#62e9fb1 # repo commit hash
+    user/repo      # a git template
+    user/repo#v1.2.3
     ```
-- `--installer`: Override the package manager used to install dependencies. By default will determine from create command and fallback to `npm`.
-  - ```bash
-    marko-create --installer pnpm
-    ```
+- `--dir`, `-d`: Directory to set the project up in (defaults to the current directory).
+- `--installer`, `-i`: Override the package manager used to install dependencies. Defaults to the one used to run the command, falling back to `npm`.
+- `--yes`, `-y`: Skip the interactive prompts and accept the defaults.
 
-# API
+The prompts only run in an interactive terminal. Under CI, AI agents, or a piped
+stdin the defaults are used (or, when required input is missing and defaults
+aren't allowed, the command exits non-zero with guidance) instead of hanging.
 
-## Installation
-
-```bash
-npm install @marko/create
-```
-
-## Example
-
-```javascript
-import { join } from "path";
-import create from "@marko/create";
-
-create({
-  dir: join(__dirname, "myapp")
-}).then(() => {
-  // Project as been created and dependencies installed.
-  console.log("Project created");
-});
-```
-
-## Options
-
-Options are the same as the CLI options.
+This package is a CLI only; it does not expose a programmatic API.
