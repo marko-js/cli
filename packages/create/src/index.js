@@ -56,10 +56,10 @@ async function create(options = {}, emitter) {
 
   await downloadRepo(template, projectPath, options, emitter);
   const { scripts } = await rewritePackageJson(projectPath, name);
-  await installPackages(installer, projectPath, emitter);
+  const installed = await installPackages(installer, projectPath, emitter);
   await initGitRepo(projectPath, emitter);
 
-  return { projectPath, scripts };
+  return { projectPath, scripts, installer, installed };
 }
 
 exports.getExamples = async function () {
@@ -149,8 +149,17 @@ async function rewritePackageJson(fullPath, name) {
 }
 
 async function installPackages(installer, fullPath, emitter) {
-  emitter.emit("install");
-  await exec(fullPath, installer, ["install"]);
+  emitter.emit("install", installer);
+  try {
+    await exec(fullPath, installer, ["install"]);
+    return true;
+  } catch (err) {
+    // Don't fail the whole scaffold if dependency install exits non-zero.
+    // Some package managers (e.g. pnpm's ignored-build-scripts warning) exit
+    // non-zero even though the project is usable, so warn and keep going.
+    emitter.emit("install-error", err, installer);
+    return false;
+  }
 }
 
 function getExampleUrl(example, tag) {

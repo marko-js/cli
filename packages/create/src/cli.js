@@ -151,14 +151,34 @@ exports.run = async function run(options = {}) {
     result.on("download", () =>
       setLoadingMessage(spinner, "Downloading app...")
     );
-    result.on("install", () =>
-      setLoadingMessage(spinner, "Installing npm modules...")
+    result.on("install", installer => {
+      // Stop the spinner so the package manager's own output is readable.
+      clearTimeout(spinner.timeout);
+      spinner.stopAndPersist({
+        symbol: chalk.cyan("→"),
+        text: `Installing dependencies with ${installer}...\n`
+      });
+    });
+    result.on("install-error", (_err, installer) =>
+      spinner.warn(
+        `\`${installer} install\` did not finish cleanly. Your project was still ` +
+          `created — you may need to install dependencies manually.\n`
+      )
     );
-    result.on("init", () => setLoadingMessage(spinner, "Initializing repo..."));
-    const { projectPath, scripts: { start, dev } = {} } = await result;
+    result.on("init", () => {
+      spinner.start();
+      setLoadingMessage(spinner, "Initializing repo...");
+    });
+    const {
+      projectPath,
+      scripts: { start, dev } = {},
+      installer,
+      installed
+    } = await result;
     spinner.succeed(
       "Project created! To get started, run:\n\n" +
         chalk.cyan(`    cd ${path.relative(process.cwd(), projectPath)}\n`) +
+        (installed ? "" : chalk.cyan(`    ${installer} install\n`)) +
         (dev
           ? chalk.cyan("    npm run dev\n")
           : start
