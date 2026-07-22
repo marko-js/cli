@@ -1,5 +1,14 @@
 # Change Log
 
+## 6.2.1
+
+### Patch Changes
+
+- [#235](https://github.com/marko-js/cli/pull/235) [`8e6cbbc`](https://github.com/marko-js/cli/commit/8e6cbbc28d074254ffe7084203b0a08bf94e413d) Thanks [@DylanPiercey](https://github.com/DylanPiercey)! - When scaffolding with pnpm, approve esbuild's build script (only if esbuild is actually installed) so vite-based templates install cleanly instead of erroring with `ERR_PNPM_IGNORED_BUILDS`. The "next steps" run command now uses the package manager you ran with (e.g. `pnpm run dev`) instead of always printing `npm`.
+
+- Updated dependencies [[`8e6cbbc`](https://github.com/marko-js/cli/commit/8e6cbbc28d074254ffe7084203b0a08bf94e413d)]:
+  - @marko/create@6.2.1
+
 ## 6.2.0
 
 ### Minor Changes
