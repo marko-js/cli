@@ -1,6 +1,0 @@
-{
-    "browser": {
-        "./readConfigFile.js": "./readConfigFile[browser].js",
-        "./requireMarkoFile.js": "./requireMarkoFile[browser].marko"
-    }
-}

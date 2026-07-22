@@ -1,57 +1,40 @@
 {
+  "name": "cli",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
-  "devDependencies": {
-    "@babel/cli": "^7.13.14",
-    "@babel/core": "^7.13.14",
-    "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.13.8",
-    "@babel/plugin-transform-runtime": "^7.13.10",
-    "@babel/preset-env": "^7.13.12",
-    "@babel/register": "^7.13.14",
-    "@commitlint/cli": "^12.1.0",
-    "@commitlint/config-conventional": "^12.1.0",
-    "@commitlint/config-lerna-scopes": "^12.1.0",
-    "@ebay/browserslist-config": "^1.2.0",
-    "@marko/compiler": "^5.8.1",
-    "@marko/translator-default": "^5.8.1",
-    "codecov": "^3.8.1",
-    "cross-env": "^7.0.3",
-    "eslint": "^7.23.0",
-    "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-prettier": "^3.3.1",
-    "fs-extra": "^9.1.0",
-    "http-server": "^0.12.3",
-    "husky": "^6.0.0",
-    "lerna": "^4.0.0",
-    "lint-staged": "^10.5.4",
-    "marko": "^5.8.1",
-    "mocha": "^8.3.2",
-    "mocha-autotest": "^1.1.0",
-    "nyc": "^15.1.0",
-    "prettier": "^2.2.1",
-    "puppeteer": "^5.4.1"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marko-js/cli.git"
   },
-  "husky": {
-    "hooks": {
-      "commit-msg": "echo $GIT_PARAMS && commitlint -e $GIT_PARAMS",
-      "pre-commit": "lint-staged"
-    }
-  },
+  "license": "MIT",
   "scripts": {
-    "build": "lerna exec --parallel -- babel src --out-dir dist --config-file ../../babel.config.js --delete-dir-on-start --copy-files",
-    "build:watch": "npm run build -- --watch",
-    "ci:report": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "ci:test": "cross-env NODE_ENV=test npm run build && nyc --reporter=text npm run mocha",
-    "clean": "lerna clean && rm -rf ./packages/*/{dist,package-lock.json} ./package-lock.json ./node_modules",
-    "format": "prettier \"**/*.{json,md,js}\" --write",
-    "lint": "eslint -f visualstudio packages/",
-    "mocha": "mocha -r @babel/register packages/*/test/**/*.test.js",
-    "publish": "npm run build && lerna publish",
-    "report": "open ./coverage/lcov-report/index.html",
-    "test": "cross-env NODE_ENV=test nyc npm run mocha",
-    "prepare": "husky install"
-  }
+    "@ci:build": "pnpm run build",
+    "@ci:lint": "eslint . && prettier . --check --log-level=warn",
+    "@ci:release": "pnpm run build && changeset publish",
+    "@ci:test": "vitest run",
+    "@ci:version": "changeset version && pnpm run format && pnpm install --lockfile-only",
+    "build": "pnpm -r run build",
+    "change": "changeset add",
+    "format": "eslint --fix .; prettier . --write --log-level=warn",
+    "lint": "eslint . && prettier . --check --log-level=warn",
+    "prepare": "husky",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.7.0",
+    "@changesets/cli": "^2.31.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.1.0",
+    "eslint": "^10.6.0",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "globals": "^17.7.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
+    "prettier": "^3.9.4",
+    "prettier-plugin-packagejson": "^3.0.2",
+    "rolldown": "^1.1.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.1",
+    "vitest": "^4.1.9"
+  },
+  "packageManager": "pnpm@11.15.1"
 }

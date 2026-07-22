@@ -3,14 +3,6 @@
 </h1>
 
 <p align="center">
-  <!-- Stability -->
-  <a href="https://nodejs.org/api/documentation.html#documentation_stability_index">
-    <img src="https://img.shields.io/badge/stability-stable-green.svg" alt="API Stability"/>
-  </a>
-  <!-- Structure -->
-  <a href="https://github.com/lerna/lerna">
-    <img src="https://img.shields.io/badge/monorepo-lerna-531099.svg" alt="Lerna"/>
-  </a>
   <!-- Format -->
   <a href="https://github.com/prettier/prettier">
     <img src="https://img.shields.io/badge/styled_with-prettier-ff69b4.svg" alt="Styled with prettier"/>
@@ -23,32 +15,70 @@
   <a href="https://github.com/marko-js/cli/actions/workflows/ci.yml">
     <img src="https://github.com/marko-js/cli/actions/workflows/ci.yml/badge.svg" alt="Build status"/>
   </a>
+  <!-- NPM Version -->
+  <a href="https://npmjs.org/package/create-marko">
+    <img src="https://img.shields.io/npm/v/create-marko.svg" alt="NPM Version"/>
+  </a>
 </p>
 
-## Commands
+Scaffold a new [Marko](https://markojs.com) application from the default starter
+or any [example](https://github.com/marko-js/examples/tree/master/examples/)
+project.
 
-| Command                                                                                   | Description                                                                                                         | Version                                                                                                                                       |
-| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| [create](https://github.com/marko-js/cli/blob/master/packages/create/README.md)           | ✨ Create a Marko application from an [example](https://github.com/marko-js/examples/tree/master/examples/) project | <a href="https://npmjs.org/package/@marko/create"><img src="https://img.shields.io/npm/v/@marko/create.svg" alt="NPM Version"/></a>           |
-| [serve](https://github.com/marko-js/cli/blob/master/packages/serve/README.md)             | 🚀 Serve a Marko application or individual component for local development                                          | <a href="https://npmjs.org/package/@marko/serve"><img src="https://img.shields.io/npm/v/@marko/serve.svg" alt="NPM Version"/></a>             |
-| [build](https://github.com/marko-js/cli/blob/master/packages/build/README.md)             | 📦 Build an optimized Marko application (the production-ready counterpart to `serve`)                               | <a href="https://npmjs.org/package/@marko/build"><img src="https://img.shields.io/npm/v/@marko/build.svg" alt="NPM Version"/></a>             |
-| [migrate](https://github.com/marko-js/cli/blob/master/packages/migrate/README.md)         | 🧹 Update Marko components to remove usage of deprecated apis                                                       | <a href="https://npmjs.org/package/@marko/migrate"><img src="https://img.shields.io/npm/v/@marko/migrate.svg" alt="NPM Version"/></a>         |
-| [prettyprint](https://github.com/marko-js/cli/blob/master/packages/prettyprint/README.md) | 💅 Reformat Marko source files for consistency and beauty                                                           | <a href="https://npmjs.org/package/@marko/prettyprint"><img src="https://img.shields.io/npm/v/@marko/prettyprint.svg" alt="NPM Version"/></a> |
-| [test](https://github.com/marko-js/cli/blob/master/packages/test/README.md)               | ✅ Test marko components in both node and browsers                                                                  | <a href="https://npmjs.org/package/@marko/test"><img src="https://img.shields.io/npm/v/@marko/test.svg" alt="NPM Version"/></a>               |
+## Usage
 
-Each command is distrubuted as a separate npm package (`@marko/<command>`). You can execute individual commands using `npx @marko/<command>` (e.g. `npx @marko/create`). We recommend installing most commands locally and using `marko-<command>` in your `package.json` `scripts`.
+```console
+npm create marko
+# or
+pnpm create marko
+# or
+yarn create marko
+```
+
+You'll be prompted for a project name and template. To skip the prompts, pass
+them as flags:
+
+```console
+pnpm create marko -- --name my-app --template basic
+```
+
+| Option              | Description                                                                 |
+| ------------------- | --------------------------------------------------------------------------- |
+| `--name`, `-n`      | Name of the new app (also accepted as the first positional argument).       |
+| `--template`, `-t`  | An example from `marko-js/examples`, or a `user/repo` git template.         |
+| `--dir`, `-d`       | Directory to create the app in (defaults to the current directory).         |
+| `--installer`, `-i` | Package manager used to install dependencies (defaults to the one you ran). |
+| `--yes`, `-y`       | Skip prompts and accept defaults.                                           |
+
+### CI & AI agents
+
+The prompts only run in an interactive terminal. When there's no human to answer
+them — `--yes` is passed, `CI` is set, an AI agent is detected
+(`CLAUDECODE`/`CURSOR_TRACE_ID`/`AI_AGENT`/`AGENT`), or stdin isn't a TTY — the
+defaults are used (name `my-app`, the starter template) instead of hanging. If
+defaults aren't allowed and required input is missing, the command exits
+non-zero with guidance rather than blocking.
+
+## Packages
+
+| Package                                   | Description                                              |
+| ----------------------------------------- | -------------------------------------------------------- |
+| [`create-marko`](./packages/create-alias) | The `npm create marko` / `pnpm create marko` entrypoint. |
+| [`@marko/create`](./packages/create)      | The scaffolder implementation and `marko-create` bin.    |
+
+> Looking for the old `serve`, `build`, `migrate`, `prettyprint`, or `test`
+> commands? They live on the
+> [`legacy`](https://github.com/marko-js/cli/tree/legacy) branch.
 
 ## Contributing
 
-This repo provides a consistent build, test, & development environment for all of Marko's CLI commands.
+This repo is a [pnpm](https://pnpm.io) workspace written in TypeScript.
 
-### [npm](https://twitter.com/chriscoyier/status/896051713378992130) scripts
-
-- `test` Run the tests for all packages
-- `publish` Runs build and begins publishing any changed packages
-- `build` Runs babel on the `src` folder for every package _(runs on publish)_
-- `format` Formats the files in the repo _(runs on precommit)_
-- `lint` Lints the files in the repo _(runs on precommit)_
+- `pnpm build` — build the packages (`tsc` + `rolldown`)
+- `pnpm test` — run the tests ([vitest](https://vitest.dev))
+- `pnpm lint` — lint and check formatting
+- `pnpm format` — auto-fix lint and formatting
+- `pnpm change` — add a [changeset](https://github.com/changesets/changesets) for your change
 
 ## Code of Conduct
 

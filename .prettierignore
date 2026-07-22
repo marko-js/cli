@@ -1,11 +1,4 @@
-*.marko.js
-.cache/
-.nyc_output
-lerna.json
-package.json
-package-lock.json
-node_modules
-snapshots
+pnpm-lock.yaml
+CHANGELOG.md
 coverage
 dist
-CHANGELOG.md

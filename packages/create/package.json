@@ -1,22 +1,7 @@
 {
   "name": "@marko/create",
-  "description": "Create Marko projects",
   "version": "6.1.0",
-  "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
-  "dependencies": {
-    "@babel/runtime": "^7.13.10",
-    "argly": "^1.2.0",
-    "chalk": "^4.1.0",
-    "degit": "^2.8.0",
-    "enquirer": "^2.3.6",
-    "got": "^11.8.2",
-    "ora": "^5.4.0",
-    "update-notifier": "^5.1.0"
-  },
-  "files": [
-    "dist"
-  ],
-  "homepage": "https://github.com/marko-js/cli/tree/master/packages/create",
+  "description": "Create Marko projects",
   "keywords": [
     "create",
     "demo",
@@ -24,19 +9,28 @@
     "util",
     "utility"
   ],
-  "license": "MIT",
-  "main": "dist/index.js",
-  "bin": {
-    "marko-create": "./dist/bin.js"
-  },
-  "maintainers": [
-    "Patrick Steele-Idem <pnidem@gmail.com>",
-    "Michael Rawlings <ml.rawlings@gmail.com>",
-    "Austin Kelleher <a@alk.im>",
-    "Dylan Piercey <pierceydylan@gmail.com>"
-  ],
+  "homepage": "https://github.com/marko-js/cli/tree/main/packages/create",
+  "bugs": "https://github.com/marko-js/cli/issues/new?template=Bug_report.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/marko-js/cli"
+    "url": "git+https://github.com/marko-js/cli.git",
+    "directory": "packages/create"
+  },
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "marko-create": "./dist/bin.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "tsc --noEmit && rolldown -c"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "giget": "^2.0.0",
+    "picocolors": "^1.1.1"
   }
 }

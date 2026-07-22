@@ -1,7 +1,0 @@
-*.marko.js
-.cache/
-.nyc_output
-node_modules
-snapshots
-coverage
-dist
