@@ -124,11 +124,13 @@ export async function run(options: CliOptions): Promise<void> {
     const { projectPath, installer, installed, scripts } = await result;
     if (spinning) spin.stop("Downloaded app");
 
+    // `<pm> run <script>` is valid for npm/pnpm/yarn/bun alike.
+    const script = scripts.dev ? "dev" : scripts.start ? "start" : undefined;
     const steps = [
       `cd ${relative(process.cwd(), projectPath) || "."}`,
       ...(installed ? [] : [`${installer} install`]),
-      scripts.dev ? "npm run dev" : scripts.start ? "npm start" : "",
-    ].filter(Boolean);
+      ...(script ? [`${installer} run ${script}`] : []),
+    ];
 
     p.outro(
       `Project created! Next steps:\n${steps
