@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://user-images.githubusercontent.com/1958812/81235077-f4a8b500-8fae-11ea-9d34-2b50b74d5938.png" alt="Marko CLI"/>
+  <a href="https://markojs.com/"><img alt="Marko" src="https://raw.githubusercontent.com/marko-js/website/refs/heads/main/public/assets/logo.svg" width="250"></a>
 </h1>
 
 <p align="center">
