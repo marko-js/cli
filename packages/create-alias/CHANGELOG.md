@@ -1,5 +1,14 @@
 # Change Log
 
+## 6.2.2
+
+### Patch Changes
+
+- [#237](https://github.com/marko-js/cli/pull/237) [`0297054`](https://github.com/marko-js/cli/commit/02970542e11029d6c98bd4a90e32919085f7a91e) Thanks [@DylanPiercey](https://github.com/DylanPiercey)! - Run the scaffold's install and git steps quietly behind the progress spinner. The noisy internals — pnpm's ignored-builds notice, esbuild's postinstall, the confirmation re-install, husky's `.git can't be found`, and git probes like `fatal: not a git repository` — are no longer printed. Install output is surfaced only when it genuinely fails.
+
+- Updated dependencies [[`0297054`](https://github.com/marko-js/cli/commit/02970542e11029d6c98bd4a90e32919085f7a91e)]:
+  - @marko/create@6.2.2
+
 ## 6.2.1
 
 ### Patch Changes
