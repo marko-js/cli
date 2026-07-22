@@ -8,31 +8,52 @@ export interface ExecOptions {
    * use it with internally-controlled arguments.
    */
   shell?: boolean;
+  /**
+   * Capture stdout/stderr instead of inheriting them. The combined output is
+   * attached to the rejection as `ExecError.output` so callers can surface it
+   * only when something actually goes wrong.
+   */
+  capture?: boolean;
+}
+
+export interface ExecError extends Error {
+  output?: string;
 }
 
 /**
- * Run a command, inheriting stdio so its output is visible to the user.
- * Resolves on a `0` exit code and rejects otherwise.
+ * Run a command to completion. Resolves on a `0` exit code and rejects
+ * otherwise. Inherits stdio by default; pass `capture` to buffer it instead.
  */
 export function exec(
   cwd: string,
   bin: string,
   args: string[],
-  { shell = false }: ExecOptions = {},
+  { shell = false, capture = false }: ExecOptions = {},
 ): Promise<void> {
   return new Promise((resolve, reject) => {
+    const stdio = capture ? "pipe" : "inherit";
     const child = shell
       ? spawn([bin, ...args].join(" "), {
           cwd,
           shell: true,
-          stdio: "inherit",
+          stdio,
           windowsHide: true,
         })
-      : spawn(bin, args, { cwd, stdio: "inherit", windowsHide: true });
+      : spawn(bin, args, { cwd, stdio, windowsHide: true });
+
+    let output = "";
+    if (capture) {
+      child.stdout?.on("data", (chunk) => (output += chunk));
+      child.stderr?.on("data", (chunk) => (output += chunk));
+    }
 
     child.once("error", reject).once("close", (code) => {
       if (code) {
-        reject(new Error(`${bin} ${args.join(" ")} exited with code ${code}`));
+        const error: ExecError = new Error(
+          `${bin} ${args.join(" ")} exited with code ${code}`,
+        );
+        error.output = output;
+        reject(error);
       } else {
         resolve();
       }
