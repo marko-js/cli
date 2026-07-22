@@ -1,5 +1,15 @@
 # Change Log
 
+## 6.3.0
+
+### Minor Changes
+
+- [#241](https://github.com/marko-js/cli/pull/241) [`325ad23`](https://github.com/marko-js/cli/commit/325ad238b95e8f5acbdcc44a1d3eeeb132a3a885) Thanks [@DylanPiercey](https://github.com/DylanPiercey)! - CLI improvements: validate the project name and derive a valid npm package name from it (e.g. `My App` → `my-app`); add `--no-install` and `--no-git`; hide the legacy `*-marko-5` examples from the interactive list (still usable via `--template`); authenticate GitHub requests with `GITHUB_TOKEN`/`GH_TOKEN` when set (higher rate limits and private templates), with clearer rate-limit errors; use plain step output instead of an animated spinner under CI/agents/piped output; and fail clearly on a missing template (and surface the underlying cause) instead of scaffolding an empty project.
+
+### Patch Changes
+
+- [#239](https://github.com/marko-js/cli/pull/239) [`0a7d8f9`](https://github.com/marko-js/cli/commit/0a7d8f90bd58949cded324764b7134c49b91d333) Thanks [@DylanPiercey](https://github.com/DylanPiercey)! - Remove the duplicated "Project created" line at the end of the scaffold — the spinner's final message and the closing message both said it. The spinner now ends with "Project created" and the closing line starts the "Next steps".
+
 ## 6.2.2
 
 ### Patch Changes
