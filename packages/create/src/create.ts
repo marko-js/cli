@@ -196,9 +196,22 @@ async function install(installer: string, cwd: string): Promise<boolean> {
     await exec(cwd, installer, ["install"], { shell: true });
     return true;
   } catch {
-    // Some package managers exit non-zero even on a usable install (e.g. pnpm's
-    // ignored-build-scripts warning). Don't fail the whole scaffold for it.
-    return false;
+    // pnpm exits non-zero when it blocks a dependency's build scripts. The
+    // vite-based templates rely on esbuild's, so approve just esbuild — pnpm
+    // writes nothing and no-ops if esbuild wasn't actually installed — then
+    // re-install to confirm that was the only problem. Any other package
+    // manager (or a genuine pnpm failure) is a real error.
+    if (installer !== "pnpm") return false;
+
+    try {
+      await exec(cwd, installer, ["approve-builds", "esbuild"], {
+        shell: true,
+      });
+      await exec(cwd, installer, ["install"], { shell: true });
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
 
