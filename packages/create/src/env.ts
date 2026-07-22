@@ -7,6 +7,10 @@ export const isAgent = (): boolean =>
 
 export const isCI = (): boolean => Boolean(process.env.CI);
 
+/** A GitHub token from the environment, if one is set. */
+export const githubToken = (): string | undefined =>
+  process.env.GITHUB_TOKEN || process.env.GH_TOKEN || undefined;
+
 /**
  * Detect the package manager used to invoke the command (via
  * `npm_config_user_agent`), falling back to `npm`.
